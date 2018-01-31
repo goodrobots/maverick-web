@@ -1,6 +1,6 @@
 # maverick-web
 
-> Maverick Web - This is a work in progress!
+> Maverick Web
 
 ## Build Setup
 
