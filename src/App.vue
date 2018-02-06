@@ -21,7 +21,7 @@
         <v-list>
           <v-list-tile v-for="item in vehicleMenuItems" :key="item.text" avatar @click="">
             <v-list-tile-avatar>
-              <img :src="`https://randomuser.me/api/portraits/men/${item.picture}.jpg`" alt="">
+              <!-- <img :src="`https://randomuser.me/api/portraits/men/${item.picture}.jpg`" alt=""> -->
             </v-list-tile-avatar>
             <v-list-tile-title v-text="item.text"></v-list-tile-title>
           </v-list-tile>
@@ -40,8 +40,8 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar dark
-      color="grey darken-3"
+    <v-toolbar
+      :color="toolbarColor"
       app
       dense
       fixed
@@ -78,7 +78,10 @@
       </v-btn>
     </v-toolbar>
     <v-content>
-      <router-view/>
+      <v-container fluid>
+        <!-- <router-view/> -->
+        <state-card-subscription></state-card-subscription>
+      </v-container>
     </v-content>
     <v-navigation-drawer
       temporary
@@ -90,16 +93,28 @@
     >
       <v-container fluid>
         <v-switch :label="`Theme: ${themeTypeStr}`" v-model="themeType" @change='toggleDarkLight()'></v-switch>
+        <div>Theme Main Color</div>
+        <v-flex xs12 sm6 md6>
+            <v-radio-group v-model="themeColor" @change='changeColor' column>
+              <v-radio v-for="color in colors" :label="color.name" :color="color.value" :value="color.value"></v-radio>
+            </v-radio-group>
+          </v-flex>
       </v-container>
     </v-navigation-drawer>
-    <v-footer :fixed="fixed" app>
-      <span>&copy; Good Robots 2018</span>
+    <v-footer class="pa-3" :fixed="fixed" app :color="toolbarColor">
+      <v-spacer></v-spacer>
+      <div>&copy; GoodRobots {{ new Date().getFullYear() }}</div>
     </v-footer>
   </v-app>
 </template>
 
 <script>
+// import LinkList from './components/LinkList'
+import StateCardSubscription from './components/StateCardSubscription'
 export default {
+  components: {
+    StateCardSubscription
+  },
   data () {
     return {
       drawer: false,
@@ -122,16 +137,46 @@ export default {
       rightDrawer: false,
       themeType: true,
       themeTypeStr: 'Dark',
-      title: 'Maverick'
+      themeColor: 'indigo',
+      toolbarColor: 'indigo darken-3',
+      title: 'Maverick',
+      colors: [
+        { name: 'Red', value: 'red' },
+        { name: 'Pink', value: 'pink' },
+        { name: 'Purple', value: 'purple' },
+        { name: 'Deep Purple', value: 'deep-purple' },
+        { name: 'Indigo', value: 'indigo' },
+        { name: 'Blue', value: 'blue' },
+        { name: 'Light Blue', value: 'light-blue' },
+        { name: 'Cyan', value: 'cyan' },
+        { name: 'Teal', value: 'teal' },
+        { name: 'Green', value: 'green' },
+        { name: 'Light Green', value: 'light-green' },
+        { name: 'Lime', value: 'lime' },
+        { name: 'Yellow', value: 'yellow' },
+        { name: 'Amber', value: 'amber' },
+        { name: 'Orange', value: 'orange' },
+        { name: 'Deep Orange', value: 'deep-orange' },
+        { name: 'Brown', value: 'brown' },
+        { name: 'Blue Grey', value: 'blue-grey' },
+        { name: 'Grey', value: 'grey' }
+      ]
     }
   },
   methods: {
     toggleDarkLight: function () {
       if (this.themeType) {
         this.themeTypeStr = 'Dark'
+        this.toolbarColor = this.themeColor + ' darken-3'
       } else {
         this.themeTypeStr = 'Light'
+        this.toolbarColor = this.themeColor + ' lighten-3'
       }
+      console.log('toggleDarkLight: ' + this.toolbarColor)
+    },
+    changeColor: function () {
+      console.log('changeColor: ' + this.themeColor)
+      this.toggleDarkLight()
     }
   },
   name: 'App'
@@ -139,7 +184,5 @@ export default {
 </script>
 
 <style>
-  .input-group__details:after {
-    background-color: rgba(255, 255, 255, 0.32) !important;
-  }
+
 </style>
