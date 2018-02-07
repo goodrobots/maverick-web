@@ -13,12 +13,12 @@ import 'vuetify/dist/vuetify.min.css'
 import colors from 'vuetify/es5/util/colors'
 
 const httpLink = new HttpLink({
-  uri: 'http://dev.maverick.one/maverick-api/graphql'
+  uri: '//dev.maverick.one/maverick-api/graphql'
 })
 
 // Create the subscription websocket link
 const wsLink = new WebSocketLink({
-  uri: 'ws://dev.maverick.one/maverick-api/subscriptions',
+  uri: (location.protocol === 'https:' || location.protocol === 'https') ? 'wss://dev.maverick.one/maverick-api/subscriptions' : 'ws://dev.maverick.one/maverick-api/subscriptions',
   options: {
     reconnect: true
   }
