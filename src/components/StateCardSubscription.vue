@@ -1,6 +1,6 @@
 <template>
-  <v-layout>
-    <v-flex xs12 sm6 offset-sm3>
+  <v-layout justify-center align-center>
+    <v-flex xs12 sm6>
     <v-card>
     <v-toolbar v-if="stateMessage.armed" dense color="red">
       <v-toolbar-title>Autopilot ARMED</v-toolbar-title>
@@ -51,10 +51,16 @@
      -->
     </v-card-text>
     </v-card>
+    
+    <div></div>
+
+    <v-alert type="info" :value="true" color="blue darken-3">
+      Connect GCS to dev.maverick.one TCP port 5780 and takeoff/land/change mode to see above values change in realtime 
+    </v-alert>
+
     </v-flex>
   </v-layout>
 </template>
-
 <script>
   import { STATE_QUERY, STATE_SUBSCRIPTION } from '../constants/graphql'
   export default {
