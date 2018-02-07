@@ -77,12 +77,14 @@
         <v-icon>menu</v-icon>
       </v-btn>
     </v-toolbar>
+    
     <v-content>
-      <v-container fluid>
-        <!-- <router-view/> -->
-        <state-card-subscription></state-card-subscription>
+      <v-container fluid fill-height>
+          <!-- <router-view/> -->
+          <state-card-subscription></state-card-subscription>
       </v-container>
     </v-content>
+    
     <v-navigation-drawer
       temporary
       clipped
@@ -137,8 +139,8 @@ export default {
       rightDrawer: false,
       themeType: true,
       themeTypeStr: 'Dark',
-      themeColor: 'indigo',
-      toolbarColor: 'indigo darken-3',
+      themeColor: 'orange',
+      toolbarColor: 'orange darken-4',
       title: 'Maverick',
       colors: [
         { name: 'Red', value: 'red' },
@@ -167,10 +169,10 @@ export default {
     toggleDarkLight: function () {
       if (this.themeType) {
         this.themeTypeStr = 'Dark'
-        this.toolbarColor = this.themeColor + ' darken-3'
+        this.toolbarColor = this.themeColor + ' darken-4'
       } else {
         this.themeTypeStr = 'Light'
-        this.toolbarColor = this.themeColor + ' lighten-3'
+        this.toolbarColor = this.themeColor + ' lighten-5'
       }
       console.log('toggleDarkLight: ' + this.toolbarColor)
     },
