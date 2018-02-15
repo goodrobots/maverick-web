@@ -1,0 +1,19 @@
+#import "./ImuFragment.gql"
+
+query imuQuery {
+  imuMessage {
+    ...ImuMessage
+  }
+}
+
+subscription imuSubscription {
+  imuMessage {
+    ...ImuMessage
+  }
+}
+
+mutation imuMutate {
+  imuMessage {
+    ...ImuMessage
+  }
+}

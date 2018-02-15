@@ -1,0 +1,12 @@
+fragment ImuMessage on ImuMessage {
+  orientationX
+  orientationY
+  orientationZ
+  orientationW
+  angularVelocityX
+  angularVelocityY
+  angularVelocityZ
+  linearAccelerationX
+  linearAccelerationY
+  linearAccelerationZ
+}

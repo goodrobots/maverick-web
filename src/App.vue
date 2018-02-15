@@ -77,14 +77,28 @@
         <v-icon>menu</v-icon>
       </v-btn>
     </v-toolbar>
-    
     <v-content>
-      <v-container fluid fill-height>
-          <!-- <router-view/> -->
-          <state-card-subscription></state-card-subscription>
+      <v-container fluid grid-list-xl>
+        <v-layout row wrap>
+          <v-flex xs6 sm6 md4>
+            <state-card></state-card>
+          </v-flex>
+          <v-flex xs6 sm6 md4>
+            <vfr-hud-card></vfr-hud-card>
+          </v-flex>
+          <v-flex xs6 sm6 md4>
+            <nav-sat-fix-card></nav-sat-fix-card>
+          </v-flex>
+          <v-flex xs6 sm6 md4>
+            <pose-stamped-card></pose-stamped-card>
+          </v-flex>
+          <v-flex xs6 sm6 md4>
+            <imu-card></imu-card>
+          </v-flex>
+        </v-layout>
       </v-container>
+      <!-- <router-view/> -->
     </v-content>
-    
     <v-navigation-drawer
       temporary
       clipped
@@ -95,12 +109,6 @@
     >
       <v-container fluid>
         <v-switch :label="`Theme: ${themeTypeStr}`" v-model="themeType" @change='toggleDarkLight()'></v-switch>
-        <div>Theme Main Color</div>
-        <v-flex xs12 sm6 md6>
-            <v-radio-group v-model="themeColor" @change='changeColor' column>
-              <v-radio v-for="color in colors" :label="color.name" :color="color.value" :value="color.value"></v-radio>
-            </v-radio-group>
-          </v-flex>
       </v-container>
     </v-navigation-drawer>
     <v-footer class="pa-3" :fixed="fixed" app :color="toolbarColor">
@@ -111,11 +119,18 @@
 </template>
 
 <script>
-// import LinkList from './components/LinkList'
-import StateCardSubscription from './components/StateCardSubscription'
+import StateCard from './components/StateCard'
+import NavSatFixCard from './components/NavSatFixCard'
+import PoseStampedCard from './components/PoseStampedCard'
+import ImuCard from './components/ImuCard'
+import VfrHudCard from './components/VfrHudCard'
 export default {
   components: {
-    StateCardSubscription
+    StateCard,
+    VfrHudCard,
+    NavSatFixCard,
+    PoseStampedCard,
+    ImuCard
   },
   data () {
     return {
@@ -139,46 +154,19 @@ export default {
       rightDrawer: false,
       themeType: true,
       themeTypeStr: 'Dark',
-      themeColor: 'orange',
       toolbarColor: 'orange darken-4',
-      title: 'Maverick',
-      colors: [
-        { name: 'Red', value: 'red' },
-        { name: 'Pink', value: 'pink' },
-        { name: 'Purple', value: 'purple' },
-        { name: 'Deep Purple', value: 'deep-purple' },
-        { name: 'Indigo', value: 'indigo' },
-        { name: 'Blue', value: 'blue' },
-        { name: 'Light Blue', value: 'light-blue' },
-        { name: 'Cyan', value: 'cyan' },
-        { name: 'Teal', value: 'teal' },
-        { name: 'Green', value: 'green' },
-        { name: 'Light Green', value: 'light-green' },
-        { name: 'Lime', value: 'lime' },
-        { name: 'Yellow', value: 'yellow' },
-        { name: 'Amber', value: 'amber' },
-        { name: 'Orange', value: 'orange' },
-        { name: 'Deep Orange', value: 'deep-orange' },
-        { name: 'Brown', value: 'brown' },
-        { name: 'Blue Grey', value: 'blue-grey' },
-        { name: 'Grey', value: 'grey' }
-      ]
+      title: 'Maverick'
     }
   },
   methods: {
     toggleDarkLight: function () {
       if (this.themeType) {
         this.themeTypeStr = 'Dark'
-        this.toolbarColor = this.themeColor + ' darken-4'
+        this.toolbarColor = 'orange darken-4'
       } else {
         this.themeTypeStr = 'Light'
-        this.toolbarColor = this.themeColor + ' lighten-5'
+        this.toolbarColor = 'orange lighten-4'
       }
-      console.log('toggleDarkLight: ' + this.toolbarColor)
-    },
-    changeColor: function () {
-      console.log('changeColor: ' + this.themeColor)
-      this.toggleDarkLight()
     }
   },
   name: 'App'
@@ -186,5 +174,4 @@ export default {
 </script>
 
 <style>
-
 </style>

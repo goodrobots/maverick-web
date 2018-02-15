@@ -1,6 +1,4 @@
 <template>
-  <v-layout justify-center align-center>
-    <v-flex xs12 sm6>
     <v-card>
     <v-toolbar v-if="stateMessage.armed" dense color="red">
       <v-toolbar-title>Autopilot ARMED</v-toolbar-title>
@@ -40,31 +38,14 @@
         <span class="grey--text">Nanoseconds:</span>
         <span class=" text-xs-right">{{stateMessage.nsecs}}</span>
       </div>
-      <!--
-    <div
-      v-for="(field, fieldname, index) in stateMessage"
-      :index="index"
-      :fieldname="fieldname"
-      :field="field">
-        {{index}} {{fieldname}}: {{field}}
-    </div>
-     -->
     </v-card-text>
     </v-card>
     
-    <div></div>
-
-    <v-alert type="info" :value="true" color="blue darken-3">
-      Connect GCS to dev.maverick.one TCP port 5780 and takeoff/land/change mode to see above values change in realtime 
-    </v-alert>
-
-    </v-flex>
-  </v-layout>
 </template>
 <script>
-  import { STATE_QUERY, STATE_SUBSCRIPTION } from '../constants/graphql'
+  import { stateQuery, stateSubscription, stateMutate } from '../graphql/StateMessage.gql'
   export default {
-    name: 'StateCardSubscription',
+    name: 'StateCard',
     data () {
       return {
         stateMessage: [],
@@ -73,10 +54,16 @@
     },
     apollo: {
       stateMessage: {
-        query: STATE_QUERY,
+        query: stateQuery,
         subscribeToMore: {
-          document: STATE_SUBSCRIPTION
-        }
+          document: stateSubscription,
+          updateQuery: (previousResult, { subscriptionData }) => {
+            return {
+              stateMessage: subscriptionData.data.stateMessage
+            }
+          }
+        },
+        mutation: stateMutate
       }
     }
   }
