@@ -10,19 +10,20 @@ import { createPersistedQueryLink } from 'apollo-link-persisted-queries'
 import { setContext } from 'apollo-link-context'
 
 // Config
+/*
 const serverUri = location.protocol + '//' + location.hostname + ':' + location.port + '/maverick-api'
 const GRAPHQL_ENDPOINT = process.env.VUE_APP_GRAPHQL_ENDPOINT || serverUri
 const GRAPHQL_PATH = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
 const GRAPHQL_SUBSCRIPTIONS_PATH = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/subscriptions'
 const GRAPHQL_PERSIST_QUERIES = false
+*/
 
 // Create the apollo client
-export function createApolloClient ({ ssr }) {
+export function createApolloClient ({ ssr, endpoint }) {
   let link, wsClient
 
   let httpLink = new HttpLink({
-    // You should use an absolute URL here
-    uri: GRAPHQL_ENDPOINT + GRAPHQL_PATH
+    uri: endpoint.uri + endpoint.queryPath
   })
 
   // HTTP Auth header injection
@@ -35,7 +36,7 @@ export function createApolloClient ({ ssr }) {
 
   // Concat all the http link parts
   httpLink = authLink.concat(httpLink)
-  if (GRAPHQL_PERSIST_QUERIES) {
+  if (endpoint.persist) {
     httpLink = createPersistedQueryLink().concat(httpLink)
   }
 
@@ -53,8 +54,8 @@ export function createApolloClient ({ ssr }) {
     }
 
     // Web socket
-    wsClient = new SubscriptionClient(GRAPHQL_ENDPOINT.replace(/^https?/i, 'ws' + (process.env.NODE_ENV === 'production' ? 's' : '')) +
-    GRAPHQL_SUBSCRIPTIONS_PATH, {
+    wsClient = new SubscriptionClient(endpoint.uri.replace(/^https?/i, 'ws' + (process.env.NODE_ENV === 'production' ? 's' : '')) +
+    endpoint.subscriptionsPath, {
       reconnect: true,
       connectionParams: () => ({
         'Authorization': getAuth()
@@ -66,7 +67,7 @@ export function createApolloClient ({ ssr }) {
 
     // File upload
     const uploadLink = authLink.concat(createUploadLink({
-      uri: GRAPHQL_ENDPOINT + GRAPHQL_PATH
+      uri: endpoint.uri + endpoint.queryPath
     }))
 
     // using the ability to split links, you can send data to each link

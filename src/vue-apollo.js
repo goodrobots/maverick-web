@@ -5,10 +5,32 @@ import { createApolloClient } from './apollo'
 // Install the vue plugin
 Vue.use(VueApollo)
 
-// Create apollo client
-export const apolloClient = createApolloClient({ ssr: false })
+// Create apollo clients
+export const devApolloClient = createApolloClient({
+  ssr: false,
+  endpoint: {
+    // uri: location.protocol + '//' + location.hostname + ':' + location.port + '/maverick-api',
+    uri: 'http://dev.maverick.one/maverick-api',
+    queryPath: '/graphql',
+    subscriptionsPath: '/subscriptions',
+    persist: false
+  }
+})
+export const wwwApolloClient = createApolloClient({
+  ssr: false,
+  endpoint: {
+    uri: 'http://www.maverick.one/maverick-api',
+    queryPath: '/graphql',
+    subscriptionsPath: '/subscriptions',
+    persist: false
+  }
+})
 
 // Create vue apollo provider
 export const apolloProvider = new VueApollo({
-  defaultClient: apolloClient
+  clients: {
+    dev: devApolloClient,
+    www: wwwApolloClient
+  },
+  defaultClient: devApolloClient
 })

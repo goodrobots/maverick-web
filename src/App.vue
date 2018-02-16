@@ -66,7 +66,7 @@
         <v-menu offset-y>
           <v-btn flat slot="activator">Vehicle</v-btn>
           <v-list>
-            <v-list-tile v-for="vehicleItem in vehicleItems" :key="vehicleItem" @click="">
+            <v-list-tile v-for="(vehicleItem, key) in vehicleItems" :key="vehicleItem" @click='changeVehicle(key)'>
               <v-list-tile-title v-text="vehicleItem"></v-list-tile-title>
             </v-list-tile>
           </v-list>
@@ -81,7 +81,7 @@
       <v-container fluid grid-list-xl>
         <v-layout row wrap>
           <v-flex xs6 sm6 md4>
-            <state-card></state-card>
+            <state-card :active-api="activeApi"></state-card>
           </v-flex>
           <v-flex xs6 sm6 md4>
             <vfr-hud-card></vfr-hud-card>
@@ -139,10 +139,10 @@ export default {
       configItems: [
         'Flight Controller', 'Onboard Computer', 'Web App'
       ],
-      vehicleItems: [
-        'Plane: Nano Talon',
-        'Copter: Dronie'
-      ],
+      vehicleItems: {
+        'dev': 'Plane: Nano Talon',
+        'www': 'Copter: Dronie'
+      },
       vehicleMenuItems: [
         { text: 'Parameters', picture: '' },
         { text: 'Sensor Config', picture: '' }
@@ -155,7 +155,8 @@ export default {
       themeType: true,
       themeTypeStr: 'Dark',
       toolbarColor: 'orange darken-4',
-      title: 'Maverick'
+      title: 'Maverick',
+      activeApi: 'dev'
     }
   },
   methods: {
@@ -167,6 +168,9 @@ export default {
         this.themeTypeStr = 'Light'
         this.toolbarColor = 'orange lighten-4'
       }
+    },
+    changeVehicle: function (data) {
+      this.activeApi = data
     }
   },
   name: 'App'

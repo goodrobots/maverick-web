@@ -7,7 +7,7 @@
       <v-toolbar-title>Autopilot DISARMED</v-toolbar-title>
     </v-toolbar>
     <v-card-title primary-title>
-      <div class="headline">{{stateMessage.mode}}</div>
+      <div class="headline">{{stateMessage.mode}} {{activeApi}}</div>
     </v-card-title>
     <v-card-text>
       <div>
@@ -46,6 +46,7 @@
   import { stateQuery, stateSubscription, stateMutate } from '../graphql/StateMessage.gql'
   export default {
     name: 'StateCard',
+    props: ['activeApi'],
     data () {
       return {
         stateMessage: [],
@@ -53,6 +54,7 @@
       }
     },
     apollo: {
+      $client: this.activeApi,
       stateMessage: {
         query: stateQuery,
         subscribeToMore: {
