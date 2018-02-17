@@ -6,20 +6,28 @@ import { createApolloClient } from './apollo'
 Vue.use(VueApollo)
 
 // Create apollo clients
-export const devApolloClient = createApolloClient({
+export const localClient = createApolloClient({
   ssr: false,
   endpoint: {
-    // uri: location.protocol + '//' + location.hostname + ':' + location.port + '/maverick-api',
-    uri: 'http://dev.maverick.one/maverick-api',
+    uri: location.protocol + '//' + location.hostname + ':' + location.port + '/maverick-api',
     queryPath: '/graphql',
     subscriptionsPath: '/subscriptions',
     persist: false
   }
 })
-export const wwwApolloClient = createApolloClient({
+export const devClient = createApolloClient({
   ssr: false,
   endpoint: {
-    uri: 'http://www.maverick.one/maverick-api',
+    uri: location.protocol + '//dev.maverick.one/maverick-api',
+    queryPath: '/graphql',
+    subscriptionsPath: '/subscriptions',
+    persist: false
+  }
+})
+export const wwwClient = createApolloClient({
+  ssr: false,
+  endpoint: {
+    uri: location.protocol + '//www.maverick.one/maverick-api',
     queryPath: '/graphql',
     subscriptionsPath: '/subscriptions',
     persist: false
@@ -29,8 +37,9 @@ export const wwwApolloClient = createApolloClient({
 // Create vue apollo provider
 export const apolloProvider = new VueApollo({
   clients: {
-    dev: devApolloClient,
-    www: wwwApolloClient
+    local: localClient,
+    dev: devClient,
+    www: wwwClient
   },
-  defaultClient: devApolloClient
+  defaultClient: localClient
 })
