@@ -6,6 +6,8 @@ import 'vuetify/dist/vuetify.min.css'
 import colors from 'vuetify/es5/util/colors'
 import { apolloProvider } from './vue-apollo'
 
+import './stylus/main.styl'
+
 Vue.use(Vuetify, {
   theme: {
     primary: colors.deepOrange.base,
