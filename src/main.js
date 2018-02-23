@@ -1,12 +1,16 @@
 import Vue from 'vue'
 import App from './App'
+import { sync } from 'vuex-router-sync'
 import router from './router'
+import store from './store'
 import Vuetify from 'vuetify'
-import 'vuetify/dist/vuetify.min.css'
 import colors from 'vuetify/es5/util/colors'
 import { apolloProvider } from './vue-apollo'
 
 import './stylus/main.styl'
+
+// Sync the vuex store with router
+sync(store, router)
 
 Vue.use(Vuetify, {
   theme: {
@@ -24,6 +28,7 @@ window.App = new Vue({
   provide: apolloProvider.provide(),
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

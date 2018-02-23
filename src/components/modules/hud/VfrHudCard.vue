@@ -32,7 +32,7 @@
     </v-card>
 </template>
 <script>
-  import { vfrHudQuery, vfrHudSubscription, vfrHudMutate } from '../graphql/VfrHudMessage.gql'
+  import { vfrHudQuery, vfrHudSubscription, vfrHudMutate } from '../../../graphql/VfrHudMessage.gql'
   export default {
     name: 'VfrHudCard',
     data () {

@@ -43,7 +43,7 @@
     
 </template>
 <script>
-  import { stateQuery, stateSubscription, stateMutate } from '../graphql/StateMessage.gql'
+  import { stateQuery, stateSubscription, stateMutate } from '../../../graphql/StateMessage.gql'
   export default {
     name: 'StateCard',
     props: ['activeApi'],

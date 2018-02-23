@@ -24,7 +24,7 @@
     </v-card>
 </template>
 <script>
-  import { imuQuery, imuSubscription, imuMutate } from '../graphql/ImuMessage.gql'
+  import { imuQuery, imuSubscription, imuMutate } from '../../../graphql/ImuMessage.gql'
   export default {
     name: 'ImuCard',
     data () {

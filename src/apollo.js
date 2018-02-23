@@ -104,7 +104,8 @@ export function createApolloClient ({ ssr, endpoint }) {
       // This will temporary disable query force-fetching
       ssrForceFetchDelay: 100,
       // Apollo devtools
-      connectToDevTools: process.env.NODE_ENV !== 'production'
+      // connectToDevTools: process.env.NODE_ENV !== 'production'
+      connectToDevTools: true
     })
   })
 

@@ -15,6 +15,7 @@ export const localClient = createApolloClient({
     persist: false
   }
 })
+/*
 export const devClient = createApolloClient({
   ssr: false,
   endpoint: {
@@ -33,13 +34,14 @@ export const wwwClient = createApolloClient({
     persist: false
   }
 })
+*/
 
 // Create vue apollo provider
 export const apolloProvider = new VueApollo({
   clients: {
-    local: localClient,
-    dev: devClient,
-    www: wwwClient
+    local: localClient
+    // dev: devClient,
+    // www: wwwClient
   },
   defaultClient: localClient
 })
