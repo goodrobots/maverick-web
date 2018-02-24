@@ -6,10 +6,7 @@
           <planner-toolbar></planner-toolbar>
         </v-flex>
       </v-layout>
-    </v-container>
-    <v-container fluid grid-list-xl>
-      <v-layout row wrap>
-
+        <planner-cesium></planner-cesium>
       </v-layout>
     </v-container>
   </v-content>
@@ -17,6 +14,7 @@
 
 <script>
 import PlannerToolbar from './PlannerToolbar'
+import PlannerCesium from './PlannerCesium'
 export default {
   name: 'PlannerModule',
   data () {
@@ -24,7 +22,8 @@ export default {
     }
   },
   components: {
-    PlannerToolbar
+    PlannerToolbar,
+    PlannerCesium
   }
 }
 </script>

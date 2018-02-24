@@ -4,6 +4,7 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
+const cesiumSource = 'node_modules/cesium/Source';
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -14,6 +15,7 @@ module.exports = {
     app: './src/main.js'
   },
   output: {
+    sourcePrefix: '', // Cesium - Needed to compile multiline strings in Cesium
     path: config.build.assetsRoot,
     filename: '[name].js',
     publicPath: process.env.NODE_ENV === 'production'
@@ -21,10 +23,11 @@ module.exports = {
       : config.dev.assetsPublicPath
   },
   resolve: {
-    extensions: ['.js', '.vue', '.json'],
+    extensions: ['*', '.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
-      '@': resolve('src')
+      '@': resolve('src'),
+      cesium: resolve(cesiumSource)
     }
   },
   module: {
@@ -78,5 +81,11 @@ module.exports = {
         loader: 'graphql-tag/loader'
       }
     ]
+  },
+  amd: { // Cesium
+    toUrlUndefined: true // Enable webpack-friendly use of require in Cesium
+  },
+  node: { // Cesium
+    fs: 'empty' // Resolve node module use of fs
   }
 }
