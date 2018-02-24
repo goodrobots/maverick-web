@@ -37,9 +37,6 @@ import PoseStampedCard from './PoseStampedCard'
 import ImuCard from './ImuCard'
 import VfrHudCard from './VfrHudCard'
 
-var Cesium = require('webpack-cesium')
-console.log(Cesium.VERSION) // => 1.31
-
 export default {
   name: 'HudModule',
   data () {

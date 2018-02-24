@@ -1,6 +1,6 @@
 {
   "name": "maverick-web",
-  "version": "0.9.0-alpha",
+  "version": "0.9.1-alpha",
   "private": true,
   "scripts": {
     "build": "node build/build.js",
