@@ -21,7 +21,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '',
     proxyTable: {},
-    cssSourceMap: true,
+    cssSourceMap: true
   },
   module: {
     loaders: [{

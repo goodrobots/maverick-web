@@ -36,6 +36,20 @@ module.exports = {
   module: {
     rules: [
       {
+        // Strip cesium pragmas
+        test: /\.js$/,
+        	enforce: 'pre',
+        	include: path.resolve(__dirname, cesiumSource),
+        	use: [{
+        		loader: 'strip-pragma-loader',
+        		options: {
+        		    pragmas: {
+        				debug: false
+        			}
+        		}
+        	}]
+      },
+      {
         test: /\.(js|vue)$/,
         loader: 'eslint-loader',
         enforce: 'pre',

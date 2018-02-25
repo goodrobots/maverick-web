@@ -26,16 +26,20 @@ module.exports = merge(baseWebpackConfig, {
   // cheap-module-eval-source-map is faster for development
   devtool: '#cheap-module-eval-source-map',
   plugins: [
-        // Copy Cesium Assets, Widgets, and Workers to a static directory
+    // Copy Cesium Assets, Widgets, and Workers to a static directory
     new CopyWebpackPlugin([ { from: path.join(cesiumSource, cesiumWorkers), to: 'Workers' } ]),
     new CopyWebpackPlugin([ { from: path.join(cesiumSource, 'Assets'), to: 'Assets' } ]),
     new CopyWebpackPlugin([ { from: path.join(cesiumSource, 'Widgets'), to: 'Widgets' } ]),
     new webpack.DefinePlugin({
-        // Define relative base path in cesium for loading assets
-        CESIUM_BASE_URL: JSON.stringify('')
+      // Define relative base path in cesium for loading assets
+      CESIUM_BASE_URL: JSON.stringify('')
     }),
     new webpack.DefinePlugin({
       'process.env': config.dev.env
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'cesium',
+      minChunks: module => module.context && module.context.indexOf('cesium') !== -1
     }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.HotModuleReplacementPlugin(),

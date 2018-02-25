@@ -40,12 +40,16 @@ const webpackConfig = merge(baseWebpackConfig, {
     new CopyWebpackPlugin([ { from: path.join(cesiumSource, 'Assets'), to: 'Assets' } ]),
     new CopyWebpackPlugin([ { from: path.join(cesiumSource, 'Widgets'), to: 'Widgets' } ]),
     new webpack.DefinePlugin({
-        // Define relative base path in cesium for loading assets
-        CESIUM_BASE_URL: JSON.stringify('')
+      // Define relative base path in cesium for loading assets
+      CESIUM_BASE_URL: JSON.stringify('')
     }),
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': env
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'cesium',
+      minChunks: module => module.context && module.context.indexOf('cesium') !== -1
     }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
