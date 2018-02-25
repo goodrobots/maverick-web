@@ -12,7 +12,7 @@ subscription paramsSubscription {
   }
 }
 
-mutation updateParam ($id: ID, $value: Float) {
+mutation updateParam ($id: ID, $value: ParamValueType) {
   updateParam(id: $id, value: $value) {
     ok
     param {
