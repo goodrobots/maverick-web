@@ -6,10 +6,32 @@ div#cesiumContainer
 import Cesium from 'cesium/Cesium'
 import 'cesium/Widgets/widgets.css'
 
+import { navSatFixQuery, navSatFixSubscription, navSatFixMutate } from '../../../graphql/NavSatFixMessage.gql'
+
 export default {
   data () {
     return {
-      viewer: undefined
+      viewer: undefined,
+      navSatFixMessage: []
+    }
+  },
+  methods: {
+  },
+  watch: {
+    navSatFixMessage: function (oldSat, newSat) {
+      if (
+        oldSat !== newSat &&
+        (newSat.longitude && newSat.latitude) &&
+        (
+          ((newSat.longitude - oldSat.longitude > 0.00001) || (newSat.longitude - oldSat.longitude > -0.00001)) ||
+          ((newSat.latitude - oldSat.latitude > 0.00001) || (newSat.latitude - oldSat.latitude > -0.00001))
+        )
+      ) {
+        // console.log('Changing camera to ' + newSat.longitude + ':' + newSat.latitude)
+        this.viewer.camera.setView({
+          destination: Cesium.Cartesian3.fromDegrees(newSat.longitude, newSat.latitude, 1000)
+        })
+      }
     }
   },
   created () {
@@ -37,9 +59,25 @@ export default {
       })
     })
     // position the camera roughly over Australia
+    /*
     this.viewer.camera.setView({
-      destination: Cesium.Cartesian3.fromDegrees(134.67, -26.00, 5000000)
+      destination: Cesium.Cartesian3.fromDegrees(this.navSatFixMessage.longitude, this.navSatFixMessage.latitude, 1000)
     })
+    */
+  },
+  apollo: {
+    navSatFixMessage: {
+      query: navSatFixQuery,
+      subscribeToMore: {
+        document: navSatFixSubscription,
+        updateQuery: (previousResult, { subscriptionData }) => {
+          return {
+            navSatFixMessage: subscriptionData.data.navSatFixMessage
+          }
+        }
+      },
+      mutation: navSatFixMutate
+    }
   }
 }
 </script>
