@@ -11,6 +11,9 @@ function resolve (dir) {
 }
 
 module.exports = {
+  stats: {
+    warnings: false
+  },
   entry: {
     app: './src/main.js'
   },
@@ -87,8 +90,5 @@ module.exports = {
   },
   node: { // Cesium
     fs: 'empty' // Resolve node module use of fs
-  },
-  stats: {
-    warnings: false // suppress warnings
   }
 }
