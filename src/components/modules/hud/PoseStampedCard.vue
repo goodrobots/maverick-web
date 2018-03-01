@@ -20,7 +20,7 @@
     </v-card>
 </template>
 <script>
-  import { poseStampedQuery, poseStampedSubscription, poseStampedMutate } from '../../../graphql/PoseStampedMessage.gql'
+  import { poseStampedQuery, poseStampedSubscription, poseStampedMutate } from '../../../graphql/gql/PoseStampedMessage.gql'
   export default {
     name: 'PoseStampedCard',
     data () {

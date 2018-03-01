@@ -6,7 +6,7 @@ div#cesiumContainer
 import Cesium from 'cesium/Cesium'
 import 'cesium/Widgets/widgets.css'
 
-import { navSatFixQuery, navSatFixSubscription, navSatFixMutate } from '../../../graphql/NavSatFixMessage.gql'
+import { navSatFixQuery, navSatFixSubscription, navSatFixMutate } from '../../../graphql/gql/NavSatFixMessage.gql'
 
 export default {
   data () {

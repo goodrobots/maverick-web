@@ -6,6 +6,7 @@ import { createApolloClient } from './apollo'
 Vue.use(VueApollo)
 
 // Create apollo clients
+/*
 export const localClient = createApolloClient({
   ssr: false,
   endpoint: {
@@ -15,11 +16,20 @@ export const localClient = createApolloClient({
     persist: false
   }
 })
-/*
-export const devClient = createApolloClient({
+*/
+export const devSitlClient = createApolloClient({
   ssr: false,
   endpoint: {
-    uri: location.protocol + '//dev.maverick.one/maverick-api',
+    uri: location.protocol + '//dev.maverick.one/web/api/sitl',
+    queryPath: '/graphql',
+    subscriptionsPath: '/subscriptions',
+    persist: false
+  }
+})
+export const devPx4sitlClient = createApolloClient({
+  ssr: false,
+  endpoint: {
+    uri: location.protocol + '//dev.maverick.one/web/api/px4sitl',
     queryPath: '/graphql',
     subscriptionsPath: '/subscriptions',
     persist: false
@@ -28,20 +38,19 @@ export const devClient = createApolloClient({
 export const wwwClient = createApolloClient({
   ssr: false,
   endpoint: {
-    uri: location.protocol + '//www.maverick.one/maverick-api',
+    uri: location.protocol + '//www.maverick.one/web/api/sitl',
     queryPath: '/graphql',
     subscriptionsPath: '/subscriptions',
     persist: false
   }
 })
-*/
 
 // Create vue apollo provider
 export const apolloProvider = new VueApollo({
   clients: {
-    local: localClient
-    // dev: devClient,
-    // www: wwwClient
+    wwwSitl: wwwClient,
+    devSitl: devSitlClient,
+    devPx4sitl: devPx4sitlClient
   },
-  defaultClient: localClient
+  defaultClient: wwwClient
 })

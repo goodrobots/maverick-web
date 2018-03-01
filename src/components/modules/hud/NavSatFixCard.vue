@@ -20,7 +20,7 @@
     </v-card>
 </template>
 <script>
-  import { navSatFixQuery, navSatFixSubscription, navSatFixMutate } from '../../../graphql/NavSatFixMessage.gql'
+  import { navSatFixQuery, navSatFixSubscription, navSatFixMutate } from '../../../graphql/gql/NavSatFixMessage.gql'
   export default {
     name: 'NavSatFixCard',
     data () {

@@ -72,7 +72,7 @@ v-container(fluid grid-list-xl)
 </template>
 
 <script>
-import { paramsQuery, paramsSubscription, updateParam } from '../../../graphql/Parameters.gql'
+import { paramsQuery, paramsSubscription, updateParam } from '../../../graphql/gql/Parameters.gql'
 export default {
   name: 'ConfigParamGroups',
   data () {

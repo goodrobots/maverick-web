@@ -5,7 +5,7 @@ import router from './router'
 import store from './store'
 import Vuetify from 'vuetify'
 import colors from 'vuetify/es5/util/colors'
-import { apolloProvider } from './vue-apollo'
+import { apolloProvider } from './graphql/vue-apollo'
 
 import './stylus/main.styl'
 
