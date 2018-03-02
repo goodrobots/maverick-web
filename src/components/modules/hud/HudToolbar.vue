@@ -1,26 +1,14 @@
-<template>
-  <v-toolbar
-      dense
-      clipped-left
-      :color="navColor"
-      app
-    >
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title v-text="appTitle"></v-toolbar-title>
-      <v-spacer></v-spacer>
-
-      <v-toolbar-items>
-        <v-menu offset-y>
-          <v-btn flat slot="activator" v-text="activeApi"></v-btn>
-          <v-list>
-            <v-list-tile v-for="(apitext, api) in apis" :key="api" @click='changeApi(api)'>
-              <v-list-tile-title v-text="apitext"></v-list-tile-title>
-            </v-list-tile>
-          </v-list>
-         </v-menu>
-        <v-spacer></v-spacer>
-      </v-toolbar-items>
-    </v-toolbar>
+<template lang='pug'>
+v-toolbar(fixed dense clipped-left :color="navColor" app)
+  v-toolbar-side-icon(@click.stop="drawer = !drawer")
+  v-toolbar-title(v-text="appTitle")
+  v-spacer
+  v-toolbar-items
+    v-menu(offset-y)
+      v-btn(flat slot="activator", v-text="apis[activeApi]")
+      v-list
+        v-list-tile(v-for="(api, key) in apis" :key="api" @click='changeApi(key)')
+          v-list-tile-title(v-text="api")
 </template>
 
 <script>

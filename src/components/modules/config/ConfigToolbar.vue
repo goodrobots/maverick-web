@@ -2,11 +2,10 @@
 v-toolbar(fixed dense clipped-left :color="navColor" app)
   v-toolbar-side-icon(@click.stop="drawer = !drawer")
   v-toolbar-title(v-text="appTitle")
-  v-icon.ml-3 fa-youtube
   v-spacer
   v-toolbar-items
     v-menu(offset-y)
-      v-btn(flat slot="activator", v-text="activeApi")
+      v-btn(flat slot="activator", v-text="apis[activeApi]")
       v-list
         v-list-tile(v-for="(api, key) in apis" :key="api" @click='changeApi(key)')
           v-list-tile-title(v-text="api")
@@ -14,10 +13,6 @@ v-toolbar(fixed dense clipped-left :color="navColor" app)
 
 <script>
 export default {
-  data () {
-    return {
-    }
-  },
   computed: {
     appTitle () { return this.$store.state.appTitle },
     navColor () { return this.$store.state.navColor },
