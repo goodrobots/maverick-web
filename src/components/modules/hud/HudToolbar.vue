@@ -11,7 +11,7 @@
 
       <v-toolbar-items>
         <v-menu offset-y>
-          <v-btn flat slot="activator">Vehicle</v-btn>
+          <v-btn flat slot="activator" v-text="activeApi"></v-btn>
           <v-list>
             <v-list-tile v-for="(apitext, api) in apis" :key="api" @click='changeApi(api)'>
               <v-list-tile-title v-text="apitext"></v-list-tile-title>
@@ -28,7 +28,8 @@ export default {
   computed: {
     appTitle () { return this.$store.state.appTitle },
     navColor () { return this.$store.state.navColor },
-    apis () { return this.$store.state.apis }
+    apis () { return this.$store.state.apis },
+    activeApi () { return this.$store.state.activeApi }
   },
   methods: {
     changeApi (api) {
