@@ -10,7 +10,7 @@
       <v-toolbar-title>Autopilot DISARMED</v-toolbar-title>
     </v-toolbar>
     <v-card-title primary-title>
-      <div class="headline">{{stateMessage.mode}} {{activeApi}}</div>
+      <div class="headline">{{stateMessage.mode}}</div>
     </v-card-title>
     <v-card-text>
       <div>
