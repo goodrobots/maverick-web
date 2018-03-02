@@ -90,6 +90,7 @@ export default {
     }
   },
   computed: {
+    activeApi () { return this.$store.state.activeApi },
     paramGroups () {
       if (this.params) {
         return [...new Set(this.params.map(param => { return param.meta ? param.meta.group : null }))].sort()
@@ -142,6 +143,7 @@ export default {
     }
   },
   apollo: {
+    $client () { return this.activeApi },
     params: {
       query: paramsQuery,
       subscribeToMore: {

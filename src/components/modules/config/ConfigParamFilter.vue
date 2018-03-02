@@ -98,6 +98,9 @@ export default {
       }
     }
   },
+  computed: {
+    activeApi () { return this.$store.state.activeApi }
+  },
   methods: {
     customFilter (items, search, filter) {
       search = search.toString().toLowerCase()
@@ -152,6 +155,7 @@ export default {
     }
   },
   apollo: {
+    $client () { return this.activeApi },
     params: {
       query: paramsQuery,
       subscribeToMore: {

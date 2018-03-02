@@ -3,7 +3,7 @@ div
   config-drawer
   config-toolbar
   v-content
-    router-view
+    router-view(:key="activeApi")
 </template>
 
 <script>
@@ -15,6 +15,9 @@ export default {
     return {
       drawer: true
     }
+  },
+  computed: {
+    activeApi () { return this.$store.state.activeApi }
   },
   components: {
     ConfigToolbar,

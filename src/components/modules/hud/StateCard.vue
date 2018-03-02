@@ -46,32 +46,32 @@
     
 </template>
 <script>
-  import { stateQuery, stateSubscription, stateMutate } from '../../../graphql/gql/StateMessage.gql'
-  export default {
-    name: 'StateCard',
-    data () {
-      return {
-        stateMessage: [],
-        loading: 0
-      }
-    },
-    computed: {
-      activeApi () { return this.$store.state.activeApi }
-    },
-    apollo: {
-      $client () { return this.activeApi },
-      stateMessage: {
-        query: stateQuery,
-        subscribeToMore: {
-          document: stateSubscription,
-          updateQuery: (previousResult, { subscriptionData }) => {
-            return {
-              stateMessage: subscriptionData.data.stateMessage
-            }
+import { stateQuery, stateSubscription, stateMutate } from '../../../graphql/gql/StateMessage.gql'
+export default {
+  name: 'StateCard',
+  data () {
+    return {
+      stateMessage: [],
+      loading: 0
+    }
+  },
+  computed: {
+    activeApi () { return this.$store.state.activeApi }
+  },
+  apollo: {
+    $client () { return this.activeApi },
+    stateMessage: {
+      query: stateQuery,
+      subscribeToMore: {
+        document: stateSubscription,
+        updateQuery: (previousResult, { subscriptionData }) => {
+          return {
+            stateMessage: subscriptionData.data.stateMessage
           }
-        },
-        mutation: stateMutate
-      }
+        }
+      },
+      mutation: stateMutate
     }
   }
+}
 </script>

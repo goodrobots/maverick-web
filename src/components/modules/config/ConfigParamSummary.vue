@@ -20,6 +20,7 @@ export default {
     }
   },
   computed: {
+    activeApi () { return this.$store.state.activeApi },
     keyedParams () {
       let _params = {}
       for (const param of this.params) {
@@ -47,6 +48,7 @@ export default {
   },
   apollo: {
     params: {
+      $client () { return this.activeApi },
       query: paramsQuery,
       subscribeToMore: {
         document: paramsSubscription,

@@ -39,6 +39,7 @@ export default new Router({
         {
           path: 'parameter-summary',
           component: ConfigParamSummary
+          // props: (route) => ({ key: this.$store.state.activeApi })
         },
         {
           path: 'parameter-groups',
