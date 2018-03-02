@@ -6,10 +6,12 @@ export default new Vuex.Store({
   state: {
     appTitle: 'Maverick Web',
     navColor: null,
-    vehicles: {
-      'dev': 'Plane: Nano Talon',
-      'www': 'Copter: Dronie'
+    apis: {
+      'devSitl': 'Dev VM: SITL',
+      'devPx4sitl': 'Dev VM: PX4 SITL',
+      'wwwSitl': 'WWW VM: SITL'
     },
+    activeApi: 'devSitl',
     configDrawer: true
   },
   mutations: {
@@ -18,6 +20,9 @@ export default new Vuex.Store({
     },
     setConfigDrawer (state, value) {
       state.configDrawer = value
+    },
+    setApi (state, api) {
+      state.activeApi = api
     }
   }
 })

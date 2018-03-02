@@ -33,7 +33,11 @@
         loading: 0
       }
     },
+    computed: {
+      activeApi () { return this.$store.state.activeApi }
+    },
     apollo: {
+      $client () { return this.activeApi },
       imuMessage: {
         query: imuQuery,
         subscribeToMore: {

@@ -1,6 +1,9 @@
 <template>
     <v-card>
-    <v-toolbar v-if="stateMessage.armed" dense color="red">
+    <v-toolbar v-if="$apollo.loading" dense color="grey">
+      <v-toolbar-title>Autopilot ARMED</v-toolbar-title>
+    </v-toolbar>
+    <v-toolbar v-else-if="stateMessage.armed" dense color="red">
       <v-toolbar-title>Autopilot ARMED</v-toolbar-title>
     </v-toolbar>
     <v-toolbar v-else="!stateMessage.armed" dense>
@@ -46,15 +49,17 @@
   import { stateQuery, stateSubscription, stateMutate } from '../../../graphql/gql/StateMessage.gql'
   export default {
     name: 'StateCard',
-    props: ['activeApi'],
     data () {
       return {
         stateMessage: [],
         loading: 0
       }
     },
+    computed: {
+      activeApi () { return this.$store.state.activeApi }
+    },
     apollo: {
-      $client: this.activeApi,
+      $client () { return this.activeApi },
       stateMessage: {
         query: stateQuery,
         subscribeToMore: {

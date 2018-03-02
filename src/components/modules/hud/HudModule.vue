@@ -10,19 +10,19 @@
     <v-container fluid grid-list-xl>
       <v-layout row wrap>
         <v-flex xs6 sm6 md4>
-          <state-card></state-card>
+          <state-card :key="activeApi"></state-card>
         </v-flex>
         <v-flex xs6 sm6 md4>
-          <vfr-hud-card></vfr-hud-card>
+          <vfr-hud-card :key="activeApi"></vfr-hud-card>
         </v-flex>
         <v-flex xs6 sm6 md4>
-          <nav-sat-fix-card></nav-sat-fix-card>
+          <nav-sat-fix-card :key="activeApi"></nav-sat-fix-card>
         </v-flex>
         <v-flex xs6 sm6 md4>
-          <pose-stamped-card></pose-stamped-card>
+          <pose-stamped-card :key="activeApi"></pose-stamped-card>
         </v-flex>
         <v-flex xs6 sm6 md4>
-          <imu-card></imu-card>
+          <imu-card :key="activeApi"></imu-card>
         </v-flex>
       </v-layout>
     </v-container>
@@ -42,6 +42,9 @@ export default {
   data () {
     return {
     }
+  },
+  computed: {
+    activeApi () { return this.$store.state.activeApi }
   },
   components: {
     HudToolbar,
