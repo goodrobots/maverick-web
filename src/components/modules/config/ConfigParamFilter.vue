@@ -2,6 +2,7 @@
 v-container(fluid grid-list-xl)
   v-layout(row wrap)
     v-flex(xs12 sm12 md12)
+      //- Popup to edit parameter
       v-dialog(v-model="dialog" max-width="500px")
         v-card
           v-card-title
@@ -35,6 +36,7 @@ v-container(fluid grid-list-xl)
               v-spacer
               v-btn(color="blue darken-1" flat @click.native="close") Cancel
               v-btn(color="blue darken-1" flat @click.native="save") Save
+      //- Display dynamic table with parameters
       v-card.px-0.py-0
         v-card-title
           v-spacer
@@ -49,6 +51,7 @@ v-container(fluid grid-list-xl)
               td.justify-center.px-0.text-xs-right
                 v-btn.mx-0(icon @click.stop="editItem(props.item)")
                   v-icon edit
+          //- Expand row with meta data about parameter
           template(slot="expand" slot-scope="props")
             v-card(flat)
               v-card-text
@@ -69,6 +72,9 @@ v-container(fluid grid-list-xl)
                         div(v-for="(value,vx) in JSON.parse(props.item.meta.values)")
                           span.primary--text(v-if="vx==props.item.value") {{ vx }}: <strong>{{ value }}</strong> (Active)
                           span(v-else) {{ vx }}: <strong>{{ value }}</strong>
+                  template
+                    tr
+                      td(v-html="props.item" colspan='5')
           v-alert(slot="no-results" :value="true" color="error" icon="warning") Your search for "{{ search }}" found no results.
 </template>
 
