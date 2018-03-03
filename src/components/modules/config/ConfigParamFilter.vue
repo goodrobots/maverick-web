@@ -141,8 +141,12 @@ export default {
       this.editedItem = Object.assign({}, item)
       if (this.editedItem.meta && this.editedItem.meta.values) {
         this.editedItem.selectValues = Object.keys(JSON.parse(this.editedItem.meta.values)).map(value => ({value: value, text: JSON.parse(this.editedItem.meta.values)[value]}))
-        this.editedItem.value = this.editedItem.value.toString()
-        this.editedItem.selectedValue = { value: this.editedItem.value.toString(), text: JSON.parse(this.editedItem.meta.values)[this.editedItem.value]['text'] }
+        if (this.editedItem.value) {
+          this.editedItem.value = this.editedItem.value.toString()
+          this.editedItem.selectedValue = { value: this.editedItem.value, text: JSON.parse(this.editedItem.meta.values)[this.editedItem.value]['text'] }
+        } else {
+          this.editedItem.selectedValue = {}
+        }
       }
       this.dialog = true
     },
