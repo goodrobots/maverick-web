@@ -1,7 +1,7 @@
 <template>
     <v-card>
     <v-toolbar v-if="$apollo.loading" dense color="grey">
-      <v-toolbar-title>Autopilot ARMED</v-toolbar-title>
+      <v-toolbar-title>Loading..</v-toolbar-title>
     </v-toolbar>
     <v-toolbar v-else-if="stateMessage.armed" dense color="red">
       <v-toolbar-title>Autopilot ARMED</v-toolbar-title>
