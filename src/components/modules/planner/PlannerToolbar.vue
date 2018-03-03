@@ -2,14 +2,13 @@
 v-toolbar(fixed dense clipped-left :color="navColor" app)
   v-toolbar-side-icon(@click.stop="drawer = !drawer")
   v-toolbar-title(v-text="appTitle")
-  v-icon.ml-3 fa-youtube
   v-spacer
   v-toolbar-items
     v-menu(offset-y)
-      v-btn(flat slot="activator") Vehicle
+      v-btn(flat slot="activator", v-text="apis[activeApi]")
       v-list
-        v-list-tile(v-for="(vehicle, key) in vehicles" :key="vehicle" @click='changeVehicle(key)')
-          v-list-tile-title(v-text="vehicle")
+        v-list-tile(v-for="(api, key) in apis" :key="api" @click='changeApi(key)')
+          v-list-tile-title(v-text="api")
 </template>
 
 <script>
@@ -17,7 +16,13 @@ export default {
   computed: {
     appTitle () { return this.$store.state.appTitle },
     navColor () { return this.$store.state.navColor },
-    vehicles () { return this.$store.state.vehicles }
+    apis () { return this.$store.state.apis },
+    activeApi () { return this.$store.state.activeApi }
+  },
+  methods: {
+    changeApi (api) {
+      this.$store.commit('setApi', api)
+    }
   }
 }
 </script>
