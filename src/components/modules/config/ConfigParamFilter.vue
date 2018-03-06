@@ -5,19 +5,37 @@ v-container(fluid grid-list-xl)
       //- Popup to edit parameter
       v-dialog(v-model="dialog" max-width="500px")
         v-card
-          v-card-title
+          v-card-title.pb-0
             span.headline Edit Parameter
-          v-card-text
+            v-spacer
+            v-card-actions
+              v-btn(color="blue darken-1" flat @click.native="close") Cancel
+              v-btn(color="blue darken-1" @click.native="save") Save
+          v-card-text.pt-0
             v-container(grid-list-md)
               v-layout(wrap)
-                v-flex(xs12 sm12 md12)
+                v-flex(xs12)
                   div(v-html="editedItem.id")
               v-layout(wrap)
-                v-flex(xs9 sm9 md9)
-                  template(v-if="editedItem.meta && editedItem.meta.values")
+                // Edit boolean value through switch
+                template(v-if="editedItem.meta && editedItem.type === 'boolean'")
+                  v-flex(xs12)
+                    v-switch(:label="`${(editedItem.value) ? 'Enabled' : 'Disabled'}`" v-model="editedItem.value" color="success" persistent-hint :hint="editedItem.meta && editedItem.meta.humanName" :suffix="editedItem.meta && editedItem.meta.fields && JSON.parse(editedItem.meta.fields).Units")
+                // Edit range (min..max) data through slider
+                template(v-else-if="editedItem.meta && editedItem.type === 'slider'")
+                  v-flex(xs9)
+                    v-slider(v-model="editedItem.value" :min="editedItem.meta.min" :max="editedItem.meta.max" :step="editedItem.increment" thumb-label persistent-hint :hint="editedItem.meta && editedItem.meta.humanName" :suffix="editedItem.meta && editedItem.meta.fields && JSON.parse(editedItem.meta.fields).Units")
+                  v-flex(xs3)
+                    v-text-field(type='number' v-model='editedItem.value')
+                // Edit value through select
+                template(v-else-if="editedItem.meta && editedItem.meta.values")
+                  v-flex(xs12)
                     v-select.input-group--focused(:items="editedItem.selectValues" v-model="editedItem.value" label="Parameter Value" dense single-line bottom autofocus persistent-hint :hint="editedItem.meta && editedItem.meta.humanName" :suffix="editedItem.meta && editedItem.meta.fields && JSON.parse(editedItem.meta.fields).Units")
-                  template(v-else)
+                // Fallback - Edit value through input text
+                template(v-else)
+                  v-flex(xs12)
                     v-text-field(label="Value" v-model="editedItem.value" autofocus persistent-hint :hint="editedItem.meta && editedItem.meta.humanName" :suffix="editedItem.meta && editedItem.meta.fields && JSON.parse(editedItem.meta.fields).Units")
+              v-divider
               v-layout(wrap)
                 v-flex(xs-12 sm12 md12)
                   div(v-if="editedItem.meta && editedItem.meta.documentation" v-html="editedItem.meta.documentation")
@@ -32,10 +50,6 @@ v-container(fluid grid-list-xl)
                       div(v-for="(value,vx) in JSON.parse(editedItem.meta.values)")
                         span.primary--text(v-if="vx==editedItem.value") {{ vx }}: <strong>{{ value }}</strong> (Active)
                         span(v-else) {{ vx }}: <strong>{{ value }}</strong>
-            v-card-actions
-              v-spacer
-              v-btn(color="blue darken-1" flat @click.native="close") Cancel
-              v-btn(color="blue darken-1" flat @click.native="save") Save
       //- Display dynamic table with parameters
       v-card.px-0.py-0
         v-card-title
@@ -137,16 +151,39 @@ export default {
       return param ? param.value : null
     },
     editItem (item) {
+      // Set the param index and create a copy for the edit dialog
       this.editedIndex = this.params.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      if (this.editedItem.meta && this.editedItem.meta.values) {
+      // If the parameter has meta values, translate them into array of hashes for select dropdown
+      if (this.editedItem.meta && this.editedItem.meta.type && this.editedItem.meta.type === 'BOOLEAN') {
+        this.editedItem.type = 'boolean'
+      } else if (this.editedItem.meta && this.editedItem.meta.values) {
         this.editedItem.selectValues = Object.keys(JSON.parse(this.editedItem.meta.values)).map(value => ({value: value, text: JSON.parse(this.editedItem.meta.values)[value]}))
-        if (this.editedItem.value) {
-          this.editedItem.value = this.editedItem.value.toString()
+        if (this.editedItem.value && JSON.parse(this.editedItem.meta.values)[this.editedItem.value] && JSON.parse(this.editedItem.meta.values)[this.editedItem.value]['text']) {
+          // this.editedItem.value = this.editedItem.value.toString()
           this.editedItem.selectedValue = { value: this.editedItem.value, text: JSON.parse(this.editedItem.meta.values)[this.editedItem.value]['text'] }
         } else {
           this.editedItem.selectedValue = {}
         }
+        this.editedItem.type = 'select'
+      } else if (this.editedItem.meta && this.editedItem.meta.min != null && this.editedItem.meta.max != null) {
+        this.editedItem.type = 'slider'
+        // If increment is not set in meta data, create a default depending on the size of the defined range
+        if (!this.editedItem.meta.increment) {
+          if (this.editedItem.meta.max - this.editedItem.meta.min > 1000) {
+            this.editedItem.increment = 100
+          } else if (this.editedItem.meta.max - this.editedItem.meta.min > 100) {
+            this.editedItem.increment = 10
+          } else if (this.editedItem.meta.max - this.editedItem.meta.min > 10) {
+            this.editedItem.increment = 1
+          } else {
+            this.editedItem.increment = 0.1
+          }
+        } else {
+          this.editedItem.increment = this.editedItem.meta.increment
+        }
+      } else {
+        this.editedItem.type = 'input'
       }
       this.dialog = true
     },
@@ -154,6 +191,14 @@ export default {
       this.dialog = false
     },
     save () {
+      // Transmute booleans into 0/1
+      /*
+      if (this.editedItem.value === true) {
+        this.editedItem.value = 1
+        console.log('true!')
+      }
+      if (this.editedItem.value === false) this.editedItem.value = 0
+      */
       this.$apollo.mutate({
         mutation: updateParam,
         variables: {
