@@ -29,8 +29,10 @@ v-container(fluid grid-list-xl)
                     v-text-field(type='number' v-model='editedItem.value')
                 // Edit value through select
                 template(v-else-if="editedItem.meta && editedItem.meta.values")
-                  v-flex(xs12)
+                  v-flex(xs9)
                     v-select.input-group--focused(:items="editedItem.selectValues" v-model="editedItem.value" label="Parameter Value" dense single-line bottom autofocus persistent-hint :hint="editedItem.meta && editedItem.meta.humanName" :suffix="editedItem.meta && editedItem.meta.fields && JSON.parse(editedItem.meta.fields).Units")
+                  v-flex(xs3)
+                    v-text-field(type='number' v-model='editedItem.value')
                 // Fallback - Edit value through input text
                 template(v-else)
                   v-flex(xs12)
