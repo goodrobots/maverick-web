@@ -2,11 +2,19 @@ fragment Parameter on Parameter {
   id
   value
   meta {
-    group
-    humanName
-    user
-    values
-    fields
+    bitmask
+    decimal
     documentation
+    group
+    humanGroup
+    humanName
+    increment
+    max
+    min
+    rebootRequired
+    type
+    unitText
+    units
+    values
   }
 }
