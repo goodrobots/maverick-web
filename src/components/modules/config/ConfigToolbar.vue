@@ -12,6 +12,7 @@ v-toolbar(fixed dense clipped-left :color="navColor" app)
 </template>
 
 <script>
+import colors from 'vuetify/es5/util/colors'
 export default {
   computed: {
     appTitle () { return this.$store.state.appTitle },
@@ -22,6 +23,10 @@ export default {
     },
     apis () { return this.$store.state.apis },
     activeApi () { return this.$store.state.activeApi }
+  },
+  mounted () {
+    // Reset theme colours for this component
+    this.$vuetify.theme.primary = colors.lightGreen.base
   },
   methods: {
     changeApi (api) {

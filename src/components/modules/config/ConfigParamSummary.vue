@@ -1,13 +1,61 @@
 <template lang='pug'>
 v-container.fluid.grid-list-xl
   v-layout.row.wrap
-    v-flex.xs12.sm12.md12
-      div
-        span Frame Class: 
-        span.primary--text(v-html="valueFormat(keyedParams.FRAME_CLASS)")
-      div
-        span Frame Type: 
-        span.primary--text(v-html="valueFormat(keyedParams.FRAME_TYPE)")
+    // Overview Card
+    v-flex.xs12.sm6.md6
+      v-card
+        v-toolbar(dense)
+          v-toolbar-title Overview
+        v-card-text
+          table(width='50%')
+            // Ardupilot Params
+            template(v-if="keyedParams.FRAME_CLASS")
+              tr
+                td Frame Class
+                td.primary--text(v-html="valueFormat(keyedParams.FRAME_CLASS)")
+              tr
+                td Frame Type
+                td.primary--text(v-html="valueFormat(keyedParams.FRAME_TYPE)")
+            // PX4 Params
+            template(v-else-if="keyedParams.MAV_TYPE")
+              tr
+                td Frame Type
+                td.primary--text(v-html="valueFormat(keyedParams.MAV_TYPE)")
+    // Checklist card
+    v-flex.xs12.sm6.md6
+      v-card
+        v-toolbar(dense)
+          v-toolbar-title Parameter Checklist
+        v-card-title(primary-title)
+          div
+            h3.headline.mb-0.grey--text Logging
+          table(width='100%')
+            tr
+              td Mavlink Logging
+              template(v-if="keyedParams.LOG_BACKEND_TYPE && keyedParams.LOG_BACKEND_TYPE.value==3")
+                td.green--text Good
+                td.green--text(v-html="valueFormat(keyedParams.LOG_BACKEND_TYPE)")
+              template(v-else)
+                td.red--text Bad
+                td.red--text(v-html="valueFormat(keyedParams.LOG_BACKEND_TYPE)")
+            tr
+              td Logging while Disarmed
+              template(v-if="keyedParams.LOG_DISARMED && keyedParams.LOG_DISARMED.value==0")
+                td.green--text Good
+                td.green--text(v-html="valueFormat(keyedParams.LOG_DISARMED)")
+              template(v-else)
+                td.red--text Bad
+                td.red--text(v-html="valueFormat(keyedParams.LOG_DISARMED)")
+            tr
+              td Stop/Rotate log on Disarm
+              template(v-if="keyedParams.LOG_FILE_DSRMROT && keyedParams.LOG_FILE_DSRMROT.value==1")
+                td.green--text Good
+                td.green--text(v-html="valueFormat(keyedParams.LOG_FILE_DSRMROT)")
+              template(v-else)
+                td.red--text Bad
+                td.red--text(v-html="valueFormat(keyedParams.LOG_FILE_DSRMROT)")
+  v-layout.row.wrap
+    
 </template>
 
 <script>
@@ -31,13 +79,10 @@ export default {
   },
   methods: {
     valueFormat (param) {
-      if (param && param.meta && param.meta.fields !== '{}') {
-        const fields = JSON.parse(param.meta.fields)
-        if (fields.Units) {
-          return param.value + ' <span class="caption"><strong>' + fields.Units + '</strong></span>'
-        }
+      if (param && param.meta && param.meta.units) {
+        return param.value + ' <span class="caption"><strong>' + param.meta.units + '</strong></span>'
       }
-      if (param && param.meta && param.meta.values !== '{}') {
+      if (param && param.meta && param.meta.values) {
         const values = JSON.parse(param.meta.values)
         if (values[param.value]) {
           return values[param.value]
@@ -47,8 +92,8 @@ export default {
     }
   },
   apollo: {
+    $client () { return this.activeApi },
     params: {
-      $client () { return this.activeApi },
       query: paramsQuery,
       subscribeToMore: {
         document: paramsSubscription,

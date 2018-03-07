@@ -1,5 +1,6 @@
 <template lang='pug'>
 v-container(fluid grid-list-xl)
+  v-alert(type="info" :value="true") This grouped parameter interface is out of date, and left for reference only
   v-layout(row wrap)
     v-flex(xs12 sm12 md12)
       v-dialog(v-model="dialog" max-width="500px")

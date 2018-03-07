@@ -14,7 +14,7 @@ sync(store, router)
 
 Vue.use(Vuetify, {
   theme: {
-    primary: colors.deepOrange.base,
+    primary: colors.blue.base,
     secondary: colors.grey.darken1,
     accent: colors.shades.black,
     error: colors.red.accent3

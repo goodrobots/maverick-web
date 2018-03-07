@@ -4,16 +4,16 @@ v-navigation-drawer(app clipped fixed v-model="drawer")
     v-subheader.mt-3.grey--text.text--darken-1 FLIGHT CONTROLLER
     v-list-tile.mt-3(@click="" to="/config/parameter-summary")
       v-list-tile-action
-        v-icon(color="grey darken-1") dashboard
-      v-list-tile-title.grey--text.text--darken-1 Summary
+        v-icon dashboard
+      v-list-tile-title Summary
     v-list-tile(@click="" to="/config/parameter-groups")
       v-list-tile-action
-        v-icon(color="grey darken-1") view_list
-      v-list-tile-title.grey--text.text--darken-1 Parameter Groups
+        v-icon view_list
+      v-list-tile-title Parameter Groups
     v-list-tile(@click="" to="/config/parameter-list")
       v-list-tile-action
-        v-icon(color="grey darken-1") filter_list
-      v-list-tile-title.grey--text.text--darken-1 Parameter List
+        v-icon filter_list
+      v-list-tile-title Parameter List
 </template>
 
 <script>
