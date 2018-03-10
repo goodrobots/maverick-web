@@ -53,10 +53,7 @@ export default {
       scene3DOnly: true,
       infoBox: false, // Disable InfoBox widget
       selectionIndicator: false, // Disable selection indicator
-      terrainProvider: new Cesium.CesiumTerrainProvider({
-        url: '//assets.agi.com/stk-terrain/world',
-        requestVertexNormals: true
-      })
+      terrainProvider: Cesium.createWorldTerrain()
     })
     // position the camera roughly over Australia
     /*
