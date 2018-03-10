@@ -10,22 +10,22 @@
             </v-card>
             <v-container>
               <v-layout row wrap justify-center>
-                <v-flex xs6 sm3 text-xs-center>
+                <v-flex xs6 sm6 md3 text-xs-center>
                   <v-btn color="mavblue" to="/hud">HUD
                     <v-icon right>flight_takeoff</v-icon>
                   </v-btn>
                 </v-flex>
-                <v-flex xs6 sm3 text-xs-center>
+                <v-flex xs6 sm6 md3 text-xs-center>
                   <v-btn color="mavorange" to="/planner">Planner
                     <v-icon right>explore</v-icon>
                   </v-btn>
                 </v-flex>
-                <v-flex xs6 sm3 text-xs-center>
+                <v-flex xs6 sm6 md3 text-xs-center>
                   <v-btn color="mavpurple" to="/config">Config
                     <v-icon right>settings</v-icon>
                   </v-btn>
                 </v-flex>
-                <v-flex xs6 sm3 text-xs-center>
+                <v-flex xs6 sm6 md3 text-xs-center>
                   <v-btn color="mavgreen" to="/analysis">Analysis
                     <v-icon right>equalizer</v-icon>
                   </v-btn>
