@@ -30,14 +30,14 @@ v-container.px-2.py-2(fluid grid-list-xl)
                 // Edit value through bitmasks
                 template(v-else-if="editedItem.meta && editedItem.type === 'bitmask'")
                   v-flex(xs9)
-                    v-checkbox(v-for="(value,vx) in JSON.parse(editedItem.meta.bitmask)" hide-details v-model="editedItem.bitmasks" :label="value" color="primary")
+                    v-checkbox(v-for="(value,vx) in JSON.parse(editedItem.meta.bitmask)" hide-details v-model="editedItem.bitmasks" :label="value" color="primary" :key="vx")
                   v-flex(xs3)
                     v-text-field(type='number' v-model='editedItem.value' hint="Override" persistent-hint)
                 // Edit value through radios
                 template(v-else-if="editedItem.meta && editedItem.type == 'radio'")
                   v-flex(xs9)
                     v-radio-group(v-model="editedItem.value" :mandatory="false" hide-details)
-                      v-radio(v-for="(value,vx) in JSON.parse(editedItem.meta.values)" hide-details :label="value" :value="vx" color="primary")
+                      v-radio(v-for="(value,vx) in JSON.parse(editedItem.meta.values)" hide-details :label="value" :value="vx" color="primary" :key="vx")
                   v-flex(xs3)
                     v-text-field(type='number' v-model='editedItem.value' hint="Override" persistent-hint)
                 // Edit value through select

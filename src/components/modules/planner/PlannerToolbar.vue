@@ -1,7 +1,6 @@
 <template lang='pug'>
 v-toolbar(fixed dense clipped-left :color="navColor" app)
-  v-toolbar-side-icon(@click.stop="drawer = !drawer")
-  v-toolbar-title(v-text="appTitle")
+  v-btn(flat disabled left small): img(src='static/img/logos/maverick-text-logo-dark.svg' height='75%')
   v-spacer
   v-toolbar-items
     v-menu(offset-y)

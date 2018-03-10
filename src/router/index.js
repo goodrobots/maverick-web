@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import App from '../App'
+import HomeModule from '../components/modules/home/HomeModule'
+
 import HudModule from '../components/modules/hud/HudModule'
 import PlannerModule from '../components/modules/planner/PlannerModule'
 
@@ -17,8 +18,12 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
+      path: '',
+      component: HomeModule
+    },
+    {
       path: '/',
-      component: App
+      component: HomeModule
     },
     {
       path: '/hud',
