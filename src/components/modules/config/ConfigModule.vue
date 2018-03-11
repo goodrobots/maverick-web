@@ -6,6 +6,7 @@ div
 </template>
 
 <script>
+import colors from 'vuetify/es5/util/colors'
 import ConfigDrawer from './ConfigDrawer'
 export default {
   name: 'ConfigModule',
@@ -19,6 +20,9 @@ export default {
   },
   components: {
     ConfigDrawer
+  },
+  mounted () {
+    this.$vuetify.theme.primary = colors.lightGreen.base // Reset theme colours for this component
   }
 }
 </script>
