@@ -1,14 +1,14 @@
 <template lang='pug'>
 v-bottom-nav(app fixed :color="navColor" :value="navState")
-  v-btn(dark to="/") Home
+  v-btn.ma-1(to="/") Home
     v-icon home
-  v-btn(dark to="/hud") HUD
+  v-btn.ma-1(to="/hud") HUD
     v-icon flight_takeoff
-  v-btn(dark to="/planner") Planner
+  v-btn.ma-1(to="/planner") Planner
     v-icon explore
-  v-btn(dark to="/config") Config
+  v-btn.ma-1(to="/config") Config
     v-icon settings
-  v-btn(dark to="/analysis") Analysis
+  v-btn.ma-1(to="/analysis") Analysis
     v-icon equalizer
 </template>
 
