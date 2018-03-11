@@ -1,11 +1,9 @@
 <template lang='pug'>
-div#plannerContent
-  planner-toolbar
+div.plannerContent
   planner-cesium
 </template>
 
 <script>
-import PlannerToolbar from './PlannerToolbar'
 import PlannerCesium from './PlannerCesium'
 export default {
   name: 'PlannerModule',
@@ -14,14 +12,13 @@ export default {
     }
   },
   components: {
-    PlannerToolbar,
     PlannerCesium
   }
 }
 </script>
 
 <style scoped>
-#plannerContent {
+.plannerContent {
   position:fixed !important;
   position:absolute;
   top:0;

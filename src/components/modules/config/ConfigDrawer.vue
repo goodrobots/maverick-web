@@ -25,8 +25,8 @@ export default {
   },
   computed: {
     drawer: {
-      get () { return this.$store.state.configDrawer },
-      set (value) { this.$store.commit('setConfigDrawer', value) }
+      get () { return this.$store.state.navDrawer },
+      set (value) { this.$store.commit('setNavDrawer', value) }
     }
   }
 }
