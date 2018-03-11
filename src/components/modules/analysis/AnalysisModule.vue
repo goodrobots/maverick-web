@@ -1,11 +1,7 @@
-<template>
-  <v-content>
-    <v-container fluid grid-list-xl>
-      <v-layout row wrap>
-
-      </v-layout>
-    </v-container>
-  </v-content>
+<template lang='pug'>
+v-content
+  v-container(fluid grid-list-xl)
+    v-layout(row wrap)
 </template>
 
 <script>
