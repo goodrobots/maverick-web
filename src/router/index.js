@@ -3,7 +3,8 @@ import Router from 'vue-router'
 
 import HomeModule from '../components/modules/home/HomeModule'
 
-import HudModule from '../components/modules/hud/HudModule'
+import CockpitModule from '../components/modules/cockpit/CockpitModule'
+
 import PlannerModule from '../components/modules/planner/PlannerModule'
 
 import ConfigModule from '../components/modules/config/ConfigModule'
@@ -26,8 +27,8 @@ export default new Router({
       component: HomeModule
     },
     {
-      path: '/hud',
-      component: HudModule
+      path: '/cockpit',
+      component: CockpitModule
     },
     {
       path: '/planner',

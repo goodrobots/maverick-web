@@ -12,7 +12,7 @@ export default new Vuex.Store({
       'devPx4sitl': 'Dev VM: PX4 SITL',
       'wwwSitl': 'WWW VM: SITL'
     },
-    activeApi: 'devSitl',
+    activeApi: 'wwwSitl',
     navDrawer: true
   },
   mutations: {

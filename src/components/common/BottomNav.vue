@@ -1,14 +1,14 @@
 <template lang='pug'>
 v-bottom-nav(app fixed :color="navColor" :value="navState")
-  v-btn.ma-1(to="/") Home
+  v-btn.mt-1(to="/") Home
     v-icon home
-  v-btn.ma-1(to="/hud") HUD
+  v-btn.mt-1(to="/cockpit") Cockpit
     v-icon flight_takeoff
-  v-btn.ma-1(to="/planner") Planner
+  v-btn.mt-1(to="/planner") Planner
     v-icon explore
-  v-btn.ma-1(to="/config") Config
+  v-btn.mt-1(to="/config") Config
     v-icon settings
-  v-btn.ma-1(to="/analysis") Analysis
+  v-btn.mt-1(to="/analysis") Analysis
     v-icon equalizer
 </template>
 
@@ -22,7 +22,7 @@ export default {
     routePath () { return this.$store.state.route.path },
     navColor () {
       switch (true) {
-        case /^\/hud/.test(this.routePath): this.$store.commit('setNavColor', 'mavblue'); break
+        case /^\/cockpit/.test(this.routePath): this.$store.commit('setNavColor', 'mavblue'); break
         case /^\/planner/.test(this.routePath): this.$store.commit('setNavColor', 'mavorange'); break
         case /^\/config/.test(this.routePath): this.$store.commit('setNavColor', 'mavpurple'); break
         case /^\/analysis/.test(this.routePath): this.$store.commit('setNavColor', 'mavgreen'); break
@@ -32,7 +32,7 @@ export default {
     },
     navState () {
       switch (true) {
-        case /^\/hud/.test(this.routePath): this.$store.commit('setNavState', true); this.$store.commit('setNavIcon', false); break
+        case /^\/cockpit/.test(this.routePath): this.$store.commit('setNavState', true); this.$store.commit('setNavIcon', false); break
         case /^\/planner/.test(this.routePath): this.$store.commit('setNavState', true); this.$store.commit('setNavIcon', false); break
         case /^\/config/.test(this.routePath): this.$store.commit('setNavState', true); this.$store.commit('setNavIcon', true); break
         case /^\/analysis/.test(this.routePath): this.$store.commit('setNavState', true); this.$store.commit('setNavIcon', false); break

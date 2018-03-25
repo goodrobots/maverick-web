@@ -9,7 +9,7 @@ v-content
         v-container
           v-layout(row wrap justify-center)
             v-flex(xs6 sm6 md3 text-xs-center)
-              v-btn(color='mavblue' to='/hud') HUD
+              v-btn(color='mavblue' to='/cockpit') Cockpit
                 v-icon(right) flight_takeoff
             v-flex(xs6 sm6 md3 text-xs-center)
               v-btn(color='mavorange' to='/planner') Planner
