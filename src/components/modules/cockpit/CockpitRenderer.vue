@@ -45,13 +45,13 @@ export default {
 
   mounted () {
     this.cockpitWindow = this.$refs.cockpitWindow
+    this.CockpitObject.PIXI.utils.skipHello()
     this.CockpitObject.PixiApp = new PIXI.Application(window.innerWidth, window.innerHeight, {
       antialias: true,
       transparent: true,
       resolution: 1,
       view: this.cockpitWindow
     })
-    this.CockpitObject.PIXI.utils.skipHello()
     this.app = this.CockpitObject.PixiApp
     this.app.renderer.view.style.position = 'absolute'
     this.app.renderer.view.style.display = 'block'
