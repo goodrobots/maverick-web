@@ -22,6 +22,7 @@ export default {
       pitchContainer: new this.CockpitObject.PIXI.Graphics(),
       pitchHorizon: new this.CockpitObject.PIXI.Graphics(),
       horizonMarkings: new this.CockpitObject.PIXI.Graphics(),
+      filledHorizon: true,
       pitchNumbers: {},
       ladderSteps: 6,
       ladderWidth: 50,
@@ -208,24 +209,26 @@ export default {
       this.pitchHorizon.lineStyle(this.rollLineWidth, 0xffffff, 1)
       this.pitchHorizon.moveTo(0, this.height / 2)
       this.pitchHorizon.lineTo(this.width, this.height / 2)
-      // Draw sky
-      this.pitchHorizon.beginFill(0xaaaaff, 0.5)
-      this.pitchHorizon.drawRect(
-        this.dimensions.x - this.dimensions.width / 4,
-        this.dimensions.y,
-        this.dimensions.width + this.dimensions.width / 4,
-        this.dimensions.height / 2
-      )
-      this.pitchHorizon.endFill()
-      // Draw ground
-      this.pitchHorizon.beginFill(0xaaffaa, 0.5)
-      this.pitchHorizon.drawRect(
-        this.dimensions.x - this.dimensions.width / 4,
-        this.dimensions.height / 2,
-        this.dimensions.width + this.dimensions.width / 4,
-        this.dimensions.height
-      )
-      this.pitchHorizon.endFill()
+      if (this.filledHorizon) {
+        // Draw sky
+        this.pitchHorizon.beginFill(0xaaaaff, 0.5)
+        this.pitchHorizon.drawRect(
+          this.dimensions.x - this.dimensions.width / 4,
+          this.dimensions.y,
+          this.dimensions.width + this.dimensions.width / 4,
+          this.dimensions.height / 2
+        )
+        this.pitchHorizon.endFill()
+        // Draw ground
+        this.pitchHorizon.beginFill(0xaaffaa, 0.5)
+        this.pitchHorizon.drawRect(
+          this.dimensions.x - this.dimensions.width / 4,
+          this.dimensions.height / 2,
+          this.dimensions.width + this.dimensions.width / 4,
+          this.dimensions.height
+        )
+        this.pitchHorizon.endFill()
+      }
       this.pitchContainer.addChild(this.pitchHorizon)
     },
     drawPitchLadder () {
