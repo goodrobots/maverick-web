@@ -5,7 +5,7 @@ div
     v-fade-transition(mode="out-in")
       router-view
     bottom-nav
-  action-button(:class="{'theme--dark': themeType}")
+  action-button(v-if="(moduleName !== 'home')" :class="{'theme--dark': themeType}")
 </template>
 
 <script>
@@ -20,9 +20,8 @@ export default {
     }
   },
   computed: {
-    routePath () {
-      return this.$store.state.route.path
-    }
+    routePath () { return this.$store.state.route.path },
+    moduleName () { return this.$store.state.moduleName }
   },
   watch: {
     routePath () {
