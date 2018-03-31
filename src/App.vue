@@ -1,6 +1,6 @@
 <template lang='pug'>
-div
-  v-app#fullscreen(:class="{'theme--dark': themeType}")
+div#fullscreen
+  v-app(:class="{'theme--dark': themeType}")
     top-nav
     v-fade-transition(mode="out-in")
       router-view
