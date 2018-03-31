@@ -4,16 +4,17 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
+    navDrawer: true,
     navColor: null,
     navState: false,
     navIcon: false,
+    fullScreen: false,
     apis: {
       'devSitl': 'Dev VM: SITL',
       'devPx4sitl': 'Dev VM: PX4 SITL',
       'wwwSitl': 'WWW VM: SITL'
     },
-    activeApi: 'wwwSitl',
-    navDrawer: true
+    activeApi: 'wwwSitl'
   },
   mutations: {
     setNavColor (state, color) {
@@ -30,6 +31,9 @@ export default new Vuex.Store({
     },
     setNavState (state, value) {
       state.navState = value
+    },
+    setFullScreen (state, value) {
+      state.fullScreen = value
     }
   }
 })

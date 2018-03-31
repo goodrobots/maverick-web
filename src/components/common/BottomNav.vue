@@ -31,6 +31,7 @@ export default {
       return this.$store.state.navColor
     },
     navState () {
+      /*
       switch (true) {
         case /^\/cockpit/.test(this.routePath): this.$store.commit('setNavState', true); this.$store.commit('setNavIcon', false); break
         case /^\/planner/.test(this.routePath): this.$store.commit('setNavState', true); this.$store.commit('setNavIcon', false); break
@@ -38,6 +39,7 @@ export default {
         case /^\/analysis/.test(this.routePath): this.$store.commit('setNavState', true); this.$store.commit('setNavIcon', false); break
         default: this.$store.commit('setNavState', false); this.$store.commit('setNavIcon', false)
       }
+      */
       return this.$store.state.navState
     }
   },
