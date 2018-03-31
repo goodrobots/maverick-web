@@ -49,15 +49,17 @@ export default {
     this.CockpitObject.PixiApp = new PIXI.Application(window.innerWidth, window.innerHeight, {
       antialias: true,
       transparent: true,
-      resolution: 1,
-      view: this.cockpitWindow
+      view: this.cockpitWindow,
+      resolution: window.devicePixelRatio || 1,
+      autoResize: true
     })
+    /*
     this.app = this.CockpitObject.PixiApp
     this.app.renderer.view.style.position = 'absolute'
     this.app.renderer.view.style.display = 'block'
     this.app.renderer.autoResize = true
     this.app.renderer.resize(window.innerWidth, window.innerHeight)
-
+    */
     this.EventBus.$emit('ready') // notify child components that pixi is ready to go
     window.addEventListener('resize', this.handleResize)
   },
