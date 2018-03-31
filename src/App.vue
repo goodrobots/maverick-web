@@ -1,10 +1,11 @@
 <template lang='pug'>
-v-app#fullscreen(:class="{'theme--dark': themeType}")
-  top-nav
-  v-fade-transition(mode="out-in")
-    router-view
-  bottom-nav
-  action-button
+div
+  v-app#fullscreen(:class="{'theme--dark': themeType}")
+    top-nav
+    v-fade-transition(mode="out-in")
+      router-view
+    bottom-nav
+  action-button(:class="{'theme--dark': themeType}")
 </template>
 
 <script>
