@@ -14,34 +14,9 @@ v-bottom-nav(app fixed :color="navColor" :value="navState")
 
 <script>
 export default {
-  data () {
-    return {
-    }
-  },
   computed: {
-    routePath () { return this.$store.state.route.path },
-    navColor () {
-      switch (true) {
-        case /^\/cockpit/.test(this.routePath): this.$store.commit('setNavColor', 'mavblue'); break
-        case /^\/planner/.test(this.routePath): this.$store.commit('setNavColor', 'mavorange'); break
-        case /^\/config/.test(this.routePath): this.$store.commit('setNavColor', 'mavpurple'); break
-        case /^\/analysis/.test(this.routePath): this.$store.commit('setNavColor', 'mavgreen'); break
-        default: this.$store.commit('setNavColor', null)
-      }
-      return this.$store.state.navColor
-    },
-    navState () {
-      /*
-      switch (true) {
-        case /^\/cockpit/.test(this.routePath): this.$store.commit('setNavState', true); this.$store.commit('setNavIcon', false); break
-        case /^\/planner/.test(this.routePath): this.$store.commit('setNavState', true); this.$store.commit('setNavIcon', false); break
-        case /^\/config/.test(this.routePath): this.$store.commit('setNavState', true); this.$store.commit('setNavIcon', true); break
-        case /^\/analysis/.test(this.routePath): this.$store.commit('setNavState', true); this.$store.commit('setNavIcon', false); break
-        default: this.$store.commit('setNavState', false); this.$store.commit('setNavIcon', false)
-      }
-      */
-      return this.$store.state.navState
-    }
+    navColor () { return this.$store.state.navColor },
+    navState () { return (this.$store.state.moduleName === 'home') ? false : this.$store.state.navState } // Return false if home screen, otherwise from vuex state
   },
   name: 'BottomNav'
 }

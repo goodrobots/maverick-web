@@ -18,6 +18,29 @@ export default {
       themeType: true
     }
   },
+  computed: {
+    routePath () {
+      return this.$store.state.route.path
+    }
+  },
+  watch: {
+    routePath () {
+      switch (true) {
+        case /^\/cockpit/.test(this.routePath): this.$store.commit('setModuleName', 'cockpit'); break
+        case /^\/planner/.test(this.routePath): this.$store.commit('setModuleName', 'planner'); break
+        case /^\/config/.test(this.routePath): this.$store.commit('setModuleName', 'config'); break
+        case /^\/analysis/.test(this.routePath): this.$store.commit('setModuleName', 'analysis'); break
+        default: this.$store.commit('setModuleName', 'home')
+      }
+      switch (this.$store.state.moduleName) {
+        case 'cockpit': this.$store.commit('setNavColor', 'mavblue'); break
+        case 'planner': this.$store.commit('setNavColor', 'mavorange'); break
+        case 'config': this.$store.commit('setNavColor', 'mavpurple'); break
+        case 'analysis': this.$store.commit('setNavColor', 'mavgreen'); break
+        default: this.$store.commit('setNavColor', null)
+      }
+    }
+  },
   name: 'App'
 }
 </script>

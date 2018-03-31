@@ -21,7 +21,9 @@ export default {
   },
   computed: {
     routePath () { return this.$store.state.route.path },
-    navState () { return this.$store.state.navState },
+    navState () {
+      return (/^\/$/.test(this.routePath)) ? false : this.$store.state.navState // Return false if home screen, otherwise from vuex state
+    },
     navIcon () { return this.$store.state.navIcon },
     navColor () { return this.$store.state.navColor },
     navDrawer () { return this.$store.state.navDrawer },

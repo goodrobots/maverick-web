@@ -1,15 +1,24 @@
 <template lang='pug'>
 v-card.transparent.navfab
-  v-speed-dial.navfab(v-model="navfab", direction="top", bottom=true, right=true, open-on-hover=false, transition="slide-y-reverse-transition")
-    v-btn(slot="activator", :color="navColor", dark, fab, hover, v-model="navfab")
-      v-icon aspect_ratio
+  v-speed-dial.navfab(v-model="navfab" direction="top" bottom=true right=true open-on-hover=false transition="slide-y-reverse-transition")
+    v-btn(slot="activator" :color="navColor" dark fab hover v-model="navfab")
+      v-icon(v-html="navIcon")
       v-icon close
-    v-btn(fab, dark, small, :color="(navState) ? navColor : 'grey'" @click.stop="toggleNavState" transition)
-      v-icon(v-if="navState" transition) swap_vert
-      v-icon(v-else transition) swap_horiz
-    v-btn(fab, dark, small, :color="(fullScreen) ? navColor : 'grey'" @click.stop="toggleFullScreen" transition)
-      v-icon(v-if="fullScreen" transition) fullscreen
-      v-icon(v-else transition) fullscreen_exit
+    v-btn(v-if="(moduleName !== 'analysis')" fab dark :small="(moduleName !== 'analysis')" color="mavgreen" to="/analysis")
+      v-icon equalizer
+    v-btn(v-if="(moduleName !== 'config')" fab dark :small="(moduleName !== 'config')" color="mavpurple" to="/config")
+      v-icon settings
+    v-btn(v-if="(moduleName !== 'planner')" fab dark :small="(moduleName !== 'planner')" color="mavorange" to="/planner")
+      v-icon explore
+    v-btn(v-if="(moduleName !== 'cockpit')" fab dark :small="(moduleName !== 'cockpit')" color="mavblue" to="/cockpit")
+      v-icon flight_takeoff
+    v-divider
+    v-btn(fab dark small :color="(navState) ? navColor : 'grey'" @click="toggleNavState")
+      v-icon(v-if="navState") swap_vert
+      v-icon(v-else) swap_horiz
+    v-btn(fab dark small :color="(fullScreen) ? navColor : 'grey'" @click="toggleFullScreen")
+      v-icon(v-if="fullScreen") fullscreen
+      v-icon(v-else) fullscreen_exit
 </template>
 
 <script>
@@ -24,10 +33,18 @@ export default {
     }
   },
   computed: {
-    routePath () { return this.$store.state.route.path },
     navState () { return this.$store.state.navState },
     navColor () { return this.$store.state.navColor },
-    fullScreen () { return this.$store.state.fullScreen }
+    fullScreen () { return this.$store.state.fullScreen },
+    moduleName () { return this.$store.state.moduleName },
+    navIcon () {
+      switch (this.moduleName) {
+        case 'cockpit': return 'flight_takeoff'
+        case 'planner': return 'explore'
+        case 'config': return 'settings'
+        case 'analysis': return 'equalizer'
+      }
+    }
   },
   methods: {
     toggleNavState () {

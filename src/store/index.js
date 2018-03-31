@@ -6,9 +6,10 @@ export default new Vuex.Store({
   state: {
     navDrawer: true,
     navColor: null,
-    navState: false,
+    navState: true,
     navIcon: false,
     fullScreen: false,
+    moduleName: null,
     apis: {
       'devSitl': 'Dev VM: SITL',
       'devPx4sitl': 'Dev VM: PX4 SITL',
@@ -34,6 +35,9 @@ export default new Vuex.Store({
     },
     setFullScreen (state, value) {
       state.fullScreen = value
+    },
+    setModuleName (state, value) {
+      state.moduleName = value
     }
   }
 })
