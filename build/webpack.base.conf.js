@@ -11,9 +11,6 @@ function resolve (dir) {
 }
 
 module.exports = {
-  stats: {
-    warnings: false
-  },
   entry: {
     app: './src/main.js'
   },
@@ -34,7 +31,8 @@ module.exports = {
     }
   },
   module: {
-    rules: [
+    unknownContextCritical: false,
+   rules: [
       {
         // Strip cesium pragmas
         test: /\.js$/,
@@ -43,7 +41,7 @@ module.exports = {
         	use: [{
         		loader: 'strip-pragma-loader',
         		options: {
-        		    pragmas: {
+        		  pragmas: {
         				debug: false
         			}
         		}
