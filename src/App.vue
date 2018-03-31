@@ -20,16 +20,12 @@ export default {
     }
   },
   computed: {
-    routePath () { return this.$store.state.route.path },
-    moduleName () { return this.$store.state.moduleName }
-  },
-  watch: {
-    routePath () {
+    moduleName () {
       switch (true) {
-        case /^\/cockpit/.test(this.routePath): this.$store.commit('setModuleName', 'cockpit'); break
-        case /^\/planner/.test(this.routePath): this.$store.commit('setModuleName', 'planner'); break
-        case /^\/config/.test(this.routePath): this.$store.commit('setModuleName', 'config'); break
-        case /^\/analysis/.test(this.routePath): this.$store.commit('setModuleName', 'analysis'); break
+        case /^\/cockpit/.test(this.$store.state.route.path): this.$store.commit('setModuleName', 'cockpit'); break
+        case /^\/planner/.test(this.$store.state.route.path): this.$store.commit('setModuleName', 'planner'); break
+        case /^\/config/.test(this.$store.state.route.path): this.$store.commit('setModuleName', 'config'); break
+        case /^\/analysis/.test(this.$store.state.route.path): this.$store.commit('setModuleName', 'analysis'); break
         default: this.$store.commit('setModuleName', 'home')
       }
       switch (this.$store.state.moduleName) {
@@ -39,6 +35,8 @@ export default {
         case 'analysis': this.$store.commit('setNavColor', 'mavgreen'); break
         default: this.$store.commit('setNavColor', null)
       }
+      console.log('route: ' + this.$store.state.route.path)
+      return this.$store.state.moduleName
     }
   },
   name: 'App'
