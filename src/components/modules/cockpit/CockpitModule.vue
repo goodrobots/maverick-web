@@ -13,9 +13,9 @@ v-content
       v-flex(xs12 sm6 md4)
         imu-card(:key="activeApi")
   div.cockpit-layout
-    cockpit-renderer
+    cockpit-renderer(:key="activeApi")
       cockpit-container(@tick="tickInfo")
-        cockpit-hud(:key="activeApi")
+        cockpit-hud
 </template>
 
 <script>

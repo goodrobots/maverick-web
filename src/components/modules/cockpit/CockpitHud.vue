@@ -213,10 +213,10 @@ export default {
         // Draw sky
         this.pitchHorizon.beginFill(0xaaaaff, 0.5)
         this.pitchHorizon.drawRect(
-          this.dimensions.x - this.dimensions.width / 4,
+          this.dimensions.x - this.dimensions.width / 2,
           this.dimensions.y,
-          this.dimensions.width + this.dimensions.width / 4,
-          this.dimensions.height / 2
+          this.dimensions.width + this.dimensions.width,
+          this.dimensions.height
         )
         this.pitchHorizon.endFill()
         // Draw ground
@@ -273,6 +273,21 @@ export default {
           lineBool = !lineBool
         }
       }
+    },
+    tickerUpdate () {
+      // Draw the rotating layer
+      this.drawRotatingBackground()
+      this.drawPitchHorizon()
+      this.drawPitchLadder()
+      // Transform the pitch container in y axis according to pitch attitude, within rotating layer
+      this.pitchContainer.position.y = this.eulerRpy.pitch * 1000
+      this.drawRollTicks()
+      // Draw the fixed layer
+      this.drawFixedBackground()
+      this.drawFixedTriangle()
+      this.drawFixedHorizonMarkings()
+      // Rotate the rotating layer according to roll attitude
+      this.rotatingBackground.rotation = this.eulerRpy.roll
     }
   },
 
@@ -287,24 +302,16 @@ export default {
         this.CockpitObject.PixiApp.stage.addChild(this.rotatingBackground)
         this.CockpitObject.PixiApp.stage.addChild(this.fixedBackground)
       }
+      this.$parent.container.x = this.dimensions.x
+      this.$parent.container.y = this.dimensions.y
+      this.$parent.container.width = this.dimensions.width
+      this.$parent.container.height = this.dimensions.height
       this.rotatingBackground.addChild(this.pitchContainer)
       // this.handleResize()
       if (!this.addState) {
         this.addState = true
         this.CockpitObject.PixiApp.ticker.add(() => {
-          // Draw the rotating layer
-          this.drawRotatingBackground()
-          this.drawPitchHorizon()
-          this.drawPitchLadder()
-          // Transform the pitch container in y axis according to pitch attitude, within rotating layer
-          this.pitchContainer.position.y = this.eulerRpy.pitch * 1000
-          this.drawRollTicks()
-          // Draw the fixed layer
-          this.drawFixedBackground()
-          this.drawFixedTriangle()
-          this.drawFixedHorizonMarkings()
-          // Rotate the rotating layer according to roll attitude
-          this.rotatingBackground.rotation = this.eulerRpy.roll
+          this.tickerUpdate()
         })
       }
     })

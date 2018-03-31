@@ -64,6 +64,7 @@ export default {
 
   beforeDestroy: function () {
     window.removeEventListener('resize', this.handleResize)
+    this.CockpitObject.PixiApp.destroy(true)
   }
 
 }

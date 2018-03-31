@@ -35,7 +35,6 @@ export default {
         case 'analysis': this.$store.commit('setNavColor', 'mavgreen'); break
         default: this.$store.commit('setNavColor', null)
       }
-      console.log('route: ' + this.$store.state.route.path)
       return this.$store.state.moduleName
     }
   },
