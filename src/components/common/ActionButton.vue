@@ -1,5 +1,6 @@
 <template lang='pug'>
 v-card.transparent.navfab
+
   v-speed-dial.navfab(v-model="navfab" direction="top" bottom=true right=true open-on-hover=false transition="slide-y-reverse-transition")
     v-btn(slot="activator" :color="navColor" dark fab hover v-model="navfab")
       v-icon(v-html="navIcon")
@@ -12,13 +13,25 @@ v-card.transparent.navfab
       v-icon explore
     v-btn(v-if="(moduleName !== 'cockpit')" fab dark :small="(moduleName !== 'cockpit')" color="mavblue" to="/cockpit")
       v-icon flight_takeoff
-    v-divider
+    // v-divider
+    // v-btn(fab dark small :color="(navState) ? navColor : 'grey'" @click="toggleNavState")
+      v-icon(v-if="navState") swap_vert
+      v-icon(v-else) swap_horiz
+    // v-btn(fab dark small :color="(fullScreen) ? navColor : 'grey'" @click="toggleFullScreen")
+      v-icon(v-if="fullScreen") fullscreen
+      v-icon(v-else) fullscreen_exit
+
+  v-speed-dial.navfab(v-model="navfab" direction="left" bottom=true right=true open-on-hover=false transition="slide-y-reverse-transition")
+    v-btn(slot="activator" :color="navColor" dark fab hover v-model="navfab")
+      v-icon(v-html="navIcon")
+      v-icon close
     v-btn(fab dark small :color="(navState) ? navColor : 'grey'" @click="toggleNavState")
       v-icon(v-if="navState") swap_vert
       v-icon(v-else) swap_horiz
     v-btn(fab dark small :color="(fullScreen) ? navColor : 'grey'" @click="toggleFullScreen")
       v-icon(v-if="fullScreen") fullscreen
       v-icon(v-else) fullscreen_exit
+
 </template>
 
 <script>
@@ -63,9 +76,8 @@ export default {
 <style>
   .navfab .speed-dial {
     position: absolute;
-    bottom: 65px;
-    right: 10px;
-    z-index: 1000;
+    bottom: 25px;
+    right: 25px;
   }
 
   .navfab .btn--floating {
