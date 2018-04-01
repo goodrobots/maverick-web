@@ -1,11 +1,11 @@
 <template lang='pug'>
 div#fullscreen
   v-app(:class="{'theme--dark': themeType}")
-    top-nav(v-show="navState" :key="activeApi")
+    top-nav(v-if="navState" :key="activeApi")
     v-fade-transition(mode="out-in")
       router-view
-    bottom-nav(v-show="navState && $vuetify.breakpoint.xsOnly")
-  action-button(v-show="this.moduleName !== 'home' && !$vuetify.breakpoint.xsOnly" :class="{'theme--dark': themeType}")
+    bottom-nav(v-if="navState && $vuetify.breakpoint.xsOnly")
+  action-button(v-if="this.moduleName !== 'home' && !$vuetify.breakpoint.xsOnly" :class="{'theme--dark': themeType}")
 </template>
 
 <script>
@@ -30,11 +30,11 @@ export default {
         default: this.$store.commit('setModuleName', 'home')
       }
       switch (this.$store.state.moduleName) {
-        case 'cockpit': this.$store.commit('setNavColor', 'mavblue'); break
-        case 'planner': this.$store.commit('setNavColor', 'mavorange'); break
-        case 'config': this.$store.commit('setNavColor', 'mavpurple'); break
-        case 'analysis': this.$store.commit('setNavColor', 'mavgreen'); break
-        default: this.$store.commit('setNavColor', null)
+        case 'cockpit': this.$store.commit('setNavColor', 'mavblue'); this.$store.commit('setNavIcon', false); break
+        case 'planner': this.$store.commit('setNavColor', 'mavorange'); this.$store.commit('setNavIcon', false); break
+        case 'config': this.$store.commit('setNavColor', 'mavpurple'); this.$store.commit('setNavIcon', true); break
+        case 'analysis': this.$store.commit('setNavColor', 'mavgreen'); this.$store.commit('setNavIcon', false); break
+        default: this.$store.commit('setNavColor', null); this.$store.commit('setNavIcon', false)
       }
       return this.$store.state.moduleName
     },
