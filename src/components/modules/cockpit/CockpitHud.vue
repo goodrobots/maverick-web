@@ -118,15 +118,6 @@ export default {
     },
     drawRotatingBackground () {
       this.rotatingBackground.clear()
-      this.rotatingBackground.beginFill(0x000000, 0.5)
-      this.rotatingBackground.lineStyle(0, 0x111111, 1)
-      this.rotatingBackground.drawRect(
-        this.dimensions.x,
-        this.dimensions.y,
-        this.dimensions.width,
-        this.dimensions.width
-      )
-      this.rotatingBackground.endFill()
       // Reset the container position and pivot point to rotate around the center
       this.rotatingBackground.pivot.x = this.dimensions.width / 2
       this.rotatingBackground.pivot.y = this.dimensions.height / 2
@@ -214,17 +205,17 @@ export default {
         this.pitchHorizon.beginFill(0xaaaaff, 0.5)
         this.pitchHorizon.drawRect(
           this.dimensions.x - this.dimensions.width / 2,
-          this.dimensions.y,
+          this.dimensions.y - this.dimensions.height / 2,
           this.dimensions.width + this.dimensions.width,
-          this.dimensions.height
+          this.dimensions.height + this.dimensions.height
         )
         this.pitchHorizon.endFill()
         // Draw ground
         this.pitchHorizon.beginFill(0xaaffaa, 0.5)
         this.pitchHorizon.drawRect(
-          this.dimensions.x - this.dimensions.width / 4,
+          this.dimensions.x - this.dimensions.width / 2,
           this.dimensions.height / 2,
-          this.dimensions.width + this.dimensions.width / 4,
+          this.dimensions.width + this.dimensions.width,
           this.dimensions.height
         )
         this.pitchHorizon.endFill()
@@ -233,15 +224,6 @@ export default {
     },
     drawPitchLadder () {
       // Draw the horizon line ladder markings
-      /*
-      this.horizonMarkings.clear()
-      this.horizonMarkings.lineStyle(this.rollLineWidth * 4, 0xffffff, 1)
-      this.horizonMarkings.moveTo((this.width / 2) - (this.ladderWidth * 4), this.height / 2)
-      this.horizonMarkings.lineTo((this.width / 2) - (this.ladderWidth * 3), this.height / 2)
-      this.horizonMarkings.moveTo((this.width / 2) + (this.ladderWidth * 3), this.height / 2)
-      this.horizonMarkings.lineTo((this.width / 2) + (this.ladderWidth * 4), this.height / 2)
-      this.pitchContainer.addChild(this.horizonMarkings)
-      */
       // Draw the ladder lines
       for (let direction of [true, false]) {
         let lineBool = false
