@@ -7,12 +7,18 @@ import Cesium from 'cesium/Cesium'
 import 'cesium/Widgets/widgets.css'
 
 import { navSatFixQuery, navSatFixSubscription, navSatFixMutate } from '../../../graphql/gql/NavSatFixMessage.gql'
+import { imuQuery, imuSubscription, imuMutate } from '../../../graphql/gql/ImuMessage.gql'
+import { vfrHudQuery, vfrHudSubscription, vfrHudMutate } from '../../../graphql/gql/VfrHudMessage.gql'
 
 export default {
   data () {
     return {
       viewer: undefined,
-      navSatFixMessage: []
+      vehicleEntity: undefined,
+      navSatFixMessage: [],
+      imuMessage: [],
+      vfrHudMessage: [],
+      posChangeThreshold: 0.00001
     }
   },
   computed: {
@@ -37,6 +43,7 @@ export default {
         navigationHelpButton: false,
         navigationInstructionsInitiallyVisible: false,
         scene3DOnly: true,
+        sceneModePicker: false,
         selectionIndicator: false,
         timeline: false
       })
@@ -44,12 +51,36 @@ export default {
         destination: Cesium.Cartesian3.fromDegrees(this.navSatFixMessage.longitude, this.navSatFixMessage.latitude, 1000)
       })
       // this.viewer.terrainProvider = Cesium.createWorldTerrain()
+      this.constructVehicle()
+    },
+    constructVehicle () {
+      const position = Cesium.Cartesian3.fromDegrees(this.navSatFixMessage.longitude, this.navSatFixMessage.latitude, this.vfrHudMessage.altitude)
+      /*
+      var heading = 0
+      var pitch = 0
+      var roll = 0
+      var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll)
+      var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr)
+      const vehicleOffset = new Cesium.Cartesian3(vehicle_offset_x,vehicle_offset_y,vehicle_offset_z)
+      */
+      this.vehicleEntity = this.viewer.entities.add({
+        name: 'Vehicle',
+        id: 'vehicle',
+        position: position,
+        // orientation : orientation,
+        box: {
+          dimensions: new Cesium.Cartesian3(4.0, 4.0, 4.0),
+          material: Cesium.Color.RED.withAlpha(0.5),
+          outline: true,
+          outlineColor: Cesium.Color.BLACK
+        }
+      })
     }
   },
 
   watch: {
     navSatFixMessage: function (oldSat, newSat) {
-      // If the viewer hasn't been constructed yet, do so
+      // If the viewer hasn't been constructed yet and we have a position, construct it
       if (!this.viewer && newSat.longitude && newSat.latitude) {
         this.constructViewer()
       }
@@ -58,14 +89,20 @@ export default {
         oldSat !== newSat &&
         (newSat.longitude && newSat.latitude) &&
         (
-          ((newSat.longitude - oldSat.longitude > 0.00001) || (newSat.longitude - oldSat.longitude > -0.00001)) ||
-          ((newSat.latitude - oldSat.latitude > 0.00001) || (newSat.latitude - oldSat.latitude > -0.00001))
+          ((newSat.longitude - oldSat.longitude > this.posChangeThreshold) || (newSat.longitude - oldSat.longitude > -this.posChangeThreshold)) ||
+          ((newSat.latitude - oldSat.latitude > this.posChangeThreshold) || (newSat.latitude - oldSat.latitude > -this.posChangeThreshold))
         )
       ) {
-        // console.log('Api: ' + this.activeApi + ', Changing camera to ' + newSat.longitude + ':' + newSat.latitude)
+        // Update the camera to center on the vheicle
+        /*
         this.viewer.camera.setView({
           destination: Cesium.Cartesian3.fromDegrees(newSat.longitude, newSat.latitude, 1000)
         })
+        */
+        console.log(newSat.longitude + ' : ' + newSat.latitude + ' : ' + newSat.altitude)
+        // Update the marker position
+        var entity = this.viewer.entities.getById('vehicle')
+        entity.position = Cesium.Cartesian3.fromDegrees(newSat.longitude, newSat.latitude, this.vfrHudMessage.altitude)
       }
     }
   },
@@ -83,11 +120,35 @@ export default {
         }
       },
       mutation: navSatFixMutate
+    },
+    imuMessage: {
+      query: imuQuery,
+      subscribeToMore: {
+        document: imuSubscription,
+        updateQuery: (previousResult, { subscriptionData }) => {
+          return {
+            imuMessage: subscriptionData.data.imuMessage
+          }
+        }
+      },
+      mutation: imuMutate
+    },
+    vfrHudMessage: {
+      query: vfrHudQuery,
+      subscribeToMore: {
+        document: vfrHudSubscription,
+        updateQuery: (previousResult, { subscriptionData }) => {
+          return {
+            vfrHudMessage: subscriptionData.data.vfrHudMessage
+          }
+        }
+      },
+      mutation: vfrHudMutate
     }
   },
 
   beforeDestroy: function () {
-    Cesium.destroyObject(this.viewer)
+    Cesium.destroyObject(this.viewer, 'This viewer has been destroyed')
   }
 }
 </script>
