@@ -1,5 +1,8 @@
 <script>
 import { imuQuery, imuSubscription } from '../../../graphql/gql/ImuMessage.gql'
+import colors from 'vuetify/es5/util/colors'
+import { colorToInt } from 'vuetify/es5/util/colorUtils'
+
 export default {
   inject: ['EventBus', 'CockpitObject'],
 
@@ -129,8 +132,8 @@ export default {
       let innerx = (this.dimensions.width / 2) + (innerLength * Math.cos(this.tickTop))
       let innery = (this.dimensions.height / 2) + (innerLength * Math.sin(this.tickTop))
       this.fixedTriangle.clear()
-      this.fixedTriangle.beginFill(0xff3333, 1)
-      this.fixedTriangle.lineStyle(this.rollLineWidth, 0xffffff, 1)
+      this.fixedTriangle.beginFill(colorToInt(colors.yellow.darken1), 1)
+      this.fixedTriangle.lineStyle(this.rollLineWidth, colorToInt(colors.shades.white), 1)
       this.fixedTriangle.moveTo(innerx, innery + 1)
       this.fixedTriangle.lineTo(innerx + this.triangleSize, innery + (this.triangleSize * 2))
       this.fixedTriangle.lineTo(innerx - this.triangleSize, innery + (this.triangleSize * 2))
@@ -140,7 +143,7 @@ export default {
     },
     drawFixedHorizonMarkings () {
       this.fixedHorizonMarkings.clear()
-      this.fixedHorizonMarkings.lineStyle(this.rollLineWidth * 5, 0xff3333, 1)
+      this.fixedHorizonMarkings.lineStyle(this.rollLineWidth * 4, colorToInt(colors.yellow.darken1), 1)
       // Draw the horizontal lines left and right from center
       this.fixedHorizonMarkings.moveTo((this.width / 2) - (this.ladderWidth * 4.5), this.height / 2)
       this.fixedHorizonMarkings.lineTo((this.width / 2) - (this.ladderWidth * 2.5), this.height / 2)
@@ -156,7 +159,7 @@ export default {
       const innerLength = this.dimensions.height / 2 - this.topOffset - (this.tickRadius * 2)
       // Draw the roll arc that runs underneath all the ticks
       this.rollArc.clear()
-      this.rollArc.lineStyle(2, 0xffffff, 1)
+      this.rollArc.lineStyle(2, colorToInt(colors.shades.white), 1)
       this.rollArc.arc(this.dimensions.width / 2, this.dimensions.height / 2, innerLength, this.tickTop - 1, this.tickTop + 1, false)
       this.rotatingBackground.addChild(this.rollArc)
       // Start at the top and draw to the left, then start at the top again and draw to the right
