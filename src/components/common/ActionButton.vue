@@ -63,8 +63,8 @@ export default {
 <style>
   .navfab .speed-dial {
     position: absolute;
-    bottom: 70px;
-    right: 70px;
+    bottom: 65px;
+    right: 10px;
     z-index: 1000;
   }
 

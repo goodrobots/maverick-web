@@ -15,10 +15,45 @@ export default {
       navSatFixMessage: []
     }
   },
-  methods: {
+  computed: {
+    activeApi () { return this.$store.state.activeApi }
   },
+
+  methods: {
+    constructViewer () {
+      Cesium.BingMapsApi.defaultKey = 'Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG'
+      // Set the default camera so it doesn't initiall focus on space
+      var extent = Cesium.Rectangle.fromDegrees(this.navSatFixMessage.longitude - 0.2, this.navSatFixMessage.latitude - 0.2, this.navSatFixMessage.longitude + 0.2, this.navSatFixMessage.latitude + 0.2)
+      Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent
+      Cesium.Camera.DEFAULT_VIEW_FACTOR = 0
+      // Construct the cesium view
+      this.viewer = new Cesium.Viewer('cesiumContainer', {
+        animation: false,
+        baseLayerPicker: false,
+        fullscreenButton: false,
+        geocoder: false,
+        homeButton: false,
+        infoBox: false,
+        navigationHelpButton: false,
+        navigationInstructionsInitiallyVisible: false,
+        scene3DOnly: true,
+        selectionIndicator: false,
+        timeline: false
+      })
+      this.viewer.camera.setView({
+        destination: Cesium.Cartesian3.fromDegrees(this.navSatFixMessage.longitude, this.navSatFixMessage.latitude, 1000)
+      })
+      // this.viewer.terrainProvider = Cesium.createWorldTerrain()
+    }
+  },
+
   watch: {
     navSatFixMessage: function (oldSat, newSat) {
+      // If the viewer hasn't been constructed yet, do so
+      if (!this.viewer && newSat.longitude && newSat.latitude) {
+        this.constructViewer()
+      }
+      // If the position has changed over a minimum threshold, update
       if (
         oldSat !== newSat &&
         (newSat.longitude && newSat.latitude) &&
@@ -27,42 +62,16 @@ export default {
           ((newSat.latitude - oldSat.latitude > 0.00001) || (newSat.latitude - oldSat.latitude > -0.00001))
         )
       ) {
-        // console.log('Changing camera to ' + newSat.longitude + ':' + newSat.latitude)
+        // console.log('Api: ' + this.activeApi + ', Changing camera to ' + newSat.longitude + ':' + newSat.latitude)
         this.viewer.camera.setView({
           destination: Cesium.Cartesian3.fromDegrees(newSat.longitude, newSat.latitude, 1000)
         })
       }
     }
   },
-  created () {
-  },
-  mounted () {
-    Cesium.BingMapsApi.defaultKey = 'Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG'
 
-    // Construct the viewer, with a high-res terrain source pre-selected.
-    this.viewer = new Cesium.Viewer('cesiumContainer', {
-      animation: false, // Disable time control widget
-      geocoder: false,
-      homeButton: false,
-      sceneModePicker: false,
-      timeline: false,
-      navigationHelpButton: false,
-      navigationInstructionsInitiallyVisible: false,
-      fullscreenButton: false,
-      baseLayerPicker: false,
-      scene3DOnly: true,
-      infoBox: false, // Disable InfoBox widget
-      selectionIndicator: false, // Disable selection indicator
-      terrainProvider: Cesium.createWorldTerrain()
-    })
-    // position the camera roughly over Australia
-    /*
-    this.viewer.camera.setView({
-      destination: Cesium.Cartesian3.fromDegrees(this.navSatFixMessage.longitude, this.navSatFixMessage.latitude, 1000)
-    })
-    */
-  },
   apollo: {
+    $client () { return this.activeApi },
     navSatFixMessage: {
       query: navSatFixQuery,
       subscribeToMore: {
@@ -75,6 +84,10 @@ export default {
       },
       mutation: navSatFixMutate
     }
+  },
+
+  beforeDestroy: function () {
+    Cesium.destroyObject(this.viewer)
   }
 }
 </script>
@@ -89,7 +102,7 @@ export default {
 }
  
 body .cesium-viewer .cesium-widget-credits {
-  display: block;
+  display: none;
   position: static;
   bottom: auto;
   left: auto;
@@ -101,6 +114,7 @@ body .cesium-viewer .cesium-widget-credits {
 }
 
 .cesium-credit-image img {
-    width: 50px;
+  display: none;
+  width: 50px;
 }
 </style>
