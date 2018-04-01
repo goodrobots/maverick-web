@@ -7,16 +7,16 @@ transition(name="slide-y-transition" mode="out-in")
     v-spacer
     v-toolbar-items
       // Armed/Disarmed button
-      v-btn(v-if="stateMessage.armed" color="red") ARMED
+      v-btn(v-if="stateMessage.armed" color="yellow" flat) ARMED
       v-btn.transparent(v-else depressed) DISARMED
       // Mode button
       v-btn.transparent(v-html="stateMessage.mode" depressed)
       // Altitude button
-      v-btn.transparent(v-html="'Alt<br>' + vfrHudMessage.altitude.toFixed(2) + 'm'" depressed ripple=false)
+      v-btn.transparent(v-if="vfrHudMessage.altitude" v-html="'Alt<br>' + vfrHudMessage.altitude.toFixed(2) + 'm'" depressed ripple=false)
       // Heading button
-      v-btn.transparent(v-show="!$vuetify.breakpoint.xsOnly" v-html="'Hdg<br>' + vfrHudMessage.heading" depressed ripple=false)
+      v-btn.transparent(v-if="vfrHudMessage && !$vuetify.breakpoint.xsOnly" v-html="'Hdg<br>' + vfrHudMessage.heading" depressed ripple=false)
       // Speed button
-      v-btn.transparent(v-show="!$vuetify.breakpoint.xsOnly" v-html="'Spd<br>' + vfrHudMessage.groundspeed.toFixed(2)" depressed ripple=false)
+      v-btn.transparent(v-if="vfrHudMessage.groundspeed && !$vuetify.breakpoint.xsOnly" v-html="'Spd<br>' + vfrHudMessage.groundspeed.toFixed(2)" depressed ripple=false)
     v-spacer
     v-toolbar-items
       v-menu(offset-y)
