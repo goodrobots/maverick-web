@@ -1,6 +1,6 @@
 <template lang='pug'>
 div.plannerContent
-  planner-cesium
+  planner-cesium(:key="activeApi")
 </template>
 
 <script>
@@ -10,6 +10,9 @@ export default {
   data () {
     return {
     }
+  },
+  computed: {
+    activeApi () { return this.$store.state.activeApi }
   },
   components: {
     PlannerCesium
