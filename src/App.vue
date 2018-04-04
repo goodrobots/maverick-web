@@ -4,8 +4,8 @@ div#fullscreen
     top-nav(v-if="navState" :key="activeApi")
     v-fade-transition(mode="out-in")
       router-view
-    bottom-nav(v-if="navState && $vuetify.breakpoint.xsOnly")
-  action-button(v-if="this.moduleName !== 'home' && !$vuetify.breakpoint.xsOnly" :class="{'theme--dark': themeType}")
+    bottom-nav(v-if="navState && $vuetify.breakpoint.smAndDown")
+  action-button(v-if="this.moduleName !== 'home' && !$vuetify.breakpoint.smAndDown" :class="{'theme--dark': themeType}")
 </template>
 
 <script>
