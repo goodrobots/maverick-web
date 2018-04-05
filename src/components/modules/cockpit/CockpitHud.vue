@@ -104,8 +104,7 @@ export default {
     handleResize () {
       this.width = window.innerWidth
       this.height = window.innerHeight
-      this.drawRotatingBackground()
-      this.drawRollTicks()
+      this.tickerUpdate()
     },
     drawFixedBackground () {
       this.fixedBackground.clear()
@@ -292,7 +291,7 @@ export default {
       this.$parent.container.width = this.dimensions.width
       this.$parent.container.height = this.dimensions.height
       this.rotatingBackground.addChild(this.pitchContainer)
-      // this.handleResize()
+      this.handleResize()
       if (!this.addState) {
         this.addState = true
         this.CockpitObject.PixiApp.ticker.add(() => {

@@ -1,5 +1,5 @@
 <template lang='pug'>
-div
+div.cockpit-hud
   canvas(ref="cockpitWindow")
     slot
 </template>
@@ -38,8 +38,7 @@ export default {
 
   methods: {
     handleResize () {
-      this.app.renderer.resize(window.innerWidth, window.innerHeight)
-      this.EventBus.$emit('ready') // notify child components that pixi components need re-rendering
+      this.CockpitObject.PixiApp.renderer.resize(window.innerWidth, window.innerHeight)
     }
   },
 
@@ -53,13 +52,6 @@ export default {
       resolution: window.devicePixelRatio || 1,
       autoResize: true
     })
-    /*
-    this.app = this.CockpitObject.PixiApp
-    this.app.renderer.view.style.position = 'absolute'
-    this.app.renderer.view.style.display = 'block'
-    this.app.renderer.autoResize = true
-    this.app.renderer.resize(window.innerWidth, window.innerHeight)
-    */
     this.EventBus.$emit('ready') // notify child components that pixi is ready to go
     window.addEventListener('resize', this.handleResize)
   },
@@ -74,7 +66,15 @@ export default {
 
 <style scoped>
 * {padding: 0; margin: 0}
-canvas {
+.cockpit-hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.cockpit-hud canvas {
   display: block;
   width: 100vw;
   height: 100vh;
