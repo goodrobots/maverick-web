@@ -1,8 +1,18 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import cockpit from './modules/cockpit'
+import planner from './modules/planner'
+import config from './modules/config'
+import analysis from './modules/analysis'
 
 Vue.use(Vuex)
 export default new Vuex.Store({
+  modules: {
+    cockpit,
+    planner,
+    config,
+    analysis
+  },
   state: {
     navDrawer: true,
     navColor: null,
