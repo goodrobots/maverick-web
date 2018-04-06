@@ -36,6 +36,7 @@ v-card.transparent.navfab
     v-btn(slot="activator" :color="navColor" dark fab hover v-model="navfab")
       v-icon(v-html="navIcon")
       v-icon close
+    // Cockpit specific actions
     template(v-if="(moduleName === 'cockpit')")
       v-tooltip(bottom)
         v-btn(fab dark small :color="(cockpitMapState) ? navColor : 'grey'" @click="toggleMap" slot="activator")
@@ -45,7 +46,12 @@ v-card.transparent.navfab
         v-btn(fab dark small :color="(cockpitHudState) ? navColor : 'grey'" @click="toggleHud" slot="activator")
           v-icon surround_sound
         span HUD
-    
+    // Planner specific actions
+    template(v-if="(moduleName === 'planner')")
+      v-tooltip(bottom)
+        v-btn(fab dark small :color="(plannerViewState) ? navColor : 'grey'" @click="toggleView" slot="activator")
+          v-icon 3d_rotation
+        span 2D/3D View
 </template>
 
 <script>
@@ -75,7 +81,9 @@ export default {
     },
     // Config states
     cockpitMapState () { return this.$store.state.cockpit.mapState },
-    cockpitHudState () { return this.$store.state.cockpit.hudState }
+    cockpitHudState () { return this.$store.state.cockpit.hudState },
+    // Planner states
+    plannerViewState () { return this.$store.state.planner.viewState }
   },
   methods: {
     toggleNavState () {
@@ -92,6 +100,9 @@ export default {
     },
     toggleHud () {
       this.$store.commit('cockpit/setHudState', !this.cockpitHudState)
+    },
+    toggleView () {
+      this.$store.commit('planner/setViewState', !this.plannerViewState)
     }
   }
 

@@ -1,21 +1,29 @@
 <template lang='pug'>
-div.plannerContent
-  planner-cesium(:key="activeApi")
+v-content
+  // div.plannerContent
+  planner2d(v-if="!plannerViewState" :key="activeApi")
+  planner3d(v-if="plannerViewState" :key="activeApi")
 </template>
 
 <script>
-import PlannerCesium from './PlannerCesium'
+import Planner2d from './Planner2d'
+import Planner3d from './Planner3d'
+
 export default {
   name: 'PlannerModule',
   data () {
     return {
     }
   },
+
   computed: {
-    activeApi () { return this.$store.state.activeApi }
+    activeApi () { return this.$store.state.activeApi },
+    plannerViewState () { return this.$store.state.planner.viewState }
   },
+
   components: {
-    PlannerCesium
+    Planner2d,
+    Planner3d
   }
 }
 </script>
