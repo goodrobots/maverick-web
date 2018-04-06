@@ -1,7 +1,7 @@
 <template lang='pug'>
 v-content(:key="activeApi")
-  cockpit-map
-  cockpit-renderer
+  cockpit-map(v-if="mapState")
+  cockpit-renderer(v-if="hudState")
     cockpit-container
       cockpit-hud
 </template>
@@ -19,7 +19,9 @@ export default {
     }
   },
   computed: {
-    activeApi () { return this.$store.state.activeApi }
+    activeApi () { return this.$store.state.activeApi },
+    mapState () { return this.$store.state.cockpit.mapState },
+    hudState () { return this.$store.state.cockpit.hudState }
   },
   components: {
     CockpitRenderer,

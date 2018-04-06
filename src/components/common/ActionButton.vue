@@ -21,28 +21,31 @@ v-card.transparent.navfab
       v-btn(fab dark :small="(moduleName !== 'cockpit')" color="mavblue" to="/cockpit" slot="activator")
         v-icon flight_takeoff
       span Cockpit
-    // v-divider
-    // v-btn(fab dark small :color="(navState) ? navColor : 'grey'" @click="toggleNavState")
-      v-icon(v-if="navState") swap_vert
-      v-icon(v-else) swap_horiz
-    // v-btn(fab dark small :color="(fullScreen) ? navColor : 'grey'" @click="toggleFullScreen")
-      v-icon(v-if="fullScreen") fullscreen
-      v-icon(v-else) fullscreen_exit
+    v-tooltip(left)
+      v-btn(fab dark small :color="(navState) ? navColor : 'grey'" @click="toggleNavState" slot="activator")
+        v-icon(v-if="navState") swap_vert
+        v-icon(v-else) swap_horiz
+      span Top Nav
+    v-tooltip(left)
+      v-btn(fab dark small :color="(fullScreen) ? navColor : 'grey'" @click="toggleFullScreen" slot="activator")
+        v-icon(v-if="fullScreen") fullscreen
+        v-icon(v-else) fullscreen_exit
+      span Fullscreen
 
   v-speed-dial.navfab(v-model="navfab" direction="left" bottom=true right=true open-on-hover=false transition="slide-x-reverse-transition")
     v-btn(slot="activator" :color="navColor" dark fab hover v-model="navfab")
       v-icon(v-html="navIcon")
       v-icon close
-    v-tooltip(top)
-      v-btn(fab dark small :color="(navState) ? navColor : 'grey'" @click="toggleNavState" slot="activator")
-        v-icon(v-if="navState") swap_vert
-        v-icon(v-else) swap_horiz
-      span Nav
-    v-tooltip(top)
-      v-btn(fab dark small :color="(fullScreen) ? navColor : 'grey'" @click="toggleFullScreen" slot="activator")
-        v-icon(v-if="fullScreen") fullscreen
-        v-icon(v-else) fullscreen_exit
-      span Fullscreen
+    template(v-if="(moduleName === 'cockpit')")
+      v-tooltip(bottom)
+        v-btn(fab dark small :color="(cockpitMapState) ? navColor : 'grey'" @click="toggleMap" slot="activator")
+          v-icon my_location
+        span Map
+      v-tooltip(bottom)
+        v-btn(fab dark small :color="(cockpitHudState) ? navColor : 'grey'" @click="toggleHud" slot="activator")
+          v-icon surround_sound
+        span HUD
+    
 </template>
 
 <script>
@@ -57,6 +60,7 @@ export default {
     }
   },
   computed: {
+    // Global states
     navState () { return this.$store.state.navState },
     navColor () { return this.$store.state.navColor },
     fullScreen () { return this.$store.state.fullScreen },
@@ -68,7 +72,10 @@ export default {
         case 'config': return 'settings'
         case 'analysis': return 'equalizer'
       }
-    }
+    },
+    // Config states
+    cockpitMapState () { return this.$store.state.cockpit.mapState },
+    cockpitHudState () { return this.$store.state.cockpit.hudState }
   },
   methods: {
     toggleNavState () {
@@ -79,6 +86,12 @@ export default {
       this.$fullscreen.toggle(document.querySelector('#fullscreen'), {
         wrap: true
       })
+    },
+    toggleMap () {
+      this.$store.commit('cockpit/setMapState', !this.cockpitMapState)
+    },
+    toggleHud () {
+      this.$store.commit('cockpit/setHudState', !this.cockpitHudState)
     }
   }
 
