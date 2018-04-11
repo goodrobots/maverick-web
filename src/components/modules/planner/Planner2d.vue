@@ -1,7 +1,7 @@
 <template lang='pug'>
 div.planner-map
   vl-map(data-projection="EPSG:4326" ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true", :controls="{attribution: false, zoom: false}")
-    vl-view(data-projection="EPSG:4326" v-if="xycenter.length > 0" :zoom="mapZoom" :center="xycenter" :rotation="0")
+    vl-view(v-if="xycenter.length > 0" :zoom="mapZoom" :center="xycenter" :rotation="0")
     // Add marker for vehicle
     vl-feature(id="vehiclemarker" ref="vehiclemarker" :properties="{prop: 'value', prop2: 'value'}")
       vl-geom-point(v-if="xy.length > 0" :coordinates="xy")
