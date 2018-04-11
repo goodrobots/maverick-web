@@ -25,7 +25,8 @@ export default new Vuex.Store({
       'devPx4sitl': 'Dev VM: PX4 SITL',
       'wwwSitl': 'WWW VM: SITL'
     },
-    activeApi: 'wwwSitl'
+    activeApi: 'devSitl',
+    bingMapsKey: 'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6'
   },
   mutations: {
     setNavColor (state, color) {
