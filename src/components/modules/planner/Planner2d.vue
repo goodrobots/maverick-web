@@ -1,6 +1,6 @@
 <template lang='pug'>
 div.planner-map
-  vl-map(data-projection="EPSG:4326" ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true", :controls="{attribution: false, zoom: false}")
+  vl-map(ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true", :controls="{attribution: false, zoom: false}")
     vl-view(v-if="xycenter.length > 0" :zoom="mapZoom" :center="xycenter" :rotation="0")
     // Add marker for vehicle
     vl-feature(id="vehiclemarker" ref="vehiclemarker" :properties="{prop: 'value', prop2: 'value'}")
@@ -18,7 +18,7 @@ div.planner-map
           vl-style-stroke(color="#666666" :width="1")
     // Add numbers for mission waypoint marker
     vl-feature(v-for="(waypoint, index) in waypoints" :key="'markernumber'+index" :properties="{prop: 'value', prop2: 'value'}")
-      vl-overlay(:position="[waypoint.longitude, waypoint.latitude]")
+      vl-overlay(v-if="waypoint.longitude && waypoint.latitude" :position="[waypoint.longitude, waypoint.latitude]")
         span.markernumber.caption(v-html="index")
     // Add lines to join the markers
     vl-feature
@@ -72,7 +72,7 @@ import Vue from 'vue'
 import VueLayers from 'vuelayers'
 import 'vuelayers/lib/style.css'
 Vue.use(VueLayers, {
-  dataProjection: 'EPSG:4326'
+  dataProjection: 'EPSG:4326',
 })
 
 export default {
@@ -91,8 +91,16 @@ export default {
         { value: 'googlesatellite', text: 'Google Satellite' },
         { value: 'googlehybrid', text: 'Google Hybrid' },
         { value: 'googleterrain', text: 'Google Terrain' }
-      ]
+      ],
+      tickers: {
+        'navSatFixMessage': false
+      }
     }
+  },
+
+  // Use timers to set intervals for each message so we can limit the update frequency in the client
+  timers: {
+    setTickers: { time: 500, autostart: true, repeat: true }
   },
 
   computed: {
@@ -127,55 +135,53 @@ export default {
     }
   },
 
+  methods: {
+    setTickers () {
+      this.tickers['navSatFixMessage'] = true
+    }
+  },
+
   apollo: {
     $client () { return this.activeApi },
     navSatFixMessage: {
       query: navSatFixQuery,
-      subscribeToMore: {
-        document: navSatFixSubscription,
-        updateQuery: (previousResult, { subscriptionData }) => {
-          return {
-            navSatFixMessage: subscriptionData.data.navSatFixMessage
-          }
+      manual: true,
+      result ({ data, loading }) {
+        if (!loading) {
+          this.navSatFixMessage = data.navSatFixMessage
         }
       }
     },
     waypoints: {
       query: waypointsQuery,
-      subscribeToMore: {
-        document: waypointsSubscription,
-        updateQuery: (previousResult, { subscriptionData }) => {
-          const update = subscriptionData.data.waypoints
-          console.log(previousResult)
-          console.log(update)
-          const waypointData = {
-            waypoints: previousResult.waypoints.map(waypoint => {
-              // We can't update immutable apollo data, so instead create a deep copy and return that into the array map
-              if (waypoint.id === update.id) {
-                let copy = JSON.parse(JSON.stringify(waypoint))
-                copy.value = update.value
-                return copy
-              // Otherwise return the array object by reference
-              } else {
-                return waypoint
-              }
-            })
-          }
-          return waypointData
+      manual: true,
+      result ({ data, loading }) {
+        if (!loading) {
+          this.waypoints = data.waypoints
+          console.log(data.waypoints)
         }
       }
-    }
-  },
-
-  watch: {
-    waypoints () {
-      /*
-      console.log('Waypoints: ')
-      console.log(this.waypoints)
-      // const coords = this.waypoints.filter(function (x) { if (x.longitude && x.latitude) return [x.longitude, x.latitude] })
-      const coords = this.waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])
-      console.log(coords)
-      */
+    },
+    $subscribe: {
+      navSatFixMessage: {
+        query: navSatFixSubscription,
+        result ({ data }) {
+          if (this.navSatFixMessage !== data.navSatFixMessage && this.tickers['navSatFixMessage']) {
+            this.navSatFixMessage = data.navSatFixMessage
+            this.tickers['navSatFixMessage'] = false // Turn the ticker off until the next interval
+          }
+        }
+      },
+      waypoints: {
+        query: waypointsSubscription,
+        result ({ data }) {
+          console.log('waypoints subscription:')
+          console.log(data)
+        }
+      }
+    },
+    error (error) {
+      console.log('Waypoints graphql error:' + error)
     }
   }
 }
