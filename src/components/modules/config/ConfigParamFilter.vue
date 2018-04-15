@@ -93,17 +93,19 @@ v-container.px-2.py-2(fluid grid-list-xl)
                     .pt-1.caption.grey--text Units
                     div(v-html="editedItem.meta.units") span(v-if="editedItem.meta.unitText") ({{ editedItem.meta.unitText }})
       //- Display dynamic table with parameters
-      v-card.px-0.py-0
+      v-card.px-0.py-0.transparent.elevation-0
         v-card-title
-          // v-select.input-group--focused(:items="groupSelects" v-model="group" label="Parameters Group" dense single-line bottom autofocus hide-details)
           v-spacer
           v-text-field(append-icon="search" label="Search" single-line hide-details v-model="search")
-        v-data-table.elevation-0.px-2.pt-0.pb-4(:search="search" :headers="headers" :items="params" :pagination.sync="pagination" item-key="id" :custom-filter="customFilter" :rows-per-page-items="[10,25,50]")
+        v-data-table.transparent.px-2.pt-0.pb-4(expand :search="search" :headers="headers" :items="params" :pagination.sync="pagination" item-key="id" :custom-filter="customFilter" :rows-per-page-items="[10,25,50]")
           template(slot="items" slot-scope="props")
             tr(@click="props.expanded = !props.expanded")
               td.justify-center.px-0.text-xs-right
                 v-btn.mx-0(icon @click.stop="editItem(props.item)")
                   v-icon edit
+              td(v-if="props.item.meta.humanGroup" v-html="props.item.meta.humanGroup")
+              td(v-else-if="props.item.meta.group" v-html="props.item.meta.group")
+              td(v-else v-html="'--'")
               td(v-html="highlight(props.item.id, search)")
               td(v-html="valueFormat(props.item)")
               td(v-if="props.item.meta && props.item.meta.humanName" v-html="highlight(props.item.meta.humanName, search)")
@@ -113,29 +115,30 @@ v-container.px-2.py-2(fluid grid-list-xl)
             v-card(flat)
               v-card-text
                 table.px-0.py-0(width='100%')
-                  tr(v-if="props.item.meta && props.item.meta.documentation")
+                  tr.transparent(v-if="props.item.meta && props.item.meta.documentation")
                     td: strong Documentation
                     td: span(v-html="highlight(props.item.meta.documentation, search)")
                   template(v-if="props.item.meta && props.item.meta.fields")
-                    tr
+                    tr.transparent
                       td: strong Fields
                       td
                         div(v-for="(field,fx) in JSON.parse(props.item.meta.fields)")
                           strong {{ fx }}: {{ field }}
                   template(v-if="props.item.meta && props.item.meta.values")
-                    tr
+                    tr.transparent
                       td: strong Values
                       td
                         div(v-for="(value,vx) in JSON.parse(props.item.meta.values)")
                           span.primary--text(v-if="vx==props.item.value") {{ vx }}: <strong>{{ value }}</strong> (Active)
                           span(v-else) {{ vx }}: <strong>{{ value }}</strong>
-                  template
+                  // template
                     tr
                       td(v-html="props.item" colspan='5')
           v-alert(slot="no-results" :value="true" color="error" icon="warning") Your search for "{{ search }}" found no results.
 </template>
 
 <script>
+import Vue from 'vue'
 import { paramsQuery, paramsSubscription, updateParam } from '../../../graphql/gql/Parameters.gql'
 export default {
   name: 'ConfigParamFilter',
@@ -144,9 +147,10 @@ export default {
       params: [],
       headers: [
         { text: '', value: '', sortable: false },
-        { text: 'Parameter Name', value: 'id', align: 'left' },
-        { text: 'Parameter Value', value: 'value', align: 'left', sortable: false },
-        { text: 'Parameter Description', value: 'meta.humanName', align: 'left', sortable: false }
+        { text: 'Group', value: 'meta.group', align: 'left' },
+        { text: 'Name', value: 'id', align: 'left' },
+        { text: 'Value', value: 'value', align: 'left', sortable: false },
+        { text: 'Description', value: 'meta.humanName', align: 'left', sortable: false }
       ],
       pagination: {
         sortBy: 'id'
@@ -162,9 +166,11 @@ export default {
       bitmasks: []
     }
   },
+
   computed: {
     activeApi () { return this.$store.state.activeApi }
   },
+
   methods: {
     customFilter (items, search, filter) {
       search = search.toString().toLowerCase()
@@ -192,6 +198,12 @@ export default {
         }
       }
       return param ? param.value : null
+    },
+    findParam (id) {
+      return this.params.find(x => x.id === id)
+    },
+    findParamIndex (id) {
+      return this.params.findIndex(x => x.id === id)
     },
     editItem (item) {
       // Set the param index and create a copy for the edit dialog
@@ -266,35 +278,70 @@ export default {
           value: this.editedItem.value
         }
       })
+      // console.log('Saved param: ' + this.editedItem.id + ' with value: ' + this.editedItem.value)
       this.close()
     }
   },
+
   apollo: {
     $client () { return this.activeApi },
     params: {
       query: paramsQuery,
+      manual: true,
+      result ({ data, loading }) {
+        if (!loading && !this.params.length) {
+          Object.keys(data.params).forEach(key => { Vue.set(this.params, key, data.params[key]) })
+        }
+        // console.log('received params: ' + this.params.length)
+      },
+      /*
       subscribeToMore: {
         document: paramsSubscription,
         // If we receive updated param, iterate through the existing params (previousResult) and carefully update just the updated parameter
         updateQuery: (previousResult, { subscriptionData }) => {
           const update = subscriptionData.data.params
-          return {
-            params: previousResult.params.map(param => {
-              // We can't update immutable apollo data, so instead create a deep copy and return that into the array map
-              if (param.id === update.id) {
-                let paramcopy = JSON.parse(JSON.stringify(param))
-                paramcopy.value = update.value
-                return paramcopy
-              // Otherwise return the array object by reference
-              } else {
-                return param
-              }
-            })
+          if (!/^STAT_/.test(update.id)) {
+            console.log('Updating parameter: ' + update.id)
+            const paramData = {
+              params: previousResult.params.map(param => {
+                // We can't update immutable apollo data, so instead create a deep copy and return that into the array map
+                if (param.id === update.id) {
+                  let paramcopy = JSON.parse(JSON.stringify(param))
+                  paramcopy.value = update.value
+                  return paramcopy
+                // Otherwise return the array object by reference
+                } else {
+                  return param
+                }
+              })
+            }
+            return paramData
           }
         }
       },
+      */
       mutation: updateParam
+    },
+    $subscribe: {
+      params: {
+        query: paramsSubscription,
+        result (data) {
+          const paramIx = this.findParamIndex(data.data.params.id)
+          Vue.set(this.params, paramIx, data.data.params)
+          // console.log('subscribe result: ' + this.params[paramIx])
+        }
+      }
     }
+  },
+
+  mounted () {
+    // Hack datatables to be transparent
+    const tables = document.querySelectorAll('.datatable.table, .datatable__actions')
+    Object.keys(tables).forEach(key => { tables[key].className += ' transparent' })
+  },
+
+  destroyed () {
+    // this.$apollo.destroy()
   }
 }
 </script>
