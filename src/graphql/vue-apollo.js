@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
-import { createApolloClient } from './apollo'
+import createApolloClient from './apollo'
 
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -19,30 +19,33 @@ export const localClient = createApolloClient({
 */
 export const devSitlClient = createApolloClient({
   ssr: false,
-  endpoint: {
-    uri: location.protocol + '//dev.maverick.one/web/api/sitl',
-    queryPath: '/graphql',
-    subscriptionsPath: '/subscriptions',
-    persist: false
-  }
+  base: location.protocol + '//dev.maverick.one/web/api/sitl',
+  endpoints: {
+    graphql: '/graphql',
+    subscription: '/subscriptions'
+  },
+  persisting: false,
+  subscriptions: true
 })
 export const devPx4sitlClient = createApolloClient({
   ssr: false,
-  endpoint: {
-    uri: location.protocol + '//dev.maverick.one/web/api/px4sitl',
-    queryPath: '/graphql',
-    subscriptionsPath: '/subscriptions',
-    persist: false
-  }
+  base: location.protocol + '//dev.maverick.one/web/api/px4sitl',
+  endpoints: {
+    graphql: '/graphql',
+    subscription: '/subscriptions'
+  },
+  persisting: false,
+  subscriptions: true
 })
 export const wwwClient = createApolloClient({
   ssr: false,
-  endpoint: {
-    uri: location.protocol + '//www.maverick.one/web/api/sitl',
-    queryPath: '/graphql',
-    subscriptionsPath: '/subscriptions',
-    persist: false
-  }
+  base: location.protocol + '//www.maverick.one/web/api/sitl',
+  endpoints: {
+    graphql: '/graphql',
+    subscription: '/subscriptions'
+  },
+  persisting: false,
+  subscriptions: true
 })
 
 // Create vue apollo provider
