@@ -29,11 +29,20 @@ export default {
       pitchNumbers: {},
       ladderSteps: 6,
       ladderWidth: 50,
-      imuMessage: []
+      imuMessage: [],
+      tickers: {
+        'imuMessage': false,
+        'drawHud': false
+      }
     }
   },
 
   render () {},
+
+  // Use timers to set intervals for each message so we can limit the update frequency in the client
+  timers: {
+    setTickers: { time: 500, autostart: true, repeat: true }
+  },
 
   computed: {
     activeApi () { return this.$store.state.activeApi },
@@ -89,6 +98,14 @@ export default {
     $client () { return this.activeApi },
     imuMessage: {
       query: imuQuery,
+      manual: true,
+      result ({ data, loading }) {
+        if (!loading) {
+          this.imuMessage = data.imuMessage
+          console.log('imuMessage Query')
+        }
+      }
+      /*
       subscribeToMore: {
         document: imuSubscription,
         updateQuery: (previousResult, { subscriptionData }) => {
@@ -97,10 +114,27 @@ export default {
           }
         }
       }
+      */
+    },
+    $subscribe: {
+      imuMessage: {
+        query: imuSubscription,
+        result ({ data }) {
+          if (this.imuMessage !== data.imuMessage && this.tickers['imuMessage']) {
+            this.imuMessage = data.imuMessage
+            this.tickers['imuMessage'] = false // Turn the ticker off until the next interval
+          }
+        }
+      }
     }
   },
 
   methods: {
+    setTickers () {
+      this.tickers['imuMessage'] = true
+      this.tickers['drawHud'] = true
+      this.tickerUpdate()
+    },
     handleResize () {
       this.width = window.innerWidth
       this.height = window.innerHeight
@@ -259,19 +293,23 @@ export default {
       }
     },
     tickerUpdate () {
-      // Draw the rotating layer
-      this.drawRotatingBackground()
-      this.drawPitchHorizon()
-      this.drawPitchLadder()
-      // Transform the pitch container in y axis according to pitch attitude, within rotating layer
-      this.pitchContainer.position.y = this.eulerRpy.pitch * 1000
-      this.drawRollTicks()
-      // Draw the fixed layer
-      this.drawFixedBackground()
-      this.drawFixedTriangle()
-      this.drawFixedHorizonMarkings()
-      // Rotate the rotating layer according to roll attitude
-      this.rotatingBackground.rotation = this.eulerRpy.roll
+      if (this.tickers['drawHud'] && this.addState) {
+        // Draw the rotating layer
+        this.drawRotatingBackground()
+        this.drawPitchHorizon()
+        this.drawPitchLadder()
+        // Transform the pitch container in y axis according to pitch attitude, within rotating layer
+        this.pitchContainer.position.y = this.eulerRpy.pitch * 1000
+        this.drawRollTicks()
+        // Draw the fixed layer
+        this.drawFixedBackground()
+        this.drawFixedTriangle()
+        this.drawFixedHorizonMarkings()
+        // Rotate the rotating layer according to roll attitude
+        this.rotatingBackground.rotation = this.eulerRpy.roll
+        // Turn off the ticker until the next interval
+        this.tickers['drawHud'] = false
+      }
     }
   },
 
@@ -294,9 +332,11 @@ export default {
       this.handleResize()
       if (!this.addState) {
         this.addState = true
+        /*
         this.CockpitObject.PixiApp.ticker.add(() => {
           this.tickerUpdate()
         })
+        */
       }
     })
     window.addEventListener('resize', this.handleResize)
