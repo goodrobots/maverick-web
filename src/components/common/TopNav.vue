@@ -39,8 +39,17 @@ export default {
       flightModes: [
         'Guided',
         'Stabilize'
-      ]
+      ],
+      tickers: {
+        'stateMessage': false,
+        'vfrHudMessage': false
+      }
     }
+  },
+
+  // Use timers to set intervals for each message so we can limit the update frequency in the client
+  timers: {
+    setTickers: { time: 500, autostart: true, repeat: true }
   },
 
   computed: {
@@ -58,20 +67,25 @@ export default {
     },
     toggleDrawer () {
       this.$store.commit('setNavDrawer', !this.$store.state.navDrawer)
+    },
+    setTickers () {
+      this.tickers['stateMessage'] = true
+      this.tickers['vfrHudMessage'] = true
     }
   },
 
   apollo: {
     $client () { return this.activeApi },
+
+    // Setup apollo queries
     vfrHudMessage: {
       client: this.activeApi,
       query: vfrHudQuery,
-      subscribeToMore: {
-        document: vfrHudSubscription,
-        updateQuery: (previousResult, { subscriptionData }) => {
-          return {
-            vfrHudMessage: subscriptionData.data.vfrHudMessage
-          }
+      manual: true,
+      result ({ data, loading }) {
+        if (!loading) {
+          this.vfrHudMessage = data.vfrHudMessage
+          // console.log('vfrHudMessage Query')
         }
       },
       mutation: vfrHudMutate
@@ -79,21 +93,35 @@ export default {
     stateMessage: {
       client: this.activeApi,
       query: stateQuery,
-      subscribeToMore: {
-        document: stateSubscription,
-        updateQuery: (previousResult, { subscriptionData }) => {
-          return {
-            stateMessage: subscriptionData.data.stateMessage
-          }
+      manual: true,
+      result ({ data, loading }) {
+        if (!loading) {
+          this.stateMessage = data.stateMessage
         }
       },
       mutation: stateMutate
-    }
-  },
+    },
 
-  watch: {
-    activeApi: function () {
-      // Object.values(this.$apollo.provider.clients).forEach(client => { client.resetStore(); client.cache.reset() })
+    // Setup apollo subscriptions to run once every ticker interval
+    $subscribe: {
+      vfrHudMessage: {
+        query: vfrHudSubscription,
+        result ({ data }) {
+          if (this.vfrHudMessage !== data.vfrHudMessage && this.tickers['vfrHudMessage']) {
+            this.vfrHudMessage = data.vfrHudMessage
+            this.tickers['vfrHudMessage'] = false // Turn the ticker off until the next interval
+          }
+        }
+      },
+      stateMessage: {
+        query: stateSubscription,
+        result ({ data }) {
+          if (this.stateMessage !== data.stateMessage && this.tickers['stateMessage']) {
+            this.stateMessage = data.stateMessage
+            this.tickers['stateMessage'] = false // Turn the ticker off until the next interval
+          }
+        }
+      }
     }
   },
 

@@ -6,8 +6,11 @@ import store from './store'
 import Vuetify from 'vuetify'
 import colors from 'vuetify/es5/util/colors'
 import { apolloProvider } from './graphql/vue-apollo'
+import VueTimers from 'vue-timers'
 
 import './stylus/main.styl'
+
+Vue.use(VueTimers)
 
 // Sync the vuex store with router
 sync(store, router)
