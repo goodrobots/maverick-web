@@ -10,14 +10,14 @@ div.planner-map
           vl-style-fill(color="rgba(245,35,35,0.8)")
           vl-style-stroke(color="#666666" :width="1")
     // Add markers for mission waypoints
-    vl-feature(v-for="(waypoint, index) in waypoints" :key="'marker'+index" :properties="{prop: 'value', prop2: 'value'}")
-      vl-geom-point(:coordinates="[waypoint.longitude, waypoint.latitude]")
+    vl-feature
+      vl-geom-multi-point(:coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
       vl-style-box
         vl-style-circle(:radius="10")
           vl-style-fill(color="rgba(35,245,35,0.5)")
           vl-style-stroke(color="#666666" :width="1")
     // Add numbers for mission waypoint marker
-    vl-feature(v-for="(waypoint, index) in waypoints" :key="'markernumber'+index" :properties="{prop: 'value', prop2: 'value'}")
+    // vl-feature(v-for="(waypoint, index) in waypoints" :key="'markernumber'+index" :properties="{prop: 'value', prop2: 'value'}")
       vl-overlay(v-if="waypoint.longitude && waypoint.latitude" :position="[waypoint.longitude, waypoint.latitude]")
         span.markernumber.caption(v-html="index")
     // Add lines to join the markers
@@ -72,7 +72,7 @@ import Vue from 'vue'
 import VueLayers from 'vuelayers'
 import 'vuelayers/lib/style.css'
 Vue.use(VueLayers, {
-  dataProjection: 'EPSG:4326',
+  dataProjection: 'EPSG:4326'
 })
 
 export default {
