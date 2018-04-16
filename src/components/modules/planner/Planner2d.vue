@@ -3,7 +3,7 @@ div.planner-map
   vl-map(ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true", :controls="{attribution: false, zoom: false}")
     vl-view(v-if="xycenter.length > 0" :zoom="mapZoom" :center="xycenter" :rotation="0")
     // Add marker for vehicle
-    vl-feature(id="vehiclemarker" ref="vehiclemarker" :properties="{prop: 'value', prop2: 'value'}")
+    vl-feature(id="vehiclemarker" ref="vehiclemarker")
       vl-geom-point(v-if="xy.length > 0" :coordinates="xy")
       vl-style-box
         vl-style-circle(:radius="6")
@@ -11,18 +11,18 @@ div.planner-map
           vl-style-stroke(color="#666666" :width="1")
     // Add markers for mission waypoints
     vl-feature
-      vl-geom-multi-point(:coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
+      vl-geom-multi-point(v-if="waypoints.length > 0" :coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
       vl-style-box
         vl-style-circle(:radius="10")
           vl-style-fill(color="rgba(35,245,35,0.5)")
           vl-style-stroke(color="#666666" :width="1")
     // Add numbers for mission waypoint marker
-    // vl-feature(v-for="(waypoint, index) in waypoints" :key="'markernumber'+index" :properties="{prop: 'value', prop2: 'value'}")
+    vl-feature(v-if="waypoints.length > 0" v-for="(waypoint, index) in waypoints" :key="'markernumber'+index" :properties="{prop: 'value', prop2: 'value'}")
       vl-overlay(v-if="waypoint.longitude && waypoint.latitude" :position="[waypoint.longitude, waypoint.latitude]")
         span.markernumber.caption(v-html="index")
     // Add lines to join the markers
     vl-feature
-      vl-geom-line-string(:coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
+      vl-geom-line-string(v-if="waypoints.length > 0" :coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
     // Draw the map layer
     vl-layer-tile(v-if="mapLayer=='osm'")
       vl-source-osm
@@ -71,6 +71,7 @@ import { waypointsQuery, waypointsSubscription } from '../../../graphql/gql/Wayp
 import Vue from 'vue'
 import VueLayers from 'vuelayers'
 import 'vuelayers/lib/style.css'
+
 Vue.use(VueLayers, {
   dataProjection: 'EPSG:4326'
 })
@@ -143,29 +144,13 @@ export default {
 
   apollo: {
     $client () { return this.activeApi },
-    navSatFixMessage: {
-      query: navSatFixQuery,
-      manual: true,
-      result ({ data, loading }) {
-        if (!loading) {
-          this.navSatFixMessage = data.navSatFixMessage
-        }
-      }
-    },
-    waypoints: {
-      query: waypointsQuery,
-      manual: true,
-      result ({ data, loading }) {
-        if (!loading) {
-          this.waypoints = data.waypoints
-          console.log(data.waypoints)
-        }
-      }
-    },
+    navSatFixMessage: navSatFixQuery,
+    waypoints: waypointsQuery,
     $subscribe: {
       navSatFixMessage: {
         query: navSatFixSubscription,
         result ({ data }) {
+          // Only update if position has changed and ticker is turned on
           if (this.navSatFixMessage !== data.navSatFixMessage && this.tickers['navSatFixMessage']) {
             this.navSatFixMessage = data.navSatFixMessage
             this.tickers['navSatFixMessage'] = false // Turn the ticker off until the next interval
@@ -179,9 +164,6 @@ export default {
           console.log(data)
         }
       }
-    },
-    error (error) {
-      console.log('Waypoints graphql error:' + error)
     }
   }
 }
