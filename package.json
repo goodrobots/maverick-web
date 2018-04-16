@@ -34,7 +34,7 @@
     "vue-fullscreen": "^2.1.3",
     "vue-router": "^3.0.1",
     "vue-timers": "^1.2.0",
-    "vuelayers": "^0.10.4",
+    "vuelayers": "^0.10.5",
     "vuetify": "^1.0.14",
     "vuex": "^3.0.1"
   },
