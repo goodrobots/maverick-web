@@ -7,10 +7,17 @@ import Vuetify from 'vuetify'
 import colors from 'vuetify/es5/util/colors'
 import { apolloProvider } from './graphql/vue-apollo'
 import VueTimers from 'vue-timers'
-
+import VueLayers from 'vuelayers'
+import 'vuelayers/lib/style.css'
 import './stylus/main.styl'
 
+// Declare timers that are used throughout components to rate limit
 Vue.use(VueTimers)
+
+// Import vuelayers and declare global projection to gps standard
+Vue.use(VueLayers, {
+  dataProjection: 'EPSG:4326'
+})
 
 // Sync the vuex store with router
 sync(store, router)

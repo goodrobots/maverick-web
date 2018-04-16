@@ -1,28 +1,28 @@
 <template lang='pug'>
 div.cockpit-map
-  vl-map.vlmap(data-projection="EPSG:4326" ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true", :controls="{attribution: false, zoom: true}")
+  vl-map.vlmap(ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true", :controls="{attribution: false, zoom: true}")
     vl-view(v-if="xy.length > 0" :zoom="14" :center="xy" :rotation="0")
-    // Add marker for vehicle
-    vl-feature(id="vehiclemarker" ref="vehiclemarker" :properties="{prop: 'value', prop2: 'value'}")
-      vl-geom-point(v-if="xy.length > 0" :coordinates="xy")
-      vl-style-box
-        vl-style-circle(:radius="6")
-          vl-style-fill(color="rgba(245,35,35,0.8)")
-          vl-style-stroke(color="#666666" :width="1")
     // Add markers for mission waypoints
-    vl-feature(v-for="(waypoint, index) in waypoints" :key="'marker'+index" :properties="{prop: 'value', prop2: 'value'}")
-      vl-geom-point(:coordinates="[waypoint.longitude, waypoint.latitude]")
+    vl-feature
+      vl-geom-multi-point(v-if="waypoints.length > 0" :coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
       vl-style-box
         vl-style-circle(:radius="10")
           vl-style-fill(color="rgba(35,245,35,0.5)")
           vl-style-stroke(color="#666666" :width="1")
     // Add numbers for mission waypoint marker
-    vl-feature(v-for="(waypoint, index) in waypoints" :key="'markernumber'+index" :properties="{prop: 'value', prop2: 'value'}")
-      vl-overlay(:position="[waypoint.longitude, waypoint.latitude]")
+    vl-feature(v-if="waypoints.length > 0" v-for="(waypoint, index) in waypoints" :key="'markernumber'+index")
+      vl-overlay(v-if="waypoint.longitude && waypoint.latitude" :position="[waypoint.longitude, waypoint.latitude]")
         span.markernumber.caption(v-html="index")
     // Add lines to join the markers
     vl-feature
-      vl-geom-line-string(:coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
+      vl-geom-line-string(v-if="waypoints.length > 0" :coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
+    // Add marker for vehicle
+    vl-feature(id="vehiclemarker" ref="vehiclemarker")
+      vl-geom-point(v-if="xy.length > 0" :coordinates="xy")
+      vl-style-box
+        vl-style-circle(:radius="6")
+          vl-style-fill(color="rgba(245,35,35,0.8)")
+          vl-style-stroke(color="#666666" :width="1")
     // Draw map layer
     vl-layer-tile
       vl-source-xyz(key="googleterrain" url="http://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}")
@@ -31,10 +31,6 @@ div.cockpit-map
 <script>
 import { navSatFixQuery, navSatFixSubscription } from '../../../graphql/gql/NavSatFixMessage.gql'
 import { waypointsQuery, waypointsSubscription } from '../../../graphql/gql/Waypoints.gql'
-import Vue from 'vue'
-import VueLayers from 'vuelayers'
-import 'vuelayers/lib/style.css'
-Vue.use(VueLayers)
 
 export default {
   data () {

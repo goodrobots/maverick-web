@@ -2,13 +2,6 @@
 div.planner-map
   vl-map(ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true", :controls="{attribution: false, zoom: false}")
     vl-view(v-if="xycenter.length > 0" :zoom="mapZoom" :center="xycenter" :rotation="0")
-    // Add marker for vehicle
-    vl-feature(id="vehiclemarker" ref="vehiclemarker")
-      vl-geom-point(v-if="xy.length > 0" :coordinates="xy")
-      vl-style-box
-        vl-style-circle(:radius="6")
-          vl-style-fill(color="rgba(245,35,35,0.8)")
-          vl-style-stroke(color="#666666" :width="1")
     // Add markers for mission waypoints
     vl-feature
       vl-geom-multi-point(v-if="waypoints.length > 0" :coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
@@ -17,12 +10,19 @@ div.planner-map
           vl-style-fill(color="rgba(35,245,35,0.5)")
           vl-style-stroke(color="#666666" :width="1")
     // Add numbers for mission waypoint marker
-    vl-feature(v-if="waypoints.length > 0" v-for="(waypoint, index) in waypoints" :key="'markernumber'+index" :properties="{prop: 'value', prop2: 'value'}")
+    vl-feature(v-if="waypoints.length > 0" v-for="(waypoint, index) in waypoints" :key="'markernumber'+index")
       vl-overlay(v-if="waypoint.longitude && waypoint.latitude" :position="[waypoint.longitude, waypoint.latitude]")
         span.markernumber.caption(v-html="index")
     // Add lines to join the markers
     vl-feature
       vl-geom-line-string(v-if="waypoints.length > 0" :coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
+    // Add marker for vehicle
+    vl-feature(id="vehiclemarker" ref="vehiclemarker")
+      vl-geom-point(v-if="xy.length > 0" :coordinates="xy")
+      vl-style-box
+        vl-style-circle(:radius="6")
+          vl-style-fill(color="rgba(245,35,35,0.8)")
+          vl-style-stroke(color="#666666" :width="1")
     // Draw the map layer
     vl-layer-tile(v-if="mapLayer=='osm'")
       vl-source-osm
@@ -68,13 +68,6 @@ div.planner-map
 <script>
 import { navSatFixQuery, navSatFixSubscription } from '../../../graphql/gql/NavSatFixMessage.gql'
 import { waypointsQuery, waypointsSubscription } from '../../../graphql/gql/Waypoints.gql'
-import Vue from 'vue'
-import VueLayers from 'vuelayers'
-import 'vuelayers/lib/style.css'
-
-Vue.use(VueLayers, {
-  dataProjection: 'EPSG:4326'
-})
 
 export default {
   data () {
