@@ -41,7 +41,7 @@ export default {
 
   // Use timers to set intervals for each message so we can limit the update frequency in the client
   timers: {
-    setTickers: { time: 500, autostart: true, repeat: true }
+    setTickers: { time: 200, autostart: true, repeat: true }
   },
 
   computed: {
@@ -96,26 +96,7 @@ export default {
   // Setup grqphql imu message stream
   apollo: {
     $client () { return this.activeApi },
-    imuMessage: {
-      query: imuQuery,
-      manual: true,
-      result ({ data, loading }) {
-        if (!loading) {
-          this.imuMessage = data.imuMessage
-          console.log('imuMessage Query')
-        }
-      }
-      /*
-      subscribeToMore: {
-        document: imuSubscription,
-        updateQuery: (previousResult, { subscriptionData }) => {
-          return {
-            imuMessage: subscriptionData.data.imuMessage
-          }
-        }
-      }
-      */
-    },
+    imuMessage: imuQuery,
     $subscribe: {
       imuMessage: {
         query: imuSubscription,
