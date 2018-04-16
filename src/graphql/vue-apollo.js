@@ -27,6 +27,7 @@ export const devSitlClient = createApolloClient({
   persisting: false,
   subscriptions: true
 })
+/*
 export const devPx4sitlClient = createApolloClient({
   ssr: false,
   base: location.protocol + '//dev.maverick.one/web/api/px4sitl',
@@ -47,13 +48,14 @@ export const wwwClient = createApolloClient({
   persisting: false,
   subscriptions: true
 })
+*/
 
 // Create vue apollo provider
 export const apolloProvider = new VueApollo({
   clients: {
-    wwwSitl: wwwClient,
-    devSitl: devSitlClient,
-    devPx4sitl: devPx4sitlClient
+    // wwwSitl: wwwClient,
+    devSitl: devSitlClient
+    // devPx4sitl: devPx4sitlClient
   },
-  defaultClient: wwwClient
+  defaultClient: devSitlClient
 })
