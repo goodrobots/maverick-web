@@ -25,6 +25,7 @@ Vue.use(Vuetify, {
 })
 
 Vue.config.productionTip = false
+Vue.config.devtools = true // Explicitly enable devtools, even in production builds
 
 /* eslint-disable no-new */
 window.App = new Vue({
