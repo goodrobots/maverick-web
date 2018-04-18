@@ -1,37 +1,55 @@
 <template lang='pug'>
-transition(name="slide-y-transition" mode="out-in")
-  v-toolbar(fixed dense clipped-left :color="navColor" app)
-    v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" flat disabled left small): img(src='static/img/logos/maverick-text-logo-dark.svg' height='75%')
-    v-spacer
-    v-toolbar-items
-      // Armed/Disarmed button
-      v-btn(v-if="stateMessage.armed" color="yellow" flat) ARMED
-      v-btn.transparent(v-else flat ripple=false) DISARMED
-      // Mode button
-      v-btn.transparent(v-html="stateMessage.mode" depressed)
-      // v-select(:items="flightModes" overflow :label="stateMessage.mode")
-      // Altitude button
-      v-btn.transparent(v-if="vfrHudMessage.altitude" v-html="'Alt<br>' + vfrHudMessage.altitude.toFixed(2) + 'm'" flat ripple=false)
-      // Heading button
-      v-btn.transparent(v-if="vfrHudMessage.heading && !$vuetify.breakpoint.smAndDown" v-html="'Hdg<br>' + vfrHudMessage.heading" flat ripple=false)
-      // Speed button
-      v-btn.transparent(v-if="vfrHudMessage.groundspeed && !$vuetify.breakpoint.smAndDown" v-html="'Spd<br>' + vfrHudMessage.groundspeed.toFixed(2)" flat ripple=false)
-    v-spacer
-    v-toolbar-items
-      v-menu(offset-y)
-        v-btn(flat slot="activator", v-text="apis[activeApi]")
-        v-list
-          v-list-tile(v-for="(api, key) in apis" :key="api" @click='changeApi(key)')
-            v-list-tile-title(v-text="api")
-    v-fade-transition(mode="out-in")
-      v-toolbar-side-icon(v-if="navIcon" @click.stop="toggleDrawer")
+v-content
+  transition(name="slide-y-transition" mode="out-in")
+    v-toolbar(fixed dense clipped-left :color="navColor" app)
+      v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" flat disabled left small): img(src='static/img/logos/maverick-text-logo-dark.svg' height='75%')
+      v-spacer
+      v-toolbar-items
+        // StatusText Messages
+        transition(name="fade-transition" mode="out-in")
+          v-menu(offset-y v-if="statusTextMessages.length > 0" :max-height="height - 100")
+            v-btn(flat slot="activator")
+              v-icon warning
+            v-list(two-line subheader dense)
+              v-subheader Messages
+                v-btn(flat @click="statusTextMessages = []")
+                  v-icon(small) delete
+              v-list-tile(v-for="(message, index) in statusTextMessages" :key="index")
+                v-list-tile-content
+                  v-list-tile-title(v-text="message.message")
+                  v-list-tile-sub-title(v-text="(fcTime - message.secs > 60) ? Math.round((fcTime - message.secs) / 60) + ' minutes ago' : fcTime - message.secs + ' seconds ago'")
+        // Armed/Disarmed button
+        v-btn(v-if="stateMessage.armed" color="yellow" flat) ARMED
+        v-btn.transparent(v-else flat ripple=false) DISARMED
+        // Mode button
+        v-btn.transparent(v-html="stateMessage.mode" depressed)
+        // v-select(:items="flightModes" overflow :label="stateMessage.mode")
+        // Altitude button
+        v-btn.transparent(v-if="vfrHudMessage.altitude" v-html="'Alt<br>' + vfrHudMessage.altitude.toFixed(2) + 'm'" flat ripple=false)
+        // Heading button
+        v-btn.transparent(v-if="vfrHudMessage.heading && !$vuetify.breakpoint.smAndDown" v-html="'Hdg<br>' + vfrHudMessage.heading" flat ripple=false)
+        // Speed button
+        v-btn.transparent(v-if="vfrHudMessage.groundspeed && !$vuetify.breakpoint.smAndDown" v-html="'Spd<br>' + vfrHudMessage.groundspeed.toFixed(2)" flat ripple=false)
+      v-spacer
+      v-toolbar-items
+        v-menu(offset-y)
+          v-btn(flat slot="activator" v-text="apis[activeApi]")
+          v-list
+            v-list-tile(v-for="(api, key) in apis" :key="api" @click='changeApi(key)')
+              v-list-tile-title(v-text="api")
+      v-fade-transition(mode="out-in")
+        v-toolbar-side-icon(v-if="navIcon" @click.stop="toggleDrawer")
+  v-snackbar(:timeout="6000" color="red" :top="true" v-model="snackbar") {{ statusTextMessage.message }}
+    v-btn(flat @click.native="snackbar = false") CLOSE
 </template>
 
 <script>
-import { vfrHudQuery, vfrHudSubscription, vfrHudMutate } from '../../graphql/gql/VfrHudMessage.gql'
-import { stateQuery, stateSubscription, stateMutate } from '../../graphql/gql/StateMessage.gql'
+import { vfrHudQuery, vfrHudSubscription } from '../../graphql/gql/VfrHudMessage.gql'
+import { stateQuery, stateSubscription } from '../../graphql/gql/StateMessage.gql'
+import { statusTextQuery, statusTextSubscription } from '../../graphql/gql/StatusTextMessage.gql'
 
 export default {
+  name: 'TopNav',
   data () {
     return {
       stateMessage: [],
@@ -43,7 +61,11 @@ export default {
       tickers: {
         'stateMessage': false,
         'vfrHudMessage': false
-      }
+      },
+      snackbar: false,
+      statusTextMessage: '',
+      statusTextMessages: [],
+      fcTime: null
     }
   },
 
@@ -58,7 +80,8 @@ export default {
     navColor () { return this.$store.state.navColor },
     navDrawer () { return this.$store.state.navDrawer },
     apis () { return this.$store.state.apis },
-    activeApi () { return this.$store.state.activeApi }
+    activeApi () { return this.$store.state.activeApi },
+    height () { return window.innerHeight }
   },
 
   methods: {
@@ -78,29 +101,9 @@ export default {
     $client () { return this.activeApi },
 
     // Setup apollo queries
-    vfrHudMessage: {
-      client: this.activeApi,
-      query: vfrHudQuery,
-      manual: true,
-      result ({ data, loading }) {
-        if (!loading) {
-          this.vfrHudMessage = data.vfrHudMessage
-          // console.log('vfrHudMessage Query')
-        }
-      },
-      mutation: vfrHudMutate
-    },
-    stateMessage: {
-      client: this.activeApi,
-      query: stateQuery,
-      manual: true,
-      result ({ data, loading }) {
-        if (!loading) {
-          this.stateMessage = data.stateMessage
-        }
-      },
-      mutation: stateMutate
-    },
+    statusTextMessage: statusTextQuery,
+    vfrHudMessage: vfrHudQuery,
+    stateMessage: stateQuery,
 
     // Setup apollo subscriptions to run once every ticker interval
     $subscribe: {
@@ -119,13 +122,20 @@ export default {
           if (this.stateMessage !== data.stateMessage && this.tickers['stateMessage']) {
             this.stateMessage = data.stateMessage
             this.tickers['stateMessage'] = false // Turn the ticker off until the next interval
+            this.fcTime = data.stateMessage.secs
           }
+        }
+      },
+      statusTextMessage: {
+        query: statusTextSubscription,
+        result ({ data }) {
+          this.statusTextMessage = data.statusTextMessage
+          this.statusTextMessages.unshift(data.statusTextMessage)
+          this.snackbar = true
         }
       }
     }
-  },
-
-  name: 'TopNav'
+  }
 }
 </script>
 
