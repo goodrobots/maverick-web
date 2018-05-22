@@ -13,6 +13,8 @@ import ConfigParamGroups from '../components/modules/config/ConfigParamGroups'
 import ConfigParamFilter from '../components/modules/config/ConfigParamFilter'
 
 import AnalysisModule from '../components/modules/analysis/AnalysisModule'
+import AnalysisIndex from '../components/modules/analysis/AnalysisIndex'
+import AnalysisLogfile from '../components/modules/analysis/AnalysisLogfile'
 
 Vue.use(Router)
 
@@ -58,8 +60,21 @@ export default new Router({
     },
     {
       path: '/analysis',
-      name: 'AnalysisModule',
-      component: AnalysisModule
+      component: AnalysisModule,
+      children: [
+        {
+          path: '',
+          redirect: 'analysis-index'
+        },
+        {
+          path: 'analysis-index',
+          component: AnalysisIndex
+        },
+        {
+          path: 'analysis-logfile/:id',
+          component: AnalysisLogfile
+        }
+      ]
     }
   ]
 })

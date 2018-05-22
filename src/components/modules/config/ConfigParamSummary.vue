@@ -61,7 +61,7 @@ v-container.fluid.grid-list-xl
 
 <script>
 import Vue from 'vue'
-import { paramsQuery, paramsSubscription, updateParam } from '../../../graphql/gql/Parameters.gql'
+import { paramsQuery, paramsSubscription, updateParam } from '../../../graphql/Parameters.gql'
 export default {
   name: 'ConfigParamSummary',
   data () {

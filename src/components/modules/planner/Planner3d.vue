@@ -6,9 +6,9 @@ div#cesiumContainer
 import Cesium from 'cesium/Cesium'
 import 'cesium/Widgets/widgets.css'
 
-import { navSatFixQuery, navSatFixSubscription, navSatFixMutate } from '../../../graphql/gql/NavSatFixMessage.gql'
-import { imuQuery, imuSubscription, imuMutate } from '../../../graphql/gql/ImuMessage.gql'
-import { vfrHudQuery, vfrHudSubscription, vfrHudMutate } from '../../../graphql/gql/VfrHudMessage.gql'
+import { navSatFixQuery, navSatFixSubscription, navSatFixMutate } from '../../../graphql/NavSatFixMessage.gql'
+import { imuQuery, imuSubscription, imuMutate } from '../../../graphql/ImuMessage.gql'
+import { vfrHudQuery, vfrHudSubscription, vfrHudMutate } from '../../../graphql/VfrHudMessage.gql'
 
 export default {
   data () {
@@ -163,7 +163,7 @@ export default {
   padding: 0;
   overflow: hidden;
 }
- 
+
 body .cesium-viewer .cesium-widget-credits {
   display: none;
   position: static;

@@ -109,7 +109,7 @@ v-container.px-2.py-2(fluid grid-list-xl)
               td(v-html="highlight(props.item.id, search)")
               td(v-html="valueFormat(props.item)")
               td(v-if="props.item.meta && props.item.meta.humanName" v-html="highlight(props.item.meta.humanName, search)")
-              td(v-else) -- 
+              td(v-else) --
           //- Expand row with meta data about parameter
           template(slot="expand" slot-scope="props")
             v-card(flat)
@@ -139,7 +139,7 @@ v-container.px-2.py-2(fluid grid-list-xl)
 
 <script>
 import Vue from 'vue'
-import { paramsQuery, paramsSubscription, updateParam } from '../../../graphql/gql/Parameters.gql'
+import { paramsQuery, paramsSubscription, updateParam } from '../../../graphql/Parameters.gql'
 export default {
   name: 'ConfigParamFilter',
   data () {

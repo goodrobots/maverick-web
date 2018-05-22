@@ -35,13 +35,13 @@ div.planner-map
     vl-layer-tile(v-if="mapLayer=='bingbirdseye'")
       vl-source-bing-maps(:api-key="bingMapsKey" imagery-set="BirdseyeV2WithLabels" hidpi=true )
     vl-layer-tile(v-if="mapLayer=='googleroad'")
-      vl-source-xyz(key="googleroad" url="http://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}")
+      vl-source-xyz(key="googleroad" url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}")
     vl-layer-tile(v-if="mapLayer=='googlesatellite'")
-      vl-source-xyz(key="googlesatellite" url="http://mt1.google.com/vt/lyrs=s&hl=pl&&x={x}&y={y}&z={z}")
+      vl-source-xyz(key="googlesatellite" url="https://mt1.google.com/vt/lyrs=s&hl=pl&&x={x}&y={y}&z={z}")
     vl-layer-tile(v-if="mapLayer=='googlehybrid'")
-      vl-source-xyz(key="googlehybrid" url="http://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}")
+      vl-source-xyz(key="googlehybrid" url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}")
     vl-layer-tile(v-if="mapLayer=='googleterrain'")
-      vl-source-xyz(key="googleterrain" url="http://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}")
+      vl-source-xyz(key="googleterrain" url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}")
   div.mapmenu
     v-menu(offset-x :close-on-content-click="false" :nudge-width="200" :nudge-right="10" v-model="mapmenu")
       v-btn(:color="navColor" slot="activator") Map Options
@@ -57,7 +57,7 @@ div.planner-map
             v-flex(xs3)
               v-subheader.subheading Layer
             v-flex(xs9)
-              v-select(:items="maplayers" overflow v-model="mapLayer" label="Map Layer")
+              v-overflow-btn(:items="maplayers" v-model="mapLayer" label="Map Layer")
           v-layout(row wrap)
             v-flex(xs3)
               v-subheader.subheading Center
@@ -66,15 +66,14 @@ div.planner-map
 </template>
 
 <script>
-import { navSatFixQuery, navSatFixSubscription } from '../../../graphql/gql/NavSatFixMessage.gql'
-import { waypointsQuery, waypointsSubscription } from '../../../graphql/gql/Waypoints.gql'
+import { navSatFixQuery, navSatFixSubscription } from '../../../graphql/NavSatFixMessage.gql'
+import { waypointsQuery, waypointsSubscription } from '../../../graphql/Waypoints.gql'
 
 export default {
   data () {
     return {
       navSatFixMessage: [],
       waypoints: [],
-      centercoords: [],
       mapmenu: false,
       maplayers: [
         { value: 'osm', text: 'OpenStreetMap' },
@@ -121,11 +120,13 @@ export default {
       return (xy[0] && xy[1]) ? xy : []
     },
     xycenter () {
+      return this.centercoords
+    },
+    centercoords () {
       // If follow option set, or centercoords empty, set centercoords from current position
       if (this.mapCenter || (this.centercoords.length === 0 && this.xy.length > 0)) {
-        this.centercoords = this.xy
+        return this.xy
       }
-      return this.centercoords
     }
   },
 

@@ -1,7 +1,7 @@
 <template lang='pug'>
-v-content
-  v-container(fluid grid-list-xl)
-    v-layout(row wrap)
+div
+  v-content
+    router-view(:key="activeApi")
 </template>
 
 <script>
@@ -11,11 +11,13 @@ export default {
     return {
     }
   },
+  computed: {
+    activeApi () { return this.$store.state.activeApi }
+  },
   components: {
   }
 }
 </script>
 
 <style>
-    
 </style>

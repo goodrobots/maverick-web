@@ -50,7 +50,7 @@ v-container(fluid grid-list-xl)
                   td.justify-center.px-0.text-xs-right
                     v-btn.mx-0(icon @click.stop="editItem(props.item)")
                       v-icon edit
-              template(slot="expand" slot-scope="props")  
+              template(slot="expand" slot-scope="props")
                 v-card(flat)
                   v-card-text
                     table.px-0.py-0
@@ -73,7 +73,7 @@ v-container(fluid grid-list-xl)
 </template>
 
 <script>
-import { paramsQuery, paramsSubscription, updateParam } from '../../../graphql/gql/Parameters.gql'
+import { paramsQuery, paramsSubscription, updateParam } from '../../../graphql/Parameters.gql'
 export default {
   name: 'ConfigParamGroups',
   data () {

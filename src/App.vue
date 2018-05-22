@@ -1,11 +1,11 @@
 <template lang='pug'>
 div#fullscreen
   v-app(:class="{'theme--dark': themeType}")
-    top-nav(v-if="navState" :key="activeApi")
     v-fade-transition(mode="out-in")
       router-view
-    bottom-nav(v-if="navState && $vuetify.breakpoint.smAndDown")
-  action-button(v-if="this.moduleName !== 'home' && !$vuetify.breakpoint.smAndDown" :class="{'theme--dark': themeType}")
+    // bottom-nav(v-if="navState && $vuetify.breakpoint.smAndDown")
+    top-nav(v-if="navState" :key="activeApi")
+  action-button(v-if="this.moduleName !== 'home'" :class="{'theme--dark': themeType}")
 </template>
 
 <script>

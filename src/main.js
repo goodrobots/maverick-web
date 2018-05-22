@@ -1,11 +1,12 @@
+import '@babel/polyfill'
 import Vue from 'vue'
-import App from './App'
+import './plugins/vuetify'
+import App from './App.vue'
 import { sync } from 'vuex-router-sync'
 import router from './router'
 import store from './store'
-import Vuetify from 'vuetify'
-import colors from 'vuetify/es5/util/colors'
-import { apolloProvider } from './graphql/vue-apollo'
+import './registerServiceWorker'
+import { apolloProvider } from './plugins/apollo/vue-apollo'
 import VueTimers from 'vue-timers'
 import VueLayers from 'vuelayers'
 import 'vuelayers/lib/style.css'
@@ -22,19 +23,19 @@ Vue.use(VueLayers, {
 // Sync the vuex store with router
 sync(store, router)
 
-Vue.use(Vuetify, {
-  theme: {
-    primary: colors.blue.base,
-    secondary: colors.grey.darken1,
-    accent: colors.shades.black,
-    error: colors.red.accent3
-  }
-})
-
 Vue.config.productionTip = false
-Vue.config.devtools = true // Explicitly enable devtools, even in production builds
+// Vue.config.devtools = true // Explicitly enable devtools, even in production builds
 
 /* eslint-disable no-new */
+window.App = new Vue({
+  provide: apolloProvider.provide(),
+  router,
+  store,
+  render: h => h(App)
+}).$mount('#app')
+
+/* eslint-disable no-new */
+/*
 window.App = new Vue({
   provide: apolloProvider.provide(),
   el: '#app',
@@ -43,3 +44,4 @@ window.App = new Vue({
   components: { App },
   template: '<App/>'
 })
+*/

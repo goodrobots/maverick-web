@@ -1,5 +1,5 @@
 <script>
-import { imuQuery, imuSubscription } from '../../../graphql/gql/ImuMessage.gql'
+import { imuQuery, imuSubscription } from '../../../graphql/ImuMessage.gql'
 import colors from 'vuetify/es5/util/colors'
 import { colorToInt } from 'vuetify/es5/util/colorUtils'
 
@@ -26,7 +26,6 @@ export default {
       pitchHorizon: new this.CockpitObject.PIXI.Graphics(),
       horizonMarkings: new this.CockpitObject.PIXI.Graphics(),
       filledHorizon: true,
-      pitchNumbers: {},
       ladderSteps: 6,
       ladderWidth: 50,
       imuMessage: [],
@@ -37,6 +36,8 @@ export default {
     }
   },
 
+  // Deliberately return a blank render
+  // eslint-disable-next-line
   render () {},
 
   // Use timers to set intervals for each message so we can limit the update frequency in the client
@@ -78,10 +79,19 @@ export default {
         for (let counter = 0; counter < this.ladderSteps * 3; counter += 1) {
           const counterindex = (direction) ? counter : -counter
           lines[counterindex] = new this.CockpitObject.PIXI.Graphics()
-          this.pitchNumbers[counterindex] = new this.CockpitObject.PIXI.Text()
         }
       }
       return lines
+    },
+    pitchNumbers () {
+      let numbers = {}
+      for (let direction of [true, false]) {
+        for (let counter = 0; counter < this.ladderSteps * 3; counter += 1) {
+          const counterindex = (direction) ? counter : -counter
+          numbers[counterindex] = new this.CockpitObject.PIXI.Text()
+        }
+      }
+      return numbers
     },
     // Convert quaternion orientation to euler angles
     eulerRpy () {

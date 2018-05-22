@@ -2,7 +2,7 @@
 v-content
   transition(name="slide-y-transition" mode="out-in")
     v-toolbar(fixed dense clipped-left :color="navColor" app)
-      v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" flat disabled left small): img(src='static/img/logos/maverick-text-logo-dark.svg' height='75%')
+      v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" flat disabled left small): img(src='@/assets/img/logos/maverick-text-logo-dark.svg' height='75%')
       v-spacer
       v-toolbar-items
         // StatusText Messages
@@ -44,9 +44,9 @@ v-content
 </template>
 
 <script>
-import { vfrHudQuery, vfrHudSubscription } from '../../graphql/gql/VfrHudMessage.gql'
-import { stateQuery, stateSubscription } from '../../graphql/gql/StateMessage.gql'
-import { statusTextQuery, statusTextSubscription } from '../../graphql/gql/StatusTextMessage.gql'
+import { vfrHudQuery, vfrHudSubscription } from '../../graphql/VfrHudMessage.gql'
+import { stateQuery, stateSubscription } from '../../graphql/StateMessage.gql'
+import { statusTextQuery, statusTextSubscription } from '../../graphql/StatusTextMessage.gql'
 
 export default {
   name: 'TopNav',

@@ -109,11 +109,11 @@ export default {
 }
 </script>
 
-<style>
-  .navfab .speed-dial {
-    position: absolute;
-    bottom: 40px;
-    right: 40px;
+<style scoped>
+  .navfab .v-speed-dial {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
   }
 
   .navfab .btn--floating {

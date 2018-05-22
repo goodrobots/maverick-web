@@ -25,12 +25,12 @@ div.cockpit-map
           vl-style-stroke(color="#666666" :width="1")
     // Draw map layer
     vl-layer-tile
-      vl-source-xyz(key="googleterrain" url="http://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}")
+      vl-source-xyz(key="googleterrain" url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}")
 </template>
 
 <script>
-import { navSatFixQuery, navSatFixSubscription } from '../../../graphql/gql/NavSatFixMessage.gql'
-import { waypointsQuery, waypointsSubscription } from '../../../graphql/gql/Waypoints.gql'
+import { navSatFixQuery, navSatFixSubscription } from '../../../graphql/NavSatFixMessage.gql'
+import { waypointsQuery, waypointsSubscription } from '../../../graphql/Waypoints.gql'
 
 export default {
   data () {
@@ -101,7 +101,7 @@ export default {
   left: 0;
   margin: 75px;
   height: 25%;
-  max-width: 50%;
+  max-width: 25%;
   z-index: 10;
   border: 2px solid white;
   border-radius: 10px;
