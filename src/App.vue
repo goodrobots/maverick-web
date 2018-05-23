@@ -2,7 +2,8 @@
 div#fullscreen
   v-app(:class="{'theme--dark': themeType}")
     v-fade-transition(mode="out-in")
-      router-view
+      keep-alive(include="PlannerModule") // cache the planner module to prevent from being destroyed on component change
+        router-view
     // bottom-nav(v-if="navState && $vuetify.breakpoint.smAndDown")
     top-nav(v-if="navState" :key="activeApi")
   action-button(v-if="this.moduleName !== 'home'" :class="{'theme--dark': themeType}")
