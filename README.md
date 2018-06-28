@@ -15,14 +15,16 @@ The experimental static minified production site is available here: http://dev.m
 
 ``` bash
 # install dependencies
-npm install
+npm -g install yarn
+npm -g install @vue/cli
+yarn install
 
 # serve with hot reload at localhost:6794
-npm run dev
+yarn run serve
 
 # build for production with minification
-npm run build
+yarn run build
 
 # build for production and view the bundle analyzer report
-npm run build --report
+yarn run build --report
 ```
