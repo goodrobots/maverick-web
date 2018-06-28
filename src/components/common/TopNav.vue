@@ -2,7 +2,7 @@
 v-content
   transition(name="slide-y-transition" mode="out-in")
     v-toolbar(fixed dense clipped-left :color="navColor" app)
-      v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" flat disabled left small): img(src='@/assets/img/logos/maverick-text-logo-dark.svg' height='75%')
+      v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" flat disabled left small): img(src='@/assets/img/logos/mavlogo-orangewhite.svg' height='75%')
       v-spacer
       v-toolbar-items
         // StatusText Messages
