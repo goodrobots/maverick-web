@@ -6,7 +6,7 @@ import { sync } from 'vuex-router-sync'
 import router from './router'
 import store from './store'
 import './registerServiceWorker'
-import { apolloProvider } from './plugins/apollo/vue-apollo'
+import { createProvider } from './plugins/apollo/vue-apollo'
 import VueTimers from 'vue-timers'
 import VueLayers from 'vuelayers'
 import 'vuelayers/lib/style.css'
@@ -28,20 +28,8 @@ Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 window.App = new Vue({
-  provide: apolloProvider.provide(),
+  provide: createProvider().provide(),
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
-
-/* eslint-disable no-new */
-/*
-window.App = new Vue({
-  provide: apolloProvider.provide(),
-  el: '#app',
-  router,
-  store,
-  components: { App },
-  template: '<App/>'
-})
-*/

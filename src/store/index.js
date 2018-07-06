@@ -21,11 +21,12 @@ export default new Vuex.Store({
     fullScreen: false,
     moduleName: null,
     apis: {
-      'devSitl': 'Dev VM: SITL'
+      'defaultClient': 'Local Flight Controller',
+      // 'devSitl': 'Dev VM: SITL'
       // 'devPx4sitl': 'Dev VM: PX4 SITL',
       // 'wwwSitl': 'WWW VM: SITL'
     },
-    activeApi: 'devSitl',
+    activeApi: 'defaultClient',
     bingMapsKey: 'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6'
   },
   mutations: {
