@@ -28,8 +28,9 @@ Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 window.App = new Vue({
+  el: '#app',
   provide: createProvider().provide(),
   router,
   store,
   render: h => h(App)
-}).$mount('#app')
+})
