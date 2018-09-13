@@ -1,8 +1,6 @@
 {
   "name": "maverick-web",
   "version": "0.9.3-alpha",
-  "description": "Maverick Web",
-  "author": "fnoop <fnoopdogg@gmail.com>",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -48,16 +46,17 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.0-rc.3",
     "@vue/cli-plugin-eslint": "^3.0.0-rc.3",
+    "@vue/cli-plugin-pwa": "^3.0.0-rc.3",
     "@vue/cli-service": "^3.0.0-rc.3",
     "@vue/cli-shared-utils": "^3.0.0-rc.3",
-    "eslint": "^4.10.0",
     "@vue/eslint-config-standard": "3.0.0-rc.3",
+    "eslint": "^4.10.0",
+    "eslint-plugin-graphql": "^2.1.1",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-node": "^6.0.0",
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-standard": "^3.0.1",
     "eslint-plugin-vue": "^4.2.2",
-    "eslint-plugin-graphql": "^2.1.1",
     "graphql-tag": "^2.9.0",
     "vue-cli-plugin-apollo": "^0.14.6",
     "vue-cli-plugin-vuetify": "^0.1.6",
@@ -68,5 +67,7 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ]
+  ],
+  "description": "Maverick Web",
+  "author": "fnoop <fnoopdogg@gmail.com>"
 }

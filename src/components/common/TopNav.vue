@@ -1,5 +1,5 @@
 <template lang='pug'>
-v-content
+v-toolbar(app fixed clipped-left)
   transition(name="slide-y-transition" mode="out-in")
     v-toolbar(fixed dense clipped-left :color="navColor" app)
       v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" flat disabled left small): img(src='@/assets/img/logos/mavlogo-orangewhite.svg' height='75%')

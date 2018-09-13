@@ -11,6 +11,7 @@ import VueTimers from 'vue-timers'
 import VueLayers from 'vuelayers'
 import 'vuelayers/lib/style.css'
 import './stylus/main.styl'
+import './registerServiceWorker'
 
 // Declare timers that are used throughout components to rate limit
 Vue.use(VueTimers)

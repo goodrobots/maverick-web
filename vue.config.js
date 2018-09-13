@@ -7,7 +7,7 @@ const cesiumWorkers = '../Build/Cesium/Workers'
 module.exports = {
   // Project deployment base
   baseUrl: './',
-  // devBaseUrl: '/dev/maverick/',
+  // baseUrl: '/dev/maverick',
 
   // where to output built files
   outputDir: 'dist',
@@ -124,13 +124,21 @@ module.exports = {
   devServer: {
     open: false,
     host: '0.0.0.0',
+    // public: 'dev.maverick.one/dev/maverick',
     disableHostCheck: true,
     port: 6794,
     https: false,
-    hotOnly: false,
+    hotOnly: true,
     overlay: true,
     proxy: null, // string | Object
-    before: app => {}
+    before: app => {},
+    clientLogLevel: 'warning',
+    inline: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
+    }
   },
 
   // options for 3rd party plugins

@@ -1,5 +1,5 @@
 <template lang='pug'>
-v-content(:key="activeApi")
+v-content.cockpit-layout(:key="activeApi")
   cockpit-map(v-if="mapState")
   cockpit-renderer(v-if="hudState")
     cockpit-container
@@ -34,3 +34,16 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.cockpit-layout {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+</style>
