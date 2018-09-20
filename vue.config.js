@@ -45,7 +45,7 @@ module.exports = {
       fs: 'empty' // Resolve node module use of fs
     },
     resolve: {
-      extensions: ['*', '.js', '.vue', '.json'],
+      extensions: ['.mjs', '.js', '.vue', '.json'],
       alias: {
         'vue$': 'vue/dist/vue.esm.js',
         '@': path.resolve(__dirname, 'src'),
@@ -67,7 +67,13 @@ module.exports = {
         				debug: false
         			}
         		}
-        	}]
+        	}],
+        	
+        test: /\.mjs$/,
+          type: 'javascript/auto',
+          include: [
+            /node_modules/
+          ]
       }]
     },
     /*
