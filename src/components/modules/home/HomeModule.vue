@@ -4,7 +4,7 @@ v-content
     v-layout(align-center justify-center)
       v-flex(xs12 sm6 md6)
         v-card.transparent.elevation-0
-          v-card-media
+          <v-responsive></v-responsive>
             img(src='@/assets/img/logos/maverick-text-logo-dark.svg' height='85%' width='75%')
         v-container
           v-layout(row wrap justify-center)
@@ -28,14 +28,14 @@ v-content
 <script>
 export default {
   name: 'HomeModule',
+  components: {
+  },
   data () {
     return {
     }
   },
   computed: {
     activeApi () { return this.$store.state.activeApi }
-  },
-  components: {
   }
 }
 </script>

@@ -1,13 +1,19 @@
+/*
+ -- Note: All the commented lines in this file are to do with Cesium support,
+ --  which is temporarily disabled.
+*/
+
 const path = require('path')
 const webpack = require('webpack')
+/*
 const CopywebpackPlugin = require('copy-webpack-plugin')
 const cesiumSource = 'node_modules/cesium/Source'
 const cesiumWorkers = '../Build/Cesium/Workers'
+*/
 
 module.exports = {
   // Project deployment base
-  baseUrl: './',
-  // baseUrl: '/dev/maverick',
+  // baseUrl: process.env.NODE_ENV == 'production' ? '/' : '/dev/maverick/',
 
   // where to output built files
   outputDir: 'dist',
@@ -15,24 +21,25 @@ module.exports = {
   // whether to use eslint-loader for lint on save.
   // valid values: true | false | 'error'
   // when set to 'error', lint errors will cause compilation to fail.
-  lintOnSave: true,
+  lintOnSave: process.env.NODE_ENV !== 'production',
 
-  // use the full build with in-browser compiler?
-  // https://vuejs.org/v2/guide/installation.html#Runtime-Compiler-vs-Runtime-only
-  // compiler: true,
+  runtimeCompiler: true,
 
   // babel-loader skips `node_modules` deps by default.
   // explicitly transpile a dependency with this option.
   transpileDependencies: [/* string or regex */],
 
   // generate sourceMap for production build?
-  productionSourceMap: true,
+  productionSourceMap: false,
 
   // tweak internal webpack configuration.
   // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
-  chainWebpack: config => {
+  chainWebpack: (config) => {
   },
+
+  
   configureWebpack: {
+    /*
     output: {
       filename: '[name].js',
       path: path.resolve(__dirname, 'dist'),
@@ -45,17 +52,37 @@ module.exports = {
       fs: 'empty' // Resolve node module use of fs
     },
     resolve: {
-      extensions: ['.mjs', '.js', '.vue', '.json'],
+      extensions: ['.js', '.vue', '.json'],
       alias: {
-        'vue$': 'vue/dist/vue.esm.js',
-        '@': path.resolve(__dirname, 'src'),
+        // vue$: 'vue/dist/vue.esm.js',
+        // '@': path.resolve(__dirname, 'src'),
         cesium: path.resolve(__dirname, cesiumSource)
       }
     },
+    */
     module: {
+      /*
       unknownContextCritical: false,
+      unknownContextRegExp: /^.\/.*$/,
+      */
       rules: [
-      {
+        /*
+        {
+          test : /\.css$/,
+          use: [
+              "style-loader",
+              "css-loader"
+          ]
+        },
+        {
+          test : /\.(png|gif|jpg|jpeg)$/,
+          use : ["file-loader"]
+        },
+        {
+          test: /\.glsl$/,
+          use: ['file-loader' ]
+        },
+        {
         // Strip cesium pragmas
         test: /\.js$/,
         	enforce: 'pre',
@@ -67,37 +94,43 @@ module.exports = {
         				debug: false
         			}
         		}
-        	}],
-        	
-        test: /\.mjs$/,
-          type: 'javascript/auto',
-          include: [
-            /node_modules/
-          ]
-      }]
+        	}]
+        }
+        */
+      ]
     },
-    /*
     optimization: {
+      /*
       splitChunks: {
-      	cacheGroups: {
-      		commons: {
-      			name: "cesium",
-      			chunks: "all",
-      			minChunks: module => module.context && module.context.indexOf('cesium') !== -1
-      		}
-      	}
+          cacheGroups: {
+              commons: {
+                  test: /[\\/]node_modules[\\/]cesium/,
+                  name: 'Cesium',
+                  chunks: 'all'
+              }
+          }
       }
+      */
     },
-    */
     plugins: [
+      /*
       // Copy Cesium Assets, Widgets, and Workers to a static directory
-      new CopywebpackPlugin([ { from: path.join(cesiumSource, cesiumWorkers), to: 'Workers' } ]),
-      new CopywebpackPlugin([ { from: path.join(cesiumSource, 'Assets'), to: 'Assets' } ]),
-      new CopywebpackPlugin([ { from: path.join(cesiumSource, 'Widgets'), to: 'Widgets' } ]),
+      new CopywebpackPlugin([
+          // copy Cesium's non-JS assets
+          {from: path.join(cesiumSource, '../Build/Cesium/Assets'), to: 'Assets'},
+          // copy Cesium's non-JS widget-bits (CSS, SVG, etc.)
+          {from: path.join(cesiumSource, '../Build/Cesium/Widgets'), to: 'Widgets'},
+          // copy Cesium's Almond-bundled-and-minified Web Worker scripts
+          {from: path.join(cesiumSource, '../Build/Cesium/Workers'), to: 'Workers'},
+          // copy Cesium's minified third-party scripts
+          {from: path.join(cesiumSource, '../Build/Cesium/ThirdParty/Workers'), to: 'ThirdParty/Workers'},
+      ]),
       new webpack.DefinePlugin({
-        CESIUM_BASE_URL: JSON.stringify('./') // Define relative base path in cesium for loading assets
-      })
-    ],
+        CESIUM_BASE_URL: JSON.stringify('../') // Define relative base path in cesium for loading assets
+      }),
+      new webpack.IgnorePlugin(/draco/)
+      */
+    ]
   },
 
   // CSS related options
@@ -111,7 +144,14 @@ module.exports = {
 
     // pass custom options to pre-processor loaders. e.g. to pass options to
     // sass-loader, use { sass: { ... } }
-    loaderOptions: {},
+    loaderOptions: {
+      css: {
+      },
+      postcss: {
+      },
+      stylus: {
+      }
+    }
 
     // Enable CSS modules for all css / pre-processor files.
     // This option does not affect *.vue files.
@@ -129,15 +169,19 @@ module.exports = {
   // configure webpack-dev-server behavior
   devServer: {
     open: false,
+    compress: true,
     host: '0.0.0.0',
-    // public: 'dev.maverick.one/dev/maverick',
+    public: 'http://newdev.maverick.one:6794',
     disableHostCheck: true,
     port: 6794,
     https: false,
     hotOnly: true,
-    overlay: true,
-    proxy: null, // string | Object
-    before: app => {},
+    overlay: {
+      warnings: true,
+      errors: true
+    },
+    proxy: null,
+    before: (app) => {},
     clientLogLevel: 'warning',
     inline: true,
     headers: {
@@ -149,6 +193,5 @@ module.exports = {
 
   // options for 3rd party plugins
   pluginOptions: {
-    // ...
   }
 }

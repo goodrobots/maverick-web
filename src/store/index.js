@@ -6,6 +6,7 @@ import config from './modules/config'
 import analysis from './modules/analysis'
 
 Vue.use(Vuex)
+
 export default new Vuex.Store({
   modules: {
     cockpit,
@@ -13,7 +14,9 @@ export default new Vuex.Store({
     config,
     analysis
   },
+
   state: {
+    darkUi: true,
     navDrawer: true,
     navColor: null,
     navState: true,
@@ -27,7 +30,11 @@ export default new Vuex.Store({
     activeApi: 'sitl',
     bingMapsKey: 'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6'
   },
+
   mutations: {
+    setDarkUi (state, value) {
+      state.darkUi = value
+    },
     setNavColor (state, color) {
       state.navColor = color
     },

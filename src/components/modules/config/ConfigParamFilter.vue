@@ -139,7 +139,7 @@ v-container.px-2.py-2(fluid grid-list-xl)
 
 <script>
 import Vue from 'vue'
-import { paramsQuery, paramsSubscription, updateParam } from '../../../graphql/Parameters.gql'
+import { paramsQuery, paramsSubscription, updateParam } from '../../../plugins/apollo/graphql/Parameters.gql'
 export default {
   name: 'ConfigParamFilter',
   data () {
@@ -166,11 +166,17 @@ export default {
       bitmasks: []
     }
   },
-
   computed: {
     activeApi () { return this.$store.state.activeApi }
   },
-
+  mounted () {
+    // Hack datatables to be transparent
+    const tables = document.querySelectorAll('.datatable.table, .datatable__actions')
+    Object.keys(tables).forEach(key => { tables[key].className += ' transparent' })
+  },
+  destroyed () {
+    // this.$apollo.destroy()
+  },
   methods: {
     customFilter (items, search, filter) {
       search = search.toString().toLowerCase()
@@ -235,7 +241,7 @@ export default {
         this.editedItem.type = 'radio'
       // If the parameter has meta values, translate them into array of hashes for select dropdown
       } else if (this.editedItem.meta && this.editedItem.meta.values) {
-        this.editedItem.selectValues = Object.keys(values).map(value => ({value: value, text: values[value]}))
+        this.editedItem.selectValues = Object.keys(values).map(value => ({ value: value, text: values[value] }))
         this.editedItem.value = this.editedItem.value.toString() // Select needs to match the string index
         this.editedItem.type = 'select'
       } else if (this.editedItem.meta && this.editedItem.meta.min != null && this.editedItem.meta.max != null) {
@@ -332,16 +338,6 @@ export default {
         }
       }
     }
-  },
-
-  mounted () {
-    // Hack datatables to be transparent
-    const tables = document.querySelectorAll('.datatable.table, .datatable__actions')
-    Object.keys(tables).forEach(key => { tables[key].className += ' transparent' })
-  },
-
-  destroyed () {
-    // this.$apollo.destroy()
   }
 }
 </script>

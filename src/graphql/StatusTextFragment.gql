@@ -1,6 +1,0 @@
-fragment StatusTextMessage on StatusTextMessage {
-  seq
-  secs
-  level
-  message
-}

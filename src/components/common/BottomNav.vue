@@ -14,10 +14,10 @@ v-bottom-nav(app fixed :color="navColor" :value="navState")
 
 <script>
 export default {
+  name: 'BottomNav',
   computed: {
     navColor () { return this.$store.state.navColor },
     navState () { return (this.$store.state.moduleName === 'home') ? false : this.$store.state.navState } // Return false if home screen, otherwise from vuex state
-  },
-  name: 'BottomNav'
+  }
 }
 </script>

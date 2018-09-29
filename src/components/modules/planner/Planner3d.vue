@@ -6,9 +6,9 @@ div#cesiumContainer
 import Cesium from 'cesium/Cesium'
 import 'cesium/Widgets/widgets.css'
 
-import { navSatFixQuery, navSatFixSubscription, navSatFixMutate } from '../../../graphql/NavSatFixMessage.gql'
-import { imuQuery, imuSubscription, imuMutate } from '../../../graphql/ImuMessage.gql'
-import { vfrHudQuery, vfrHudSubscription, vfrHudMutate } from '../../../graphql/VfrHudMessage.gql'
+import { navSatFixQuery, navSatFixSubscription, navSatFixMutate } from '../../../plugins/apollo/graphql/NavSatFixMessage.gql'
+import { imuQuery, imuSubscription, imuMutate } from '../../../plugins/apollo/graphql/ImuMessage.gql'
+import { vfrHudQuery, vfrHudSubscription, vfrHudMutate } from '../../../plugins/apollo/graphql/VfrHudMessage.gql'
 
 export default {
   data () {
@@ -23,6 +23,38 @@ export default {
   },
   computed: {
     activeApi () { return this.$store.state.activeApi }
+  },
+
+  watch: {
+    navSatFixMessage: function (oldSat, newSat) {
+      // If the viewer hasn't been constructed yet and we have a position, construct it
+      if (!this.viewer && newSat.longitude && newSat.latitude) {
+        this.constructViewer()
+      }
+      // If the position has changed over a minimum threshold, update
+      if (
+        oldSat !== newSat &&
+        (newSat.longitude && newSat.latitude) &&
+        (
+          ((newSat.longitude - oldSat.longitude > this.posChangeThreshold) || (newSat.longitude - oldSat.longitude > -this.posChangeThreshold)) ||
+          ((newSat.latitude - oldSat.latitude > this.posChangeThreshold) || (newSat.latitude - oldSat.latitude > -this.posChangeThreshold))
+        )
+      ) {
+        // Update the camera to center on the vheicle
+        /*
+        this.viewer.camera.setView({
+          destination: Cesium.Cartesian3.fromDegrees(newSat.longitude, newSat.latitude, 1000)
+        })
+        */
+        // Update the marker position
+        var entity = this.viewer.entities.getById('vehicle')
+        entity.position = Cesium.Cartesian3.fromDegrees(newSat.longitude, newSat.latitude, this.vfrHudMessage.altitude)
+      }
+    }
+  },
+
+  beforeDestroy: function () {
+    Cesium.destroyObject(this.viewer, 'This viewer has been destroyed')
   },
 
   methods: {
@@ -78,34 +110,6 @@ export default {
     }
   },
 
-  watch: {
-    navSatFixMessage: function (oldSat, newSat) {
-      // If the viewer hasn't been constructed yet and we have a position, construct it
-      if (!this.viewer && newSat.longitude && newSat.latitude) {
-        this.constructViewer()
-      }
-      // If the position has changed over a minimum threshold, update
-      if (
-        oldSat !== newSat &&
-        (newSat.longitude && newSat.latitude) &&
-        (
-          ((newSat.longitude - oldSat.longitude > this.posChangeThreshold) || (newSat.longitude - oldSat.longitude > -this.posChangeThreshold)) ||
-          ((newSat.latitude - oldSat.latitude > this.posChangeThreshold) || (newSat.latitude - oldSat.latitude > -this.posChangeThreshold))
-        )
-      ) {
-        // Update the camera to center on the vheicle
-        /*
-        this.viewer.camera.setView({
-          destination: Cesium.Cartesian3.fromDegrees(newSat.longitude, newSat.latitude, 1000)
-        })
-        */
-        // Update the marker position
-        var entity = this.viewer.entities.getById('vehicle')
-        entity.position = Cesium.Cartesian3.fromDegrees(newSat.longitude, newSat.latitude, this.vfrHudMessage.altitude)
-      }
-    }
-  },
-
   apollo: {
     $client () { return this.activeApi },
     navSatFixMessage: {
@@ -144,11 +148,8 @@ export default {
       },
       mutation: vfrHudMutate
     }
-  },
-
-  beforeDestroy: function () {
-    Cesium.destroyObject(this.viewer, 'This viewer has been destroyed')
   }
+
 }
 </script>
 

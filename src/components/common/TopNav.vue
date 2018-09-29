@@ -1,8 +1,8 @@
 <template lang='pug'>
-v-toolbar(app fixed clipped-left)
+div
   transition(name="slide-y-transition" mode="out-in")
-    v-toolbar(fixed dense clipped-left :color="navColor" app)
-      v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" flat disabled left small): img(src='@/assets/img/logos/mavlogo-orangewhite.svg' height='75%')
+    v-toolbar(app fixed dense flat clipped-left :color="navColor" :height=48)
+      v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" flat left small to="/"): img(src='@/assets/img/logos/mavlogo-orangewhite.svg' height='35px')
       v-spacer
       v-toolbar-items
         // StatusText Messages
@@ -44,9 +44,9 @@ v-toolbar(app fixed clipped-left)
 </template>
 
 <script>
-import { vfrHudQuery, vfrHudSubscription } from '../../graphql/VfrHudMessage.gql'
-import { stateQuery, stateSubscription } from '../../graphql/StateMessage.gql'
-import { statusTextQuery, statusTextSubscription } from '../../graphql/StatusTextMessage.gql'
+import { vfrHudQuery, vfrHudSubscription } from '../../plugins/apollo/graphql/VfrHudMessage.gql'
+import { stateQuery, stateSubscription } from '../../plugins/apollo/graphql/StateMessage.gql'
+import { statusTextQuery, statusTextSubscription } from '../../plugins/apollo/graphql/StatusTextMessage.gql'
 
 export default {
   name: 'TopNav',

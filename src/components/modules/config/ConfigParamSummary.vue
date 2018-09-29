@@ -61,7 +61,7 @@ v-container.fluid.grid-list-xl
 
 <script>
 import Vue from 'vue'
-import { paramsQuery, paramsSubscription, updateParam } from '../../../graphql/Parameters.gql'
+import { paramsQuery, paramsSubscription, updateParam } from '../../../plugins/apollo/graphql/Parameters.gql'
 export default {
   name: 'ConfigParamSummary',
   data () {
@@ -69,11 +69,12 @@ export default {
       params: []
     }
   },
-
   computed: {
     activeApi () { return this.$store.state.activeApi }
   },
-
+  destroyed () {
+    // this.$apollo.destroy()
+  },
   methods: {
     valueFormat (param) {
       if (param && param.meta && param.meta.units) {
@@ -140,9 +141,6 @@ export default {
         }
       }
     }
-  },
-  destroyed () {
-    // this.$apollo.destroy()
   }
 }
 </script>

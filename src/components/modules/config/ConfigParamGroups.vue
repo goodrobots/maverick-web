@@ -73,7 +73,7 @@ v-container(fluid grid-list-xl)
 </template>
 
 <script>
-import { paramsQuery, paramsSubscription, updateParam } from '../../../graphql/Parameters.gql'
+import { paramsQuery, paramsSubscription, updateParam } from '../../../plugins/apollo/graphql/Parameters.gql'
 export default {
   name: 'ConfigParamGroups',
   data () {
@@ -123,7 +123,7 @@ export default {
       this.editedIndex = this.params.indexOf(item)
       this.editedItem = Object.assign({}, item)
       if (this.editedItem.meta && this.editedItem.meta.values) {
-        this.editedItem.selectValues = Object.keys(JSON.parse(this.editedItem.meta.values)).map(value => ({value: value, text: JSON.parse(this.editedItem.meta.values)[value]}))
+        this.editedItem.selectValues = Object.keys(JSON.parse(this.editedItem.meta.values)).map(value => ({ value: value, text: JSON.parse(this.editedItem.meta.values)[value] }))
         this.editedItem.value = this.editedItem.value.toString()
         this.editedItem.selectedValue = { value: this.editedItem.value.toString(), text: JSON.parse(this.editedItem.meta.values)[this.editedItem.value]['text'] }
       }

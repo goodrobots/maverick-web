@@ -7,14 +7,14 @@ div
 <script>
 export default {
   name: 'AnalysisModule',
+  components: {
+  },
   data () {
     return {
     }
   },
   computed: {
     activeApi () { return this.$store.state.activeApi }
-  },
-  components: {
   }
 }
 </script>

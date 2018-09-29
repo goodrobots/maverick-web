@@ -20,7 +20,7 @@
     </v-card>
 </template>
 <script>
-  import { poseStampedQuery, poseStampedSubscription, poseStampedMutate } from '../../../graphql/gql/PoseStampedMessage.gql'
+  import { poseStampedQuery, poseStampedSubscription, poseStampedMutate } from '../../../plugins/apollo/graphql/gql/PoseStampedMessage.gql'
   export default {
     name: 'PoseStampedCard',
     data () {

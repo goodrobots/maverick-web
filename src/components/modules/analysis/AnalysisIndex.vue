@@ -23,7 +23,7 @@ v-container(fluid grid-list-xl)
 </template>
 
 <script>
-import { mavlogsQuery } from '../../../graphql/Mavlogs.gql'
+import { mavlogsQuery } from '../../../plugins/apollo/graphql/Mavlogs.gql'
 
 export default {
   name: 'AnalysisIndex',
@@ -50,6 +50,19 @@ export default {
 
   computed: {
     activeApi () { return this.$store.state.activeApi }
+  },
+
+  watch: {
+    mavlogs () {
+      // console.log('mavlogs')
+      // console.log(this.mavlogs)
+    }
+  },
+
+  mounted () {
+    // Hack datatables to be transparent
+    const tables = document.querySelectorAll('.datatable.table, .datatable__actions')
+    Object.keys(tables).forEach(key => { tables[key].className += ' transparent' })
   },
 
   methods: {
@@ -83,19 +96,6 @@ export default {
     $client () { return this.activeApi },
     mavlogs: {
       query: mavlogsQuery
-    }
-  },
-
-  mounted () {
-    // Hack datatables to be transparent
-    const tables = document.querySelectorAll('.datatable.table, .datatable__actions')
-    Object.keys(tables).forEach(key => { tables[key].className += ' transparent' })
-  },
-
-  watch: {
-    mavlogs () {
-      // console.log('mavlogs')
-      // console.log(this.mavlogs)
     }
   }
 

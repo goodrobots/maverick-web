@@ -14,19 +14,16 @@ import CockpitMap from './CockpitMap.vue'
 
 export default {
   name: 'CockpitModule',
-
-  data () {
-    return {
-    }
-  },
-
   components: {
     CockpitRenderer,
     CockpitContainer,
     CockpitHud,
     CockpitMap
   },
-
+  data () {
+    return {
+    }
+  },
   computed: {
     activeApi () { return this.$store.state.activeApi },
     mapState () { return this.$store.state.cockpit.mapState },

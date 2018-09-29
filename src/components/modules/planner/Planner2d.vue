@@ -66,8 +66,8 @@ div.planner-map
 </template>
 
 <script>
-import { navSatFixQuery, navSatFixSubscription } from '../../../graphql/NavSatFixMessage.gql'
-import { waypointsQuery, waypointsSubscription } from '../../../graphql/Waypoints.gql'
+import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/apollo/graphql/NavSatFixMessage.gql'
+import { waypointsQuery, waypointsSubscription } from '../../../plugins/apollo/graphql/Waypoints.gql'
 
 export default {
   data () {

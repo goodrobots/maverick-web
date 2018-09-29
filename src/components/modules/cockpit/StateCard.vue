@@ -46,7 +46,7 @@
     
 </template>
 <script>
-import { stateQuery, stateSubscription, stateMutate } from '../../../graphql/gql/StateMessage.gql'
+import { stateQuery, stateSubscription, stateMutate } from '../../../plugins/apollo/graphql/gql/StateMessage.gql'
 export default {
   name: 'StateCard',
   data () {

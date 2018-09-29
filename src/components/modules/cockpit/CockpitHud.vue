@@ -1,11 +1,10 @@
 <script>
-import { imuQuery, imuSubscription } from '../../../graphql/ImuMessage.gql'
+import { imuQuery, imuSubscription } from '../../../plugins/apollo/graphql/ImuMessage.gql'
 import colors from 'vuetify/es5/util/colors'
 import { colorToInt } from 'vuetify/es5/util/colorUtils'
 
 export default {
   inject: ['EventBus', 'CockpitObject'],
-
   data () {
     return {
       width: window.innerWidth,
@@ -35,16 +34,6 @@ export default {
       }
     }
   },
-
-  // Deliberately return a blank render
-  // eslint-disable-next-line
-  render () {},
-
-  // Use timers to set intervals for each message so we can limit the update frequency in the client
-  timers: {
-    setTickers: { time: 200, autostart: true, repeat: true }
-  },
-
   computed: {
     activeApi () { return this.$store.state.activeApi },
     dimensions () {
@@ -102,7 +91,10 @@ export default {
       return rpy
     }
   },
-
+  // Use timers to set intervals for each message so we can limit the update frequency in the client
+  timers: {
+    setTickers: { time: 200, autostart: true, repeat: true }
+  },
   // Setup grqphql imu message stream
   apollo: {
     $client () { return this.activeApi },
@@ -119,7 +111,37 @@ export default {
       }
     }
   },
-
+  mounted () {
+    this.addState = false
+    this.EventBus.$on('ready', () => {
+      // Setup layered graphics containers
+      if (this.$parent.container) {
+        this.$parent.container.addChild(this.rotatingBackground)
+        this.$parent.container.addChild(this.fixedBackground)
+      } else {
+        this.CockpitObject.PixiApp.stage.addChild(this.rotatingBackground)
+        this.CockpitObject.PixiApp.stage.addChild(this.fixedBackground)
+      }
+      this.$parent.container.x = this.dimensions.x
+      this.$parent.container.y = this.dimensions.y
+      this.$parent.container.width = this.dimensions.width
+      this.$parent.container.height = this.dimensions.height
+      this.rotatingBackground.addChild(this.pitchContainer)
+      this.handleResize()
+      if (!this.addState) {
+        this.addState = true
+        /*
+        this.CockpitObject.PixiApp.ticker.add(() => {
+          this.tickerUpdate()
+        })
+        */
+      }
+    })
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeDestroy: function () {
+    window.removeEventListener('resize', this.handleResize)
+  },
   methods: {
     setTickers () {
       this.tickers['imuMessage'] = true
@@ -271,7 +293,7 @@ export default {
             this.pitchLadder[counterindex].lineTo(this.width / 2 + ((this.ladderWidth / 2) * lineMultiplier), this.height / 2 - line)
             if (!lineBool && counter) {
               this.pitchNumbers[counterindex].text = counterindex * 5
-              this.pitchNumbers[counterindex].style = {fontSize: 18, fill: 0xffffff}
+              this.pitchNumbers[counterindex].style = { fontSize: 18, fill: 0xffffff }
               this.pitchNumbers[counterindex].x = this.width / 2 - this.ladderWidth - 30
               this.pitchNumbers[counterindex].y = this.height / 2 - line - 10
               // let text = new this.CockpitObject.PIXI.Text(counterindex * 5, {fontSize: 18, fill: 0xffffff})
@@ -303,38 +325,8 @@ export default {
       }
     }
   },
-
-  mounted () {
-    this.addState = false
-    this.EventBus.$on('ready', () => {
-      // Setup layered graphics containers
-      if (this.$parent.container) {
-        this.$parent.container.addChild(this.rotatingBackground)
-        this.$parent.container.addChild(this.fixedBackground)
-      } else {
-        this.CockpitObject.PixiApp.stage.addChild(this.rotatingBackground)
-        this.CockpitObject.PixiApp.stage.addChild(this.fixedBackground)
-      }
-      this.$parent.container.x = this.dimensions.x
-      this.$parent.container.y = this.dimensions.y
-      this.$parent.container.width = this.dimensions.width
-      this.$parent.container.height = this.dimensions.height
-      this.rotatingBackground.addChild(this.pitchContainer)
-      this.handleResize()
-      if (!this.addState) {
-        this.addState = true
-        /*
-        this.CockpitObject.PixiApp.ticker.add(() => {
-          this.tickerUpdate()
-        })
-        */
-      }
-    })
-    window.addEventListener('resize', this.handleResize)
-  },
-
-  beforeDestroy: function () {
-    window.removeEventListener('resize', this.handleResize)
-  }
+  // Deliberately return a blank render
+  // eslint-disable-next-line
+  render () {}
 }
 </script>

@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
-import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/graphql-client'
+import {
+  createApolloClient,
+  restartWebsockets
+} from 'vue-cli-plugin-apollo/graphql-client'
 
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -8,19 +11,25 @@ Vue.use(VueApollo)
 // Name of the localStorage item
 const AUTH_TOKEN = 'apollo-token'
 
-/* global location */
-const currentSite = location.hostname + (location.port ? ':' + location.port : '')
+// Http endpoint
+// const currentSite = location.hostname + (location.port ? ':' + location.port : '')
+/*
 const defaultEndpoint = '/web/api/fc'
+const httpEndpoint = location.protocol + '//' + currentSite + defaultEndpoint + '/graphql'
+const wsEndpoint = ((location.protocol === 'https:') ? 'wss://' : 'ws://') + currentSite + defaultEndpoint + '/subscriptions'
+*/
 
 // Config
+/*
 const defaultOptions = {
-  httpEndpoint: process.env.VUE_APP_GRAPHQL_HTTP || location.protocol + '//' + currentSite + defaultEndpoint + '/graphql',
-  wsEndpoint: process.env.VUE_APP_GRAPHQL_HTTP || ((location.protocol === 'https:') ? 'wss://' : 'ws://') + currentSite + defaultEndpoint + '/subscriptions',
+  httpEndpoint,
+  wsEndpoint,
   tokenName: AUTH_TOKEN,
   persisting: true,
   websocketsOnly: false,
   ssr: false
 }
+*/
 
 function createClient (options = {}) {
   const { apolloClient, wsClient } = createApolloClient(options)
@@ -31,8 +40,10 @@ function createClient (options = {}) {
 export function createProvider (options = {}) {
   // const fcClient = createClient(defaultOptions)
   const sitlClient = createClient({
-    httpEndpoint: location.protocol + '//' + currentSite + '/web/api/sitl/graphql',
-    wsEndpoint: ((location.protocol === 'https:') ? 'wss://' : 'ws://') + currentSite + '/web/api/sitl/subscriptions',
+    // httpEndpoint: location.protocol + '//' + currentSite + '/web/api/sitl/graphql',
+    httpEndpoint: 'http://newdev.maverick.one:6801/graphql',
+    wsEndpoint: 'ws://newdev.maverick.one:6801/subscriptions',
+    // wsEndpoint: ((location.protocol === 'https:') ? 'wss://' : 'ws://') + currentSite + '/web/api/sitl/subscriptions',
     tokenName: AUTH_TOKEN,
     persisting: true,
     websocketsOnly: false,
@@ -63,15 +74,29 @@ export function createProvider (options = {}) {
 }
 
 // Manually call this when user log in
-/* global localStorage */
-export function onLogin (apolloClient, token) {
-  localStorage.setItem(AUTH_TOKEN, token)
+export async function onLogin (apolloClient, token) {
+  if (typeof localStorage !== 'undefined' && token) {
+    localStorage.setItem(AUTH_TOKEN, token)
+  }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
+  try {
+    await apolloClient.resetStore()
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log('%cError on cache reset (login)', 'color: orange;', e.message)
+  }
 }
 
 // Manually call this when user log out
-export function onLogout (apolloClient) {
-  localStorage.removeItem(AUTH_TOKEN)
+export async function onLogout (apolloClient) {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.removeItem(AUTH_TOKEN)
+  }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
-  apolloClient.resetStore()
+  try {
+    await apolloClient.resetStore()
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log('%cError on cache reset (logout)', 'color: orange;', e.message)
+  }
 }

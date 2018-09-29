@@ -32,7 +32,7 @@
     </v-card>
 </template>
 <script>
-  import { vfrHudQuery, vfrHudSubscription, vfrHudMutate } from '../../../graphql/gql/VfrHudMessage.gql'
+  import { vfrHudQuery, vfrHudSubscription, vfrHudMutate } from '../../../plugins/apollo/graphql/gql/VfrHudMessage.gql'
   export default {
     name: 'VfrHudCard',
     data () {

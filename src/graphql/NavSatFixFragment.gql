@@ -1,5 +1,0 @@
-fragment NavSatFixMessage on NavSatFixMessage {
-  latitude
-  longitude
-  altitude
-}

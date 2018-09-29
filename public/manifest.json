@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "short_name": "",
+  "name": "maverick-web",
+  "short_name": "maverick-web",
   "icons": [
     {
       "src": "/img/icons/android-chrome-192x192.png",

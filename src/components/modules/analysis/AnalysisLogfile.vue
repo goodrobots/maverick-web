@@ -26,7 +26,7 @@ div
 </template>
 
 <script>
-import { mavlogsQuery } from '../../../graphql/Mavlogs.gql'
+import { mavlogsQuery } from '../../../plugins/apollo/graphql/Mavlogs.gql'
 
 export default {
   name: 'AnalysisIndex',

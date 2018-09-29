@@ -1,8 +1,0 @@
-fragment VfrHudMessage on VfrHudMessage {
-  airspeed
-  groundspeed
-  heading
-  throttle
-  altitude
-  climb
-}

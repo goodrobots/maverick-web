@@ -36,12 +36,6 @@ export default {
     }
   },
 
-  methods: {
-    handleResize () {
-      this.CockpitObject.PixiApp.renderer.resize(window.innerWidth, window.innerHeight)
-    }
-  },
-
   mounted () {
     this.cockpitWindow = this.$refs.cockpitWindow
     this.CockpitObject.PIXI.utils.skipHello()
@@ -59,8 +53,13 @@ export default {
   beforeDestroy: function () {
     window.removeEventListener('resize', this.handleResize)
     this.CockpitObject.PixiApp.destroy(true)
-  }
+  },
 
+  methods: {
+    handleResize () {
+      this.CockpitObject.PixiApp.renderer.resize(window.innerWidth, window.innerHeight)
+    }
+  }
 }
 </script>
 

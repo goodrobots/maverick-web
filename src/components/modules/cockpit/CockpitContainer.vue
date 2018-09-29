@@ -8,12 +8,6 @@ export default {
     }
   },
 
-  // At the current time, Vue does not allow empty components to be created without a DOM element if they have children.
-  // To work around this, we create a tiny render function that renders to <template><!-- children --></template>.
-  render: function (h) {
-    return h('template', this.$slots.default)
-  },
-
   mounted () {
     this.container = new this.CockpitObject.PIXI.Container()
     this.container.interactive = true
@@ -33,6 +27,13 @@ export default {
 
       // this.CockpitObject.PixiApp.ticker.add(delta => this.$emit('tick', this.container, delta))
     })
+  },
+
+  // At the current time, Vue does not allow empty components to be created without a DOM element if they have children.
+  // To work around this, we create a tiny render function that renders to <template><!-- children --></template>.
+  render: function (h) {
+    return h('template', this.$slots.default)
   }
+
 }
 </script>
