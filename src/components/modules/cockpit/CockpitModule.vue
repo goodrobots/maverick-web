@@ -21,13 +21,18 @@ export default {
     CockpitMap
   },
   data () {
-    return {
-    }
+    return {}
   },
   computed: {
-    activeApi () { return this.$store.state.activeApi },
-    mapState () { return this.$store.state.cockpit.mapState },
-    hudState () { return this.$store.state.cockpit.hudState }
+    activeApi () {
+      return this.$store.state.activeApi
+    },
+    mapState () {
+      return this.$store.state.cockpit.mapState
+    },
+    hudState () {
+      return this.$store.state.cockpit.hudState
+    }
   }
 }
 </script>

@@ -29,8 +29,14 @@ div.cockpit-map
 </template>
 
 <script>
-import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/apollo/graphql/NavSatFixMessage.gql'
-import { waypointsQuery, waypointsSubscription } from '../../../plugins/apollo/graphql/Waypoints.gql'
+import {
+  navSatFixQuery,
+  navSatFixSubscription
+} from '../../../plugins/apollo/graphql/NavSatFixMessage.gql'
+import {
+  waypointsQuery,
+  waypointsSubscription
+} from '../../../plugins/apollo/graphql/Waypoints.gql'
 
 export default {
   data () {
@@ -41,27 +47,34 @@ export default {
   },
 
   computed: {
-    activeApi () { return this.$store.state.activeApi },
-    bingMapsKey () { return this.$store.state.bingMapsKey },
+    activeApi () {
+      return this.$store.state.activeApi
+    },
+    bingMapsKey () {
+      return this.$store.state.bingMapsKey
+    },
     // xy computes EPSG:3857 coordinates from EPSG:4326.  If both x,y are not values then return nothing as vl components get upset otherwise
     xy () {
       // const xy = VueLayers.core.projHelper.fromLonLat([this.navSatFixMessage.longitude, this.navSatFixMessage.latitude])
-      const xy = [this.navSatFixMessage.longitude, this.navSatFixMessage.latitude]
-      return (xy[0] && xy[1]) ? xy : []
+      const xy = [
+        this.navSatFixMessage.longitude,
+        this.navSatFixMessage.latitude
+      ]
+      return xy[0] && xy[1] ? xy : []
     }
   },
 
   apollo: {
-    $client () { return this.activeApi },
+    $client () {
+      return this.activeApi
+    },
     navSatFixMessage: {
       query: navSatFixQuery,
       subscribeToMore: {
         document: navSatFixSubscription,
-        updateQuery: (previousResult, { subscriptionData }) => {
-          return {
-            navSatFixMessage: subscriptionData.data.navSatFixMessage
-          }
-        }
+        updateQuery: (previousResult, { subscriptionData }) => ({
+          navSatFixMessage: subscriptionData.data.navSatFixMessage
+        })
       }
     },
     waypoints: {
@@ -76,13 +89,12 @@ export default {
             waypoints: previousResult.waypoints.map(waypoint => {
               // We can't update immutable apollo data, so instead create a deep copy and return that into the array map
               if (waypoint.id === update.id) {
-                let copy = JSON.parse(JSON.stringify(waypoint))
+                const copy = JSON.parse(JSON.stringify(waypoint))
                 copy.value = update.value
                 return copy
-              // Otherwise return the array object by reference
-              } else {
-                return waypoint
+                // Otherwise return the array object by reference
               }
+              return waypoint
             })
           }
           return waypointData
@@ -90,7 +102,6 @@ export default {
       }
     }
   }
-
 }
 </script>
 
@@ -107,11 +118,11 @@ export default {
   border-radius: 10px;
 }
 .vlmap {
-    border-radius: 5px;
-    overflow: hidden;
+  border-radius: 5px;
+  overflow: hidden;
 }
-.vlmap div canvas{
-    border-radius: 5px;
+.vlmap div canvas {
+  border-radius: 5px;
 }
 .markernumber {
   position: relative;

@@ -1,52 +1,65 @@
 <template>
-    <v-card>
-    <v-toolbar v-if="$apollo.loading" dense color="grey">
+  <v-card>
+    <v-toolbar
+      v-if="$apollo.loading"
+      dense
+      color="grey">
       <v-toolbar-title>Loading..</v-toolbar-title>
     </v-toolbar>
-    <v-toolbar v-else-if="stateMessage.armed" dense color="red">
+    <v-toolbar
+      v-else-if="stateMessage.armed"
+      dense
+      color="red">
       <v-toolbar-title>Autopilot ARMED</v-toolbar-title>
     </v-toolbar>
-    <v-toolbar v-else="!stateMessage.armed" dense>
+    <v-toolbar
+      v-else-if="!stateMessage.armed"
+      dense>
       <v-toolbar-title>Autopilot DISARMED</v-toolbar-title>
     </v-toolbar>
     <v-card-title primary-title>
-      <div class="headline">{{stateMessage.mode}}</div>
+      <div class="headline">{{ stateMessage.mode }}</div>
     </v-card-title>
     <v-card-text>
       <div>
         <span class="grey--text">Connected:</span>
-        <span>{{stateMessage.connected}}</span>
+        <span>{{ stateMessage.connected }}</span>
       </div>
       <div>
         <span class="grey--text">Guided:</span>
-        <span class="text-xs-right">{{stateMessage.guided}}</span>
+        <span class="text-xs-right">{{ stateMessage.guided }}</span>
       </div>
       <div>
         <span class="grey--text">System Status:</span>
-        <span class=" text-xs-right">{{stateMessage.systemStatus}}</span>
+        <span class=" text-xs-right">{{ stateMessage.systemStatus }}</span>
       </div>
       <div>
         <span class="grey--text">Frame ID:</span>
-        <span class=" text-xs-right">{{stateMessage.frameId}}</span>
+        <span class=" text-xs-right">{{ stateMessage.frameId }}</span>
       </div>
       <div>
         <span class="grey--text">Sequence Number:</span>
-        <span class=" text-xs-right">{{stateMessage.seq}}</span>
+        <span class=" text-xs-right">{{ stateMessage.seq }}</span>
       </div>
       <div>
         <span class="grey--text">Seconds:</span>
-        <span class=" text-xs-right">{{stateMessage.secs}}</span>
+        <span class=" text-xs-right">{{ stateMessage.secs }}</span>
       </div>
       <div>
         <span class="grey--text">Nanoseconds:</span>
-        <span class=" text-xs-right">{{stateMessage.nsecs}}</span>
+        <span class=" text-xs-right">{{ stateMessage.nsecs }}</span>
       </div>
     </v-card-text>
-    </v-card>
-    
+  </v-card>
+
 </template>
 <script>
-import { stateQuery, stateSubscription, stateMutate } from '../../../plugins/apollo/graphql/gql/StateMessage.gql'
+import {
+  stateQuery,
+  stateSubscription,
+  stateMutate
+} from '../../../plugins/apollo/graphql/gql/StateMessage.gql'
+
 export default {
   name: 'StateCard',
   data () {
@@ -56,19 +69,21 @@ export default {
     }
   },
   computed: {
-    activeApi () { return this.$store.state.activeApi }
+    activeApi () {
+      return this.$store.state.activeApi
+    }
   },
   apollo: {
-    $client () { return this.activeApi },
+    $client () {
+      return this.activeApi
+    },
     stateMessage: {
       query: stateQuery,
       subscribeToMore: {
         document: stateSubscription,
-        updateQuery: (previousResult, { subscriptionData }) => {
-          return {
-            stateMessage: subscriptionData.data.stateMessage
-          }
-        }
+        updateQuery: (previousResult, { subscriptionData }) => ({
+          stateMessage: subscriptionData.data.stateMessage
+        })
       },
       mutation: stateMutate
     }

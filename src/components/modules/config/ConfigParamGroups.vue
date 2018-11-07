@@ -73,7 +73,12 @@ v-container(fluid grid-list-xl)
 </template>
 
 <script>
-import { paramsQuery, paramsSubscription, updateParam } from '../../../plugins/apollo/graphql/Parameters.gql'
+import {
+  paramsQuery,
+  paramsSubscription,
+  updateParam
+} from '../../../plugins/apollo/graphql/Parameters.gql'
+
 export default {
   name: 'ConfigParamGroups',
   data () {
@@ -91,24 +96,34 @@ export default {
     }
   },
   computed: {
-    activeApi () { return this.$store.state.activeApi },
+    activeApi () {
+      return this.$store.state.activeApi
+    },
     paramGroups () {
       if (this.params) {
-        return [...new Set(this.params.map(param => { return param.meta ? param.meta.group : null }))].sort()
-      } else {
-        return []
+        return [
+          ...new Set(
+            this.params.map(param => (param.meta ? param.meta.group : null))
+          )
+        ].sort()
       }
+      return []
     }
   },
   methods: {
     groupFilter (items, search, filter) {
-      return items.filter(function (row) { return row.meta && filter(row.meta.group, search.toString().toLowerCase()) })
+      return items.filter(
+        row =>
+          row.meta && filter(row.meta.group, search.toString().toLowerCase())
+      )
     },
     valueFormat (param) {
       if (param && param.meta && param.meta.fields) {
         const fields = JSON.parse(param.meta.fields)
         if (fields.Units) {
-          return param.value + ' <span class="caption"><strong>' + fields.Units + '</strong></span>'
+          return `${param.value} <span class="caption"><strong>${
+            fields.Units
+          }</strong></span>`
         }
       }
       if (param && param.meta && param.meta.values) {
@@ -123,9 +138,18 @@ export default {
       this.editedIndex = this.params.indexOf(item)
       this.editedItem = Object.assign({}, item)
       if (this.editedItem.meta && this.editedItem.meta.values) {
-        this.editedItem.selectValues = Object.keys(JSON.parse(this.editedItem.meta.values)).map(value => ({ value: value, text: JSON.parse(this.editedItem.meta.values)[value] }))
+        this.editedItem.selectValues = Object.keys(
+          JSON.parse(this.editedItem.meta.values)
+        ).map(value => ({
+          value,
+          text: JSON.parse(this.editedItem.meta.values)[value]
+        }))
         this.editedItem.value = this.editedItem.value.toString()
-        this.editedItem.selectedValue = { value: this.editedItem.value.toString(), text: JSON.parse(this.editedItem.meta.values)[this.editedItem.value]['text'] }
+        this.editedItem.selectedValue = {
+          value: this.editedItem.value.toString(),
+          text: JSON.parse(this.editedItem.meta.values)[this.editedItem.value]
+            .text
+        }
       }
       this.dialog = true
     },
@@ -144,7 +168,9 @@ export default {
     }
   },
   apollo: {
-    $client () { return this.activeApi },
+    $client () {
+      return this.activeApi
+    },
     params: {
       query: paramsQuery,
       subscribeToMore: {
@@ -156,13 +182,12 @@ export default {
             params: previousResult.params.map(param => {
               // We can't update immutable apollo data, so instead create a deep copy and return that into the array map
               if (param.id === update.id) {
-                let paramcopy = JSON.parse(JSON.stringify(param))
+                const paramcopy = JSON.parse(JSON.stringify(param))
                 paramcopy.value = update.value
                 return paramcopy
-              // Otherwise return the array object by reference
-              } else {
-                return param
+                // Otherwise return the array object by reference
               }
+              return param
             })
           }
         }

@@ -139,7 +139,12 @@ v-container.px-2.py-2(fluid grid-list-xl)
 
 <script>
 import Vue from 'vue'
-import { paramsQuery, paramsSubscription, updateParam } from '../../../plugins/apollo/graphql/Parameters.gql'
+import {
+  paramsQuery,
+  paramsSubscription,
+  updateParam
+} from '../../../plugins/apollo/graphql/Parameters.gql'
+
 export default {
   name: 'ConfigParamFilter',
   data () {
@@ -149,8 +154,18 @@ export default {
         { text: '', value: '', sortable: false },
         { text: 'Group', value: 'meta.group', align: 'left' },
         { text: 'Name', value: 'id', align: 'left' },
-        { text: 'Value', value: 'value', align: 'left', sortable: false },
-        { text: 'Description', value: 'meta.humanName', align: 'left', sortable: false }
+        {
+          text: 'Value',
+          value: 'value',
+          align: 'left',
+          sortable: false
+        },
+        {
+          text: 'Description',
+          value: 'meta.humanName',
+          align: 'left',
+          sortable: false
+        }
       ],
       pagination: {
         sortBy: 'id'
@@ -167,12 +182,18 @@ export default {
     }
   },
   computed: {
-    activeApi () { return this.$store.state.activeApi }
+    activeApi () {
+      return this.$store.state.activeApi
+    }
   },
   mounted () {
     // Hack datatables to be transparent
-    const tables = document.querySelectorAll('.datatable.table, .datatable__actions')
-    Object.keys(tables).forEach(key => { tables[key].className += ' transparent' })
+    const tables = document.querySelectorAll(
+      '.datatable.table, .datatable__actions'
+    )
+    Object.keys(tables).forEach(key => {
+      tables[key].className += ' transparent'
+    })
   },
   destroyed () {
     // this.$apollo.destroy()
@@ -180,22 +201,29 @@ export default {
   methods: {
     customFilter (items, search, filter) {
       search = search.toString().toLowerCase()
-      return items.filter(function (row) {
-        return (filter(row.id, search) || filter(row.value, search) || (row.meta && (filter(row.meta.humanName, search) || filter(row.meta.documentation, search))))
-      })
+      return items.filter(
+        row =>
+          filter(row.id, search) ||
+          filter(row.value, search) ||
+          (row.meta &&
+            (filter(row.meta.humanName, search) ||
+              filter(row.meta.documentation, search)))
+      )
     },
     highlight (text, search) {
       if (!search) {
         return text
-      } else {
-        return text.replace(new RegExp(search, 'gi'), match => {
-          return '<span class="primary--text">' + match + '</span>'
-        })
       }
+      return text.replace(
+        new RegExp(search, 'gi'),
+        match => `<span class="primary--text">${match}</span>`
+      )
     },
     valueFormat (param) {
       if (param.meta && param.meta.units) {
-        return param.value + ' <span class="caption"><strong>' + param.meta.units + '</strong></span>'
+        return `${param.value} <span class="caption"><strong>${
+          param.meta.units
+        }</strong></span>`
       }
       if (param && param.meta && param.meta.values) {
         const values = JSON.parse(param.meta.values)
@@ -216,16 +244,24 @@ export default {
       this.editedIndex = this.params.indexOf(item)
       this.editedItem = Object.assign({}, item)
       const values = JSON.parse(this.editedItem.meta.values)
-      if (this.editedItem.meta && this.editedItem.meta.type && this.editedItem.meta.type === 'BOOLEAN') {
+      if (
+        this.editedItem.meta &&
+        this.editedItem.meta.type &&
+        this.editedItem.meta.type === 'BOOLEAN'
+      ) {
         this.editedItem.type = 'boolean'
-      } else if (this.editedItem.meta && this.editedItem.meta.type && this.editedItem.meta.type === 'BITMASK') {
+      } else if (
+        this.editedItem.meta &&
+        this.editedItem.meta.type &&
+        this.editedItem.meta.type === 'BITMASK'
+      ) {
         const bitmask = JSON.parse(this.editedItem.meta.bitmask)
         const reverseKeys = Object.keys(bitmask).reverse()
         let paramVal = this.editedItem.value
         console.log(reverseKeys)
-        let selectedBits = []
-        for (var i in reverseKeys) {
-          var keyVal = reverseKeys[i]
+        const selectedBits = []
+        for (const i in reverseKeys) {
+          const keyVal = reverseKeys[i]
           console.log(keyVal)
           if (paramVal - keyVal >= 0) {
             console.log(keyVal)
@@ -236,27 +272,44 @@ export default {
         console.log(selectedBits)
         this.editedItem.bitmasks = selectedBits
         this.editedItem.type = 'bitmask'
-      } else if (this.editedItem.meta && this.editedItem.meta.values && Object.keys(values).length <= 6) {
+      } else if (
+        this.editedItem.meta &&
+        this.editedItem.meta.values &&
+        Object.keys(values).length <= 6
+      ) {
         this.editedItem.value = this.editedItem.value.toString() // Select needs to match the string index
         this.editedItem.type = 'radio'
-      // If the parameter has meta values, translate them into array of hashes for select dropdown
+        // If the parameter has meta values, translate them into array of hashes for select dropdown
       } else if (this.editedItem.meta && this.editedItem.meta.values) {
-        this.editedItem.selectValues = Object.keys(values).map(value => ({ value: value, text: values[value] }))
+        this.editedItem.selectValues = Object.keys(values).map(value => ({
+          value,
+          text: values[value]
+        }))
         this.editedItem.value = this.editedItem.value.toString() // Select needs to match the string index
         this.editedItem.type = 'select'
-      } else if (this.editedItem.meta && this.editedItem.meta.min != null && this.editedItem.meta.max != null) {
+      } else if (
+        this.editedItem.meta &&
+        this.editedItem.meta.min != null &&
+        this.editedItem.meta.max != null
+      ) {
         this.editedItem.type = 'slider'
         // If increment is not set in meta data, create a default depending on the size of the defined range
         if (!this.editedItem.meta.increment) {
           if (this.editedItem.meta.max - this.editedItem.meta.min > 1000) {
             this.editedItem.increment = 100
-          } else if (this.editedItem.meta.max - this.editedItem.meta.min > 100) {
+          } else if (
+            this.editedItem.meta.max - this.editedItem.meta.min >
+            100
+          ) {
             this.editedItem.increment = 10
           } else if (this.editedItem.meta.max - this.editedItem.meta.min > 10) {
             this.editedItem.increment = 1
           } else if (this.editedItem.meta.max - this.editedItem.meta.min > 1) {
             this.editedItem.increment = 0.1
-          } else if (this.editedItem.meta.max - this.editedItem.meta.min > 0.1) {
+          } else if (
+            this.editedItem.meta.max - this.editedItem.meta.min >
+            0.1
+          ) {
             this.editedItem.increment = 0.01
           } else {
             this.editedItem.increment = 0.001
@@ -290,13 +343,17 @@ export default {
   },
 
   apollo: {
-    $client () { return this.activeApi },
+    $client () {
+      return this.activeApi
+    },
     params: {
       query: paramsQuery,
       manual: true,
       result ({ data, loading }) {
         if (!loading && !this.params.length) {
-          Object.keys(data.params).forEach(key => { Vue.set(this.params, key, data.params[key]) })
+          Object.keys(data.params).forEach(key => {
+            Vue.set(this.params, key, data.params[key])
+          })
         }
         // console.log('received params: ' + this.params.length)
       },

@@ -57,6 +57,7 @@ v-card.transparent.navfab
 <script>
 import fullscreen from 'vue-fullscreen'
 import Vue from 'vue'
+
 Vue.use(fullscreen)
 
 export default {
@@ -67,23 +68,41 @@ export default {
   },
   computed: {
     // Global states
-    navState () { return this.$store.state.navState },
-    navColor () { return this.$store.state.navColor },
-    fullScreen () { return this.$store.state.fullScreen },
-    moduleName () { return this.$store.state.moduleName },
+    navState () {
+      return this.$store.state.navState
+    },
+    navColor () {
+      return this.$store.state.navColor
+    },
+    fullScreen () {
+      return this.$store.state.fullScreen
+    },
+    moduleName () {
+      return this.$store.state.moduleName
+    },
     navIcon () {
       switch (this.moduleName) {
-        case 'cockpit': return 'flight_takeoff'
-        case 'planner': return 'explore'
-        case 'config': return 'settings'
-        case 'analysis': return 'equalizer'
+        case 'cockpit':
+          return 'flight_takeoff'
+        case 'planner':
+          return 'explore'
+        case 'config':
+          return 'settings'
+        case 'analysis':
+          return 'equalizer'
       }
     },
     // Config states
-    cockpitMapState () { return this.$store.state.cockpit.mapState },
-    cockpitHudState () { return this.$store.state.cockpit.hudState },
+    cockpitMapState () {
+      return this.$store.state.cockpit.mapState
+    },
+    cockpitHudState () {
+      return this.$store.state.cockpit.hudState
+    },
     // Planner states
-    plannerViewState () { return this.$store.state.planner.viewState }
+    plannerViewState () {
+      return this.$store.state.planner.viewState
+    }
   },
   methods: {
     toggleNavState () {
@@ -105,18 +124,17 @@ export default {
       this.$store.commit('planner/setViewState', !this.plannerViewState)
     }
   }
-
 }
 </script>
 
 <style scoped>
-  .navfab .v-speed-dial {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-  }
+.navfab .v-speed-dial {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+}
 
-  .navfab .btn--floating {
-    position: relative;
-  }
+.navfab .btn--floating {
+  position: relative;
+}
 </style>

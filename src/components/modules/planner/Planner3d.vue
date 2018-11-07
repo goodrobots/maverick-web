@@ -6,9 +6,21 @@ div#cesiumContainer
 import Cesium from 'cesium/Cesium'
 import 'cesium/Widgets/widgets.css'
 
-import { navSatFixQuery, navSatFixSubscription, navSatFixMutate } from '../../../plugins/apollo/graphql/NavSatFixMessage.gql'
-import { imuQuery, imuSubscription, imuMutate } from '../../../plugins/apollo/graphql/ImuMessage.gql'
-import { vfrHudQuery, vfrHudSubscription, vfrHudMutate } from '../../../plugins/apollo/graphql/VfrHudMessage.gql'
+import {
+  navSatFixQuery,
+  navSatFixSubscription,
+  navSatFixMutate
+} from '../../../plugins/apollo/graphql/NavSatFixMessage.gql'
+import {
+  imuQuery,
+  imuSubscription,
+  imuMutate
+} from '../../../plugins/apollo/graphql/ImuMessage.gql'
+import {
+  vfrHudQuery,
+  vfrHudSubscription,
+  vfrHudMutate
+} from '../../../plugins/apollo/graphql/VfrHudMessage.gql'
 
 export default {
   data () {
@@ -22,11 +34,13 @@ export default {
     }
   },
   computed: {
-    activeApi () { return this.$store.state.activeApi }
+    activeApi () {
+      return this.$store.state.activeApi
+    }
   },
 
   watch: {
-    navSatFixMessage: function (oldSat, newSat) {
+    navSatFixMessage (oldSat, newSat) {
       // If the viewer hasn't been constructed yet and we have a position, construct it
       if (!this.viewer && newSat.longitude && newSat.latitude) {
         this.constructViewer()
@@ -35,10 +49,10 @@ export default {
       if (
         oldSat !== newSat &&
         (newSat.longitude && newSat.latitude) &&
-        (
-          ((newSat.longitude - oldSat.longitude > this.posChangeThreshold) || (newSat.longitude - oldSat.longitude > -this.posChangeThreshold)) ||
-          ((newSat.latitude - oldSat.latitude > this.posChangeThreshold) || (newSat.latitude - oldSat.latitude > -this.posChangeThreshold))
-        )
+        (newSat.longitude - oldSat.longitude > this.posChangeThreshold ||
+          newSat.longitude - oldSat.longitude > -this.posChangeThreshold ||
+          (newSat.latitude - oldSat.latitude > this.posChangeThreshold ||
+            newSat.latitude - oldSat.latitude > -this.posChangeThreshold))
       ) {
         // Update the camera to center on the vheicle
         /*
@@ -47,21 +61,31 @@ export default {
         })
         */
         // Update the marker position
-        var entity = this.viewer.entities.getById('vehicle')
-        entity.position = Cesium.Cartesian3.fromDegrees(newSat.longitude, newSat.latitude, this.vfrHudMessage.altitude)
+        const entity = this.viewer.entities.getById('vehicle')
+        entity.position = Cesium.Cartesian3.fromDegrees(
+          newSat.longitude,
+          newSat.latitude,
+          this.vfrHudMessage.altitude
+        )
       }
     }
   },
 
-  beforeDestroy: function () {
+  beforeDestroy () {
     Cesium.destroyObject(this.viewer, 'This viewer has been destroyed')
   },
 
   methods: {
     constructViewer () {
-      Cesium.BingMapsApi.defaultKey = 'Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG'
+      Cesium.BingMapsApi.defaultKey =
+        'Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG'
       // Set the default camera so it doesn't initiall focus on space
-      var extent = Cesium.Rectangle.fromDegrees(this.navSatFixMessage.longitude - 0.2, this.navSatFixMessage.latitude - 0.2, this.navSatFixMessage.longitude + 0.2, this.navSatFixMessage.latitude + 0.2)
+      const extent = Cesium.Rectangle.fromDegrees(
+        this.navSatFixMessage.longitude - 0.2,
+        this.navSatFixMessage.latitude - 0.2,
+        this.navSatFixMessage.longitude + 0.2,
+        this.navSatFixMessage.latitude + 0.2
+      )
       Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent
       Cesium.Camera.DEFAULT_VIEW_FACTOR = 0
       // Construct the cesium view
@@ -80,13 +104,21 @@ export default {
         timeline: false
       })
       this.viewer.camera.setView({
-        destination: Cesium.Cartesian3.fromDegrees(this.navSatFixMessage.longitude, this.navSatFixMessage.latitude, 1000)
+        destination: Cesium.Cartesian3.fromDegrees(
+          this.navSatFixMessage.longitude,
+          this.navSatFixMessage.latitude,
+          1000
+        )
       })
       // this.viewer.terrainProvider = Cesium.createWorldTerrain()
       this.constructVehicle()
     },
     constructVehicle () {
-      const position = Cesium.Cartesian3.fromDegrees(this.navSatFixMessage.longitude, this.navSatFixMessage.latitude, this.vfrHudMessage.altitude)
+      const position = Cesium.Cartesian3.fromDegrees(
+        this.navSatFixMessage.longitude,
+        this.navSatFixMessage.latitude,
+        this.vfrHudMessage.altitude
+      )
       /*
       var heading = 0
       var pitch = 0
@@ -98,7 +130,7 @@ export default {
       this.vehicleEntity = this.viewer.entities.add({
         name: 'Vehicle',
         id: 'vehicle',
-        position: position,
+        position,
         // orientation : orientation,
         box: {
           dimensions: new Cesium.Cartesian3(4.0, 4.0, 4.0),
@@ -111,16 +143,16 @@ export default {
   },
 
   apollo: {
-    $client () { return this.activeApi },
+    $client () {
+      return this.activeApi
+    },
     navSatFixMessage: {
       query: navSatFixQuery,
       subscribeToMore: {
         document: navSatFixSubscription,
-        updateQuery: (previousResult, { subscriptionData }) => {
-          return {
-            navSatFixMessage: subscriptionData.data.navSatFixMessage
-          }
-        }
+        updateQuery: (previousResult, { subscriptionData }) => ({
+          navSatFixMessage: subscriptionData.data.navSatFixMessage
+        })
       },
       mutation: navSatFixMutate
     },
@@ -128,11 +160,9 @@ export default {
       query: imuQuery,
       subscribeToMore: {
         document: imuSubscription,
-        updateQuery: (previousResult, { subscriptionData }) => {
-          return {
-            imuMessage: subscriptionData.data.imuMessage
-          }
-        }
+        updateQuery: (previousResult, { subscriptionData }) => ({
+          imuMessage: subscriptionData.data.imuMessage
+        })
       },
       mutation: imuMutate
     },
@@ -140,16 +170,13 @@ export default {
       query: vfrHudQuery,
       subscribeToMore: {
         document: vfrHudSubscription,
-        updateQuery: (previousResult, { subscriptionData }) => {
-          return {
-            vfrHudMessage: subscriptionData.data.vfrHudMessage
-          }
-        }
+        updateQuery: (previousResult, { subscriptionData }) => ({
+          vfrHudMessage: subscriptionData.data.vfrHudMessage
+        })
       },
       mutation: vfrHudMutate
     }
   }
-
 }
 </script>
 
@@ -159,7 +186,7 @@ export default {
   width: 100%;
   height: 100%;
   top: 0;
-  left:0;
+  left: 0;
   margin: 0;
   padding: 0;
   overflow: hidden;

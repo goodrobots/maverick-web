@@ -45,7 +45,7 @@ export function createProvider (options = {}) {
     wsEndpoint: 'ws://newdev.maverick.one:6801/subscriptions',
     // wsEndpoint: ((location.protocol === 'https:') ? 'wss://' : 'ws://') + currentSite + '/web/api/sitl/subscriptions',
     tokenName: AUTH_TOKEN,
-    persisting: true,
+    persisting: false,
     websocketsOnly: false,
     ssr: false
   })
@@ -65,7 +65,11 @@ export function createProvider (options = {}) {
     // Global error handler for all smart queries and subscriptions
     errorHandler (error) {
       // eslint-disable-next-line no-console
-      console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)
+      console.log(
+        '%cError',
+        'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
+        error.message
+      )
     },
     defaultClient: sitlClient
   })

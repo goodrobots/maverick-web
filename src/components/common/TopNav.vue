@@ -44,9 +44,18 @@ div
 </template>
 
 <script>
-import { vfrHudQuery, vfrHudSubscription } from '../../plugins/apollo/graphql/VfrHudMessage.gql'
-import { stateQuery, stateSubscription } from '../../plugins/apollo/graphql/StateMessage.gql'
-import { statusTextQuery, statusTextSubscription } from '../../plugins/apollo/graphql/StatusTextMessage.gql'
+import {
+  vfrHudQuery,
+  vfrHudSubscription
+} from '../../plugins/apollo/graphql/VfrHudMessage.gql'
+import {
+  stateQuery,
+  stateSubscription
+} from '../../plugins/apollo/graphql/StateMessage.gql'
+import {
+  statusTextQuery,
+  statusTextSubscription
+} from '../../plugins/apollo/graphql/StatusTextMessage.gql'
 
 export default {
   name: 'TopNav',
@@ -54,13 +63,10 @@ export default {
     return {
       stateMessage: [],
       vfrHudMessage: [],
-      flightModes: [
-        'Guided',
-        'Stabilize'
-      ],
+      flightModes: ['Guided', 'Stabilize'],
       tickers: {
-        'stateMessage': false,
-        'vfrHudMessage': false
+        stateMessage: false,
+        vfrHudMessage: false
       },
       snackbar: false,
       statusTextMessage: '',
@@ -75,13 +81,27 @@ export default {
   },
 
   computed: {
-    routePath () { return this.$store.state.route.path },
-    navIcon () { return this.$store.state.navIcon },
-    navColor () { return this.$store.state.navColor },
-    navDrawer () { return this.$store.state.navDrawer },
-    apis () { return this.$store.state.apis },
-    activeApi () { return this.$store.state.activeApi },
-    height () { return window.innerHeight }
+    routePath () {
+      return this.$store.state.route.path
+    },
+    navIcon () {
+      return this.$store.state.navIcon
+    },
+    navColor () {
+      return this.$store.state.navColor
+    },
+    navDrawer () {
+      return this.$store.state.navDrawer
+    },
+    apis () {
+      return this.$store.state.apis
+    },
+    activeApi () {
+      return this.$store.state.activeApi
+    },
+    height () {
+      return window.innerHeight
+    }
   },
 
   methods: {
@@ -92,13 +112,15 @@ export default {
       this.$store.commit('setNavDrawer', !this.$store.state.navDrawer)
     },
     setTickers () {
-      this.tickers['stateMessage'] = true
-      this.tickers['vfrHudMessage'] = true
+      this.tickers.stateMessage = true
+      this.tickers.vfrHudMessage = true
     }
   },
 
   apollo: {
-    $client () { return this.activeApi },
+    $client () {
+      return this.activeApi
+    },
 
     // Setup apollo queries
     statusTextMessage: statusTextQuery,
@@ -110,18 +132,24 @@ export default {
       vfrHudMessage: {
         query: vfrHudSubscription,
         result ({ data }) {
-          if (this.vfrHudMessage !== data.vfrHudMessage && this.tickers['vfrHudMessage']) {
+          if (
+            this.vfrHudMessage !== data.vfrHudMessage &&
+            this.tickers.vfrHudMessage
+          ) {
             this.vfrHudMessage = data.vfrHudMessage
-            this.tickers['vfrHudMessage'] = false // Turn the ticker off until the next interval
+            this.tickers.vfrHudMessage = false // Turn the ticker off until the next interval
           }
         }
       },
       stateMessage: {
         query: stateSubscription,
         result ({ data }) {
-          if (this.stateMessage !== data.stateMessage && this.tickers['stateMessage']) {
+          if (
+            this.stateMessage !== data.stateMessage &&
+            this.tickers.stateMessage
+          ) {
             this.stateMessage = data.stateMessage
-            this.tickers['stateMessage'] = false // Turn the ticker off until the next interval
+            this.tickers.stateMessage = false // Turn the ticker off until the next interval
             this.fcTime = data.stateMessage.secs
           }
         }

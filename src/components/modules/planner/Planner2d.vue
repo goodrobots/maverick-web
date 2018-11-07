@@ -66,8 +66,14 @@ div.planner-map
 </template>
 
 <script>
-import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/apollo/graphql/NavSatFixMessage.gql'
-import { waypointsQuery, waypointsSubscription } from '../../../plugins/apollo/graphql/Waypoints.gql'
+import {
+  navSatFixQuery,
+  navSatFixSubscription
+} from '../../../plugins/apollo/graphql/NavSatFixMessage.gql'
+import {
+  waypointsQuery,
+  waypointsSubscription
+} from '../../../plugins/apollo/graphql/Waypoints.gql'
 
 export default {
   data () {
@@ -86,7 +92,7 @@ export default {
         { value: 'googleterrain', text: 'Google Terrain' }
       ],
       tickers: {
-        'navSatFixMessage': false
+        navSatFixMessage: false
       }
     }
   },
@@ -97,34 +103,58 @@ export default {
   },
 
   computed: {
-    bingMapsKey () { return this.$store.state.bingMapsKey },
-    activeApi () { return this.$store.state.activeApi },
-    navColor () { return this.$store.state.navColor },
+    bingMapsKey () {
+      return this.$store.state.bingMapsKey
+    },
+    activeApi () {
+      return this.$store.state.activeApi
+    },
+    navColor () {
+      return this.$store.state.navColor
+    },
     mapCenter: {
-      get () { return this.$store.state.planner.mapCenter },
-      set (value) { return this.$store.commit('planner/setMapCenter', value) }
+      get () {
+        return this.$store.state.planner.mapCenter
+      },
+      set (value) {
+        return this.$store.commit('planner/setMapCenter', value)
+      }
     },
     mapLayer: {
-      get () { return this.$store.state.planner.mapLayer },
-      set (value) { return this.$store.commit('planner/setMapLayer', value) }
+      get () {
+        return this.$store.state.planner.mapLayer
+      },
+      set (value) {
+        return this.$store.commit('planner/setMapLayer', value)
+      }
     },
     mapZoom: {
-      get () { return this.$store.state.planner.mapZoom },
-      set (value) { this.$store.commit('planner/setMapZoom', value) }
+      get () {
+        return this.$store.state.planner.mapZoom
+      },
+      set (value) {
+        this.$store.commit('planner/setMapZoom', value)
+      }
     },
     xy () {
       // xy computes EPSG:3857 coordinates from EPSG:4326.  If both x,y are not values then return nothing as vl components get upset otherwise
       // const xy = VueLayers.core.projHelper.fromLonLat([this.navSatFixMessage.longitude, this.navSatFixMessage.latitude])
       // Note: This is no longer necessary, instead set data-projection in the vl-map component use
-      const xy = [this.navSatFixMessage.longitude, this.navSatFixMessage.latitude]
-      return (xy[0] && xy[1]) ? xy : []
+      const xy = [
+        this.navSatFixMessage.longitude,
+        this.navSatFixMessage.latitude
+      ]
+      return xy[0] && xy[1] ? xy : []
     },
     xycenter () {
       return this.centercoords
     },
     centercoords () {
       // If follow option set, or centercoords empty, set centercoords from current position
-      if (this.mapCenter || (this.centercoords.length === 0 && this.xy.length > 0)) {
+      if (
+        this.mapCenter ||
+        (this.centercoords.length === 0 && this.xy.length > 0)
+      ) {
         return this.xy
       }
     }
@@ -132,12 +162,14 @@ export default {
 
   methods: {
     setTickers () {
-      this.tickers['navSatFixMessage'] = true
+      this.tickers.navSatFixMessage = true
     }
   },
 
   apollo: {
-    $client () { return this.activeApi },
+    $client () {
+      return this.activeApi
+    },
     navSatFixMessage: navSatFixQuery,
     waypoints: waypointsQuery,
     $subscribe: {
@@ -145,9 +177,12 @@ export default {
         query: navSatFixSubscription,
         result ({ data }) {
           // Only update if position has changed and ticker is turned on
-          if (this.navSatFixMessage !== data.navSatFixMessage && this.tickers['navSatFixMessage']) {
+          if (
+            this.navSatFixMessage !== data.navSatFixMessage &&
+            this.tickers.navSatFixMessage
+          ) {
             this.navSatFixMessage = data.navSatFixMessage
-            this.tickers['navSatFixMessage'] = false // Turn the ticker off until the next interval
+            this.tickers.navSatFixMessage = false // Turn the ticker off until the next interval
           }
         }
       },

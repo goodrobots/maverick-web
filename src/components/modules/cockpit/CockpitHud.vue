@@ -1,7 +1,10 @@
 <script>
-import { imuQuery, imuSubscription } from '../../../plugins/apollo/graphql/ImuMessage.gql'
 import colors from 'vuetify/es5/util/colors'
 import { colorToInt } from 'vuetify/es5/util/colorUtils'
+import {
+  imuQuery,
+  imuSubscription
+} from '../../../plugins/apollo/graphql/ImuMessage.gql'
 
 export default {
   inject: ['EventBus', 'CockpitObject'],
@@ -29,13 +32,15 @@ export default {
       ladderWidth: 50,
       imuMessage: [],
       tickers: {
-        'imuMessage': false,
-        'drawHud': false
+        imuMessage: false,
+        drawHud: false
       }
     }
   },
   computed: {
-    activeApi () { return this.$store.state.activeApi },
+    activeApi () {
+      return this.$store.state.activeApi
+    },
     dimensions () {
       return {
         x: 0,
@@ -52,10 +57,12 @@ export default {
     },
     // Predefine graphic objects for roll ticks
     rollTicks () {
-      let ticks = {}
-      for (let direction of [true, false]) {
+      const ticks = {}
+      for (const direction of [true, false]) {
         for (let counter = 0; counter < 1; counter += this.tickStep) {
-          const tick = (direction) ? this.tickTop + counter : this.tickTop - counter
+          const tick = direction
+            ? this.tickTop + counter
+            : this.tickTop - counter
           ticks[tick] = new this.CockpitObject.PIXI.Graphics()
         }
       }
@@ -63,20 +70,20 @@ export default {
     },
     // Predefine graphic objects for pitch ladder
     pitchLadder () {
-      let lines = {}
-      for (let direction of [true, false]) {
+      const lines = {}
+      for (const direction of [true, false]) {
         for (let counter = 0; counter < this.ladderSteps * 3; counter += 1) {
-          const counterindex = (direction) ? counter : -counter
+          const counterindex = direction ? counter : -counter
           lines[counterindex] = new this.CockpitObject.PIXI.Graphics()
         }
       }
       return lines
     },
     pitchNumbers () {
-      let numbers = {}
-      for (let direction of [true, false]) {
+      const numbers = {}
+      for (const direction of [true, false]) {
         for (let counter = 0; counter < this.ladderSteps * 3; counter += 1) {
-          const counterindex = (direction) ? counter : -counter
+          const counterindex = direction ? counter : -counter
           numbers[counterindex] = new this.CockpitObject.PIXI.Text()
         }
       }
@@ -85,9 +92,29 @@ export default {
     // Convert quaternion orientation to euler angles
     eulerRpy () {
       const rpy = {}
-      rpy.roll = -Math.atan2(2.0 * (this.imuMessage.orientationZ * this.imuMessage.orientationY + this.imuMessage.orientationW * this.imuMessage.orientationX), 1.0 - 2.0 * (this.imuMessage.orientationX * this.imuMessage.orientationX + this.imuMessage.orientationY * this.imuMessage.orientationY))
-      rpy.pitch = -Math.asin(2.0 * (this.imuMessage.orientationY * this.imuMessage.orientationW - this.imuMessage.orientationZ * this.imuMessage.orientationX))
-      rpy.yaw = -Math.atan2(2.0 * (this.imuMessage.orientationZ * this.imuMessage.orientationW + this.imuMessage.orientationX * this.imuMessage.orientationY), -1.0 + 2.0 * (this.imuMessage.orientationW * this.imuMessage.orientationW + this.imuMessage.orientationX * this.imuMessage.orientationX))
+      rpy.roll = -Math.atan2(
+        2.0 *
+          (this.imuMessage.orientationZ * this.imuMessage.orientationY +
+            this.imuMessage.orientationW * this.imuMessage.orientationX),
+        1.0 -
+          2.0 *
+            (this.imuMessage.orientationX * this.imuMessage.orientationX +
+              this.imuMessage.orientationY * this.imuMessage.orientationY)
+      )
+      rpy.pitch = -Math.asin(
+        2.0 *
+          (this.imuMessage.orientationY * this.imuMessage.orientationW -
+            this.imuMessage.orientationZ * this.imuMessage.orientationX)
+      )
+      rpy.yaw = -Math.atan2(
+        2.0 *
+          (this.imuMessage.orientationZ * this.imuMessage.orientationW +
+            this.imuMessage.orientationX * this.imuMessage.orientationY),
+        -1.0 +
+          2.0 *
+            (this.imuMessage.orientationW * this.imuMessage.orientationW +
+              this.imuMessage.orientationX * this.imuMessage.orientationX)
+      )
       return rpy
     }
   },
@@ -97,15 +124,17 @@ export default {
   },
   // Setup grqphql imu message stream
   apollo: {
-    $client () { return this.activeApi },
+    $client () {
+      return this.activeApi
+    },
     imuMessage: imuQuery,
     $subscribe: {
       imuMessage: {
         query: imuSubscription,
         result ({ data }) {
-          if (this.imuMessage !== data.imuMessage && this.tickers['imuMessage']) {
+          if (this.imuMessage !== data.imuMessage && this.tickers.imuMessage) {
             this.imuMessage = data.imuMessage
-            this.tickers['imuMessage'] = false // Turn the ticker off until the next interval
+            this.tickers.imuMessage = false // Turn the ticker off until the next interval
           }
         }
       }
@@ -139,13 +168,13 @@ export default {
     })
     window.addEventListener('resize', this.handleResize)
   },
-  beforeDestroy: function () {
+  beforeDestroy () {
     window.removeEventListener('resize', this.handleResize)
   },
   methods: {
     setTickers () {
-      this.tickers['imuMessage'] = true
-      this.tickers['drawHud'] = true
+      this.tickers.imuMessage = true
+      this.tickers.drawHud = true
       this.tickerUpdate()
     },
     handleResize () {
@@ -174,64 +203,123 @@ export default {
       this.rotatingBackground.position.y = this.dimensions.height / 2
     },
     drawFixedTriangle () {
-      const innerLength = this.dimensions.height / 2 - this.topOffset - (this.tickRadius * 2)
-      let innerx = (this.dimensions.width / 2) + (innerLength * Math.cos(this.tickTop))
-      let innery = (this.dimensions.height / 2) + (innerLength * Math.sin(this.tickTop))
+      const innerLength =
+        this.dimensions.height / 2 - this.topOffset - this.tickRadius * 2
+      const innerx =
+        this.dimensions.width / 2 + innerLength * Math.cos(this.tickTop)
+      const innery =
+        this.dimensions.height / 2 + innerLength * Math.sin(this.tickTop)
       this.fixedTriangle.clear()
       this.fixedTriangle.beginFill(colorToInt(colors.yellow.darken1), 1)
-      this.fixedTriangle.lineStyle(this.rollLineWidth, colorToInt(colors.shades.white), 1)
+      this.fixedTriangle.lineStyle(
+        this.rollLineWidth,
+        colorToInt(colors.shades.white),
+        1
+      )
       this.fixedTriangle.moveTo(innerx, innery + 1)
-      this.fixedTriangle.lineTo(innerx + this.triangleSize, innery + (this.triangleSize * 2))
-      this.fixedTriangle.lineTo(innerx - this.triangleSize, innery + (this.triangleSize * 2))
+      this.fixedTriangle.lineTo(
+        innerx + this.triangleSize,
+        innery + this.triangleSize * 2
+      )
+      this.fixedTriangle.lineTo(
+        innerx - this.triangleSize,
+        innery + this.triangleSize * 2
+      )
       this.fixedTriangle.lineTo(innerx, innery + 1)
       this.fixedTriangle.endFill()
       this.fixedBackground.addChild(this.fixedTriangle)
     },
     drawFixedHorizonMarkings () {
       this.fixedHorizonMarkings.clear()
-      this.fixedHorizonMarkings.lineStyle(this.rollLineWidth * 4, colorToInt(colors.yellow.darken1), 1)
+      this.fixedHorizonMarkings.lineStyle(
+        this.rollLineWidth * 4,
+        colorToInt(colors.yellow.darken1),
+        1
+      )
       // Draw the horizontal lines left and right from center
-      this.fixedHorizonMarkings.moveTo((this.width / 2) - (this.ladderWidth * 4.5), this.height / 2)
-      this.fixedHorizonMarkings.lineTo((this.width / 2) - (this.ladderWidth * 2.5), this.height / 2)
-      this.fixedHorizonMarkings.moveTo((this.width / 2) + (this.ladderWidth * 4.5), this.height / 2)
-      this.fixedHorizonMarkings.lineTo((this.width / 2) + (this.ladderWidth * 2.5), this.height / 2)
+      this.fixedHorizonMarkings.moveTo(
+        this.width / 2 - this.ladderWidth * 4.5,
+        this.height / 2
+      )
+      this.fixedHorizonMarkings.lineTo(
+        this.width / 2 - this.ladderWidth * 2.5,
+        this.height / 2
+      )
+      this.fixedHorizonMarkings.moveTo(
+        this.width / 2 + this.ladderWidth * 4.5,
+        this.height / 2
+      )
+      this.fixedHorizonMarkings.lineTo(
+        this.width / 2 + this.ladderWidth * 2.5,
+        this.height / 2
+      )
       // Draw the arrow at center
-      this.fixedHorizonMarkings.moveTo(this.width / 2 - this.ladderWidth, this.height / 2 + 30)
+      this.fixedHorizonMarkings.moveTo(
+        this.width / 2 - this.ladderWidth,
+        this.height / 2 + 30
+      )
       this.fixedHorizonMarkings.lineTo(this.width / 2, this.height / 2)
-      this.fixedHorizonMarkings.lineTo(this.width / 2 + this.ladderWidth, this.height / 2 + 30)
+      this.fixedHorizonMarkings.lineTo(
+        this.width / 2 + this.ladderWidth,
+        this.height / 2 + 30
+      )
       this.fixedBackground.addChild(this.fixedHorizonMarkings)
     },
     drawRollTicks () {
-      const innerLength = this.dimensions.height / 2 - this.topOffset - (this.tickRadius * 2)
+      const innerLength =
+        this.dimensions.height / 2 - this.topOffset - this.tickRadius * 2
       // Draw the roll arc that runs underneath all the ticks
       this.rollArc.clear()
       this.rollArc.lineStyle(2, colorToInt(colors.shades.white), 1)
-      this.rollArc.arc(this.dimensions.width / 2, this.dimensions.height / 2, innerLength, this.tickTop - 1, this.tickTop + 1, false)
+      this.rollArc.arc(
+        this.dimensions.width / 2,
+        this.dimensions.height / 2,
+        innerLength,
+        this.tickTop - 1,
+        this.tickTop + 1,
+        false
+      )
       this.rotatingBackground.addChild(this.rollArc)
       // Start at the top and draw to the left, then start at the top again and draw to the right
       // This is to ensure we always have the central tick/triangle at the top regardless of number and spacing of ticks
-      for (let direction of [true, false]) {
+      for (const direction of [true, false]) {
         let tickBool = false
         for (let counter = 0; counter < 1; counter += this.tickStep) {
-          const tick = (direction) ? this.tickTop + counter : this.tickTop - counter
-          const tickMultiplier = (tickBool) ? 2 : 1
-          const outerLength = this.dimensions.height / 2 - this.topOffset + this.tickRadius - (this.tickRadius * tickMultiplier)
-          let outerx = (this.dimensions.width / 2) + (outerLength * Math.cos(tick))
-          let outery = (this.dimensions.height / 2) + (outerLength * Math.sin(tick))
-          let innerx = (this.dimensions.width / 2) + (innerLength * Math.cos(tick))
-          let innery = (this.dimensions.height / 2) + (innerLength * Math.sin(tick))
+          const tick = direction
+            ? this.tickTop + counter
+            : this.tickTop - counter
+          const tickMultiplier = tickBool ? 2 : 1
+          const outerLength =
+            this.dimensions.height / 2 -
+            this.topOffset +
+            this.tickRadius -
+            this.tickRadius * tickMultiplier
+          const outerx =
+            this.dimensions.width / 2 + outerLength * Math.cos(tick)
+          const outery =
+            this.dimensions.height / 2 + outerLength * Math.sin(tick)
+          const innerx =
+            this.dimensions.width / 2 + innerLength * Math.cos(tick)
+          const innery =
+            this.dimensions.height / 2 + innerLength * Math.sin(tick)
           if (!counter) {
-          // If we're still at the top, draw a nice triangle instead
+            // If we're still at the top, draw a nice triangle instead
             this.topTriangle.clear()
             this.topTriangle.beginFill(0xffffff, 1)
             this.topTriangle.lineStyle(this.rollLineWidth, 0xffffff, 1)
             this.topTriangle.moveTo(innerx, innery)
-            this.topTriangle.lineTo(innerx + this.triangleSize, innery - (this.triangleSize * 2))
-            this.topTriangle.lineTo(innerx - this.triangleSize, innery - (this.triangleSize * 2))
+            this.topTriangle.lineTo(
+              innerx + this.triangleSize,
+              innery - this.triangleSize * 2
+            )
+            this.topTriangle.lineTo(
+              innerx - this.triangleSize,
+              innery - this.triangleSize * 2
+            )
             this.topTriangle.lineTo(innerx, innery)
             this.topTriangle.endFill()
             this.rotatingBackground.addChild(this.topTriangle)
-          // Otherwise, draw a tick
+            // Otherwise, draw a tick
           } else {
             this.rollTicks[tick].clear()
             this.rollTicks[tick].lineStyle(2, 0xeeeeee, 1)
@@ -274,30 +362,53 @@ export default {
     drawPitchLadder () {
       // Draw the horizon line ladder markings
       // Draw the ladder lines
-      for (let direction of [true, false]) {
+      for (const direction of [true, false]) {
         let lineBool = false
         for (let counter = 0; counter < this.ladderSteps * 3; counter += 1) {
-          const counterindex = (direction) ? counter : -counter
-          const absline = (((this.height / 2) - this.topOffset * 2) / this.ladderSteps) * counter
-          const line = (direction) ? absline : -absline
-          const lineMultiplier = (lineBool) ? 1 : 2
-          const lineColor = (lineBool) ? 0xffffff : 0xeeeeee
+          const counterindex = direction ? counter : -counter
+          const absline =
+            ((this.height / 2 - this.topOffset * 2) / this.ladderSteps) *
+            counter
+          const line = direction ? absline : -absline
+          const lineMultiplier = lineBool ? 1 : 2
+          const lineColor = lineBool ? 0xffffff : 0xeeeeee
           this.pitchLadder[counterindex].clear()
           // If the ladder line is within smaller y-axis boundary, add it to the ladder container and display it
           if (
-            (this.height / 2 - line > this.topOffset + 20 + Math.abs(this.eulerRpy.pitch * 1000)) &&
-            (this.height / 2 - line < this.height - this.topOffset - 20 + Math.abs(this.eulerRpy.pitch * 1000))
+            this.height / 2 - line >
+              this.topOffset + 20 + Math.abs(this.eulerRpy.pitch * 1000) &&
+            this.height / 2 - line <
+              this.height -
+                this.topOffset -
+                20 +
+                Math.abs(this.eulerRpy.pitch * 1000)
           ) {
-            this.pitchLadder[counterindex].lineStyle(this.rollLineWidth * lineMultiplier, lineColor, 1)
-            this.pitchLadder[counterindex].moveTo(this.width / 2 - ((this.ladderWidth / 2) * lineMultiplier), this.height / 2 - line)
-            this.pitchLadder[counterindex].lineTo(this.width / 2 + ((this.ladderWidth / 2) * lineMultiplier), this.height / 2 - line)
+            this.pitchLadder[counterindex].lineStyle(
+              this.rollLineWidth * lineMultiplier,
+              lineColor,
+              1
+            )
+            this.pitchLadder[counterindex].moveTo(
+              this.width / 2 - (this.ladderWidth / 2) * lineMultiplier,
+              this.height / 2 - line
+            )
+            this.pitchLadder[counterindex].lineTo(
+              this.width / 2 + (this.ladderWidth / 2) * lineMultiplier,
+              this.height / 2 - line
+            )
             if (!lineBool && counter) {
               this.pitchNumbers[counterindex].text = counterindex * 5
-              this.pitchNumbers[counterindex].style = { fontSize: 18, fill: 0xffffff }
-              this.pitchNumbers[counterindex].x = this.width / 2 - this.ladderWidth - 30
+              this.pitchNumbers[counterindex].style = {
+                fontSize: 18,
+                fill: 0xffffff
+              }
+              this.pitchNumbers[counterindex].x =
+                this.width / 2 - this.ladderWidth - 30
               this.pitchNumbers[counterindex].y = this.height / 2 - line - 10
               // let text = new this.CockpitObject.PIXI.Text(counterindex * 5, {fontSize: 18, fill: 0xffffff})
-              this.pitchLadder[counterindex].addChild(this.pitchNumbers[counterindex])
+              this.pitchLadder[counterindex].addChild(
+                this.pitchNumbers[counterindex]
+              )
             }
           }
           this.pitchContainer.addChild(this.pitchLadder[counterindex])
@@ -306,7 +417,7 @@ export default {
       }
     },
     tickerUpdate () {
-      if (this.tickers['drawHud'] && this.addState) {
+      if (this.tickers.drawHud && this.addState) {
         // Draw the rotating layer
         this.drawRotatingBackground()
         this.drawPitchHorizon()
@@ -321,7 +432,7 @@ export default {
         // Rotate the rotating layer according to roll attitude
         this.rotatingBackground.rotation = this.eulerRpy.roll
         // Turn off the ticker until the next interval
-        this.tickers['drawHud'] = false
+        this.tickers.drawHud = false
       }
     }
   },

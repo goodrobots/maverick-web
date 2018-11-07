@@ -16,23 +16,26 @@ export default {
     // Planner3d
   },
   data () {
-    return {
-    }
+    return {}
   },
   computed: {
-    activeApi () { return this.$store.state.activeApi },
-    plannerViewState () { return this.$store.state.planner.viewState }
+    activeApi () {
+      return this.$store.state.activeApi
+    },
+    plannerViewState () {
+      return this.$store.state.planner.viewState
+    }
   }
 }
 </script>
 
 <style scoped>
 .plannerContent {
-  position:fixed !important;
-  position:absolute;
-  top:0;
-  right:0;
-  bottom:0;
-  left:0;
+  position: fixed !important;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 </style>

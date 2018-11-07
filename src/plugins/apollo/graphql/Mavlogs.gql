@@ -1,0 +1,13 @@
+#import "./MavlogsFragment.gql"
+
+query mavlogsQuery {
+  mavlogs {
+    ...Mavlog
+  }
+}
+
+subscription mavlogsSubscription {
+  mavlogs {
+    ...Mavlog
+  }
+}

@@ -13,7 +13,9 @@ export default {
     this.container.interactive = true
 
     // Forward PIXI's pointerdown event through Vue.
-    this.container.on('pointerdown', () => this.$emit('pointerdown', this.container))
+    this.container.on('pointerdown', () =>
+      this.$emit('pointerdown', this.container)
+    )
 
     // Once the PIXI app in the renderer component is ready, add this container to its parent.
     this.EventBus.$on('ready', () => {
@@ -31,9 +33,8 @@ export default {
 
   // At the current time, Vue does not allow empty components to be created without a DOM element if they have children.
   // To work around this, we create a tiny render function that renders to <template><!-- children --></template>.
-  render: function (h) {
+  render (h) {
     return h('template', this.$slots.default)
   }
-
 }
 </script>

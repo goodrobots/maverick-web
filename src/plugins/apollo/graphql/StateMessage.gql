@@ -1,0 +1,19 @@
+#import "./StateFragment.gql"
+
+query stateQuery {
+  stateMessage {
+    ...StateMessage
+  }
+}
+
+subscription stateSubscription {
+  stateMessage {
+    ...StateMessage
+  }
+}
+
+mutation stateMutate {
+  stateMessage {
+    ...StateMessage
+  }
+}

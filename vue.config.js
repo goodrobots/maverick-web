@@ -1,11 +1,11 @@
 /*
- -- Note: All the commented lines in this file are to do with Cesium support,
- --  which is temporarily disabled.
+    Note: All the commented lines in this file are to do with Cesium support,
+    which is temporarily disabled.
 */
 
+/*
 const path = require('path')
 const webpack = require('webpack')
-/*
 const CopywebpackPlugin = require('copy-webpack-plugin')
 const cesiumSource = 'node_modules/cesium/Source'
 const cesiumWorkers = '../Build/Cesium/Workers'
@@ -27,17 +27,17 @@ module.exports = {
 
   // babel-loader skips `node_modules` deps by default.
   // explicitly transpile a dependency with this option.
-  transpileDependencies: [/* string or regex */],
+  transpileDependencies: [
+    /* string or regex */
+  ],
 
   // generate sourceMap for production build?
   productionSourceMap: false,
 
   // tweak internal webpack configuration.
   // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
-  chainWebpack: (config) => {
-  },
+  chainWebpack: config => {},
 
-  
   configureWebpack: {
     /*
     output: {
@@ -85,16 +85,16 @@ module.exports = {
         {
         // Strip cesium pragmas
         test: /\.js$/,
-        	enforce: 'pre',
-        	include: path.resolve(__dirname, cesiumSource),
-        	use: [{
-        		loader: 'strip-pragma-loader',
-        		options: {
-        		  pragmas: {
-        				debug: false
-        			}
-        		}
-        	}]
+          enforce: 'pre',
+          include: path.resolve(__dirname, cesiumSource),
+          use: [{
+            loader: 'strip-pragma-loader',
+            options: {
+              pragmas: {
+                debug: false
+              }
+            }
+          }]
         }
         */
       ]
@@ -145,12 +145,9 @@ module.exports = {
     // pass custom options to pre-processor loaders. e.g. to pass options to
     // sass-loader, use { sass: { ... } }
     loaderOptions: {
-      css: {
-      },
-      postcss: {
-      },
-      stylus: {
-      }
+      css: {},
+      postcss: {},
+      stylus: {}
     }
 
     // Enable CSS modules for all css / pre-processor files.
@@ -181,17 +178,17 @@ module.exports = {
       errors: true
     },
     proxy: null,
-    before: (app) => {},
+    before: app => {},
     clientLogLevel: 'warning',
     inline: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
+      'Access-Control-Allow-Headers':
+        'X-Requested-With, content-type, Authorization'
     }
   },
 
   // options for 3rd party plugins
-  pluginOptions: {
-  }
+  pluginOptions: {}
 }

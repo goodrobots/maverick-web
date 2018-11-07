@@ -20,13 +20,16 @@ v-navigation-drawer(app left clipped fixed v-model="drawer")
 export default {
   name: 'ConfigDrawer',
   data () {
-    return {
-    }
+    return {}
   },
   computed: {
     drawer: {
-      get () { return this.$store.state.navDrawer },
-      set (value) { this.$store.commit('setNavDrawer', value) }
+      get () {
+        return this.$store.state.navDrawer
+      },
+      set (value) {
+        this.$store.commit('setNavDrawer', value)
+      }
     }
   }
 }

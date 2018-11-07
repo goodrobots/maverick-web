@@ -36,7 +36,11 @@ v-dialog(v-model="dialog" max-width="500px")
 
 <script>
 export default {
-  name: 'ConfigParamEdit',
-  props: ['editedItem']
+  name: 'ConfigParamEdit'
+  /*
+  props: {
+    editedItem: Object
+  }
+  */
 }
 </script>

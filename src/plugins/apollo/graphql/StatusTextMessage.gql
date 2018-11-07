@@ -1,0 +1,19 @@
+#import "./StatusTextFragment.gql"
+
+query statusTextQuery {
+  statusTextMessage {
+    ...StatusTextMessage
+  }
+}
+
+subscription statusTextSubscription {
+  statusTextMessage {
+    ...StatusTextMessage
+  }
+}
+
+mutation statusTextMutate {
+  statusTextMessage {
+    ...StatusTextMessage
+  }
+}

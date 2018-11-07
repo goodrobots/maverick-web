@@ -24,11 +24,12 @@ export default new Vuex.Store({
     fullScreen: false,
     moduleName: null,
     apis: {
-      'fc': 'Local Flight Controller',
-      'sitl': 'Local SITL Simulator'
+      fc: 'Local Flight Controller',
+      sitl: 'Local SITL Simulator'
     },
     activeApi: 'sitl',
-    bingMapsKey: 'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6'
+    bingMapsKey:
+      'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6'
   },
 
   mutations: {

@@ -39,32 +39,42 @@ export default {
   mounted () {
     this.cockpitWindow = this.$refs.cockpitWindow
     this.CockpitObject.PIXI.utils.skipHello()
-    this.CockpitObject.PixiApp = new PIXI.Application(window.innerWidth, window.innerHeight, {
-      antialias: true,
-      transparent: true,
-      view: this.cockpitWindow,
-      resolution: window.devicePixelRatio || 1,
-      autoResize: true
-    })
+    this.CockpitObject.PixiApp = new PIXI.Application(
+      window.innerWidth,
+      window.innerHeight,
+      {
+        antialias: true,
+        transparent: true,
+        view: this.cockpitWindow,
+        resolution: window.devicePixelRatio || 1,
+        autoResize: true
+      }
+    )
     this.EventBus.$emit('ready') // notify child components that pixi is ready to go
     window.addEventListener('resize', this.handleResize)
   },
 
-  beforeDestroy: function () {
+  beforeDestroy () {
     window.removeEventListener('resize', this.handleResize)
     this.CockpitObject.PixiApp.destroy(true)
   },
 
   methods: {
     handleResize () {
-      this.CockpitObject.PixiApp.renderer.resize(window.innerWidth, window.innerHeight)
+      this.CockpitObject.PixiApp.renderer.resize(
+        window.innerWidth,
+        window.innerHeight
+      )
     }
   }
 }
 </script>
 
 <style scoped>
-* {padding: 0; margin: 0}
+* {
+  padding: 0;
+  margin: 0;
+}
 .cockpit-hud {
   position: absolute;
   top: 0;

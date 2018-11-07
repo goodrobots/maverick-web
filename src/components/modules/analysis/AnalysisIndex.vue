@@ -37,7 +37,12 @@ export default {
         { text: 'Filename', value: 'filename', align: 'left' },
         { text: 'Start', value: 'start', align: 'left' },
         { text: 'Finish', value: 'finish', align: 'left' },
-        { text: 'Description', value: 'description', align: 'left', sortable: false },
+        {
+          text: 'Description',
+          value: 'description',
+          align: 'left',
+          sortable: false
+        },
         { text: 'State', value: 'state', align: 'left' }
       ],
       pagination: {
@@ -49,7 +54,9 @@ export default {
   },
 
   computed: {
-    activeApi () { return this.$store.state.activeApi }
+    activeApi () {
+      return this.$store.state.activeApi
+    }
   },
 
   watch: {
@@ -61,43 +68,53 @@ export default {
 
   mounted () {
     // Hack datatables to be transparent
-    const tables = document.querySelectorAll('.datatable.table, .datatable__actions')
-    Object.keys(tables).forEach(key => { tables[key].className += ' transparent' })
+    const tables = document.querySelectorAll(
+      '.datatable.table, .datatable__actions'
+    )
+    Object.keys(tables).forEach(key => {
+      tables[key].className += ' transparent'
+    })
   },
 
   methods: {
     customFilter (items, search, filter) {
       search = search.toString().toLowerCase()
-      return items.filter(function (row) {
-        return (filter(row.id, search) || filter(row.filename, search) || filter(row.source, search) || filter(row.description, search) || filter(row.state, search))
-      })
+      return items.filter(
+        row =>
+          filter(row.id, search) ||
+          filter(row.filename, search) ||
+          filter(row.source, search) ||
+          filter(row.description, search) ||
+          filter(row.state, search)
+      )
     },
     highlight (text, search) {
       if (!search) {
         return text
-      } else {
-        return text.replace(new RegExp(search, 'gi'), match => {
-          return '<span class="primary--text">' + match + '</span>'
-        })
       }
+      return text.replace(
+        new RegExp(search, 'gi'),
+        match => `<span class="primary--text">${match}</span>`
+      )
     },
     rowColor (state) {
       if (/Error/.test(state)) {
         return 'red darken-2'
-      } else if (/processing/.test(state)) {
-        return 'amber darken-2'
-      } else {
-        return ''
       }
+      if (/processing/.test(state)) {
+        return 'amber darken-2'
+      }
+      return ''
     }
   },
 
   apollo: {
-    $client () { return this.activeApi },
+    $client () {
+      return this.activeApi
+    },
     mavlogs: {
       query: mavlogsQuery
     }
   }
-
 }
 </script>

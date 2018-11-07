@@ -61,7 +61,12 @@ v-container.fluid.grid-list-xl
 
 <script>
 import Vue from 'vue'
-import { paramsQuery, paramsSubscription, updateParam } from '../../../plugins/apollo/graphql/Parameters.gql'
+import {
+  paramsQuery,
+  paramsSubscription,
+  updateParam
+} from '../../../plugins/apollo/graphql/Parameters.gql'
+
 export default {
   name: 'ConfigParamSummary',
   data () {
@@ -70,7 +75,9 @@ export default {
     }
   },
   computed: {
-    activeApi () { return this.$store.state.activeApi }
+    activeApi () {
+      return this.$store.state.activeApi
+    }
   },
   destroyed () {
     // this.$apollo.destroy()
@@ -78,7 +85,9 @@ export default {
   methods: {
     valueFormat (param) {
       if (param && param.meta && param.meta.units) {
-        return param.value + ' <span class="caption"><strong>' + param.meta.units + '</strong></span>'
+        return `${param.value} <span class="caption"><strong>${
+          param.meta.units
+        }</strong></span>`
       }
       if (param && param.meta && param.meta.values) {
         const values = JSON.parse(param.meta.values)
@@ -94,13 +103,17 @@ export default {
   },
 
   apollo: {
-    $client () { return this.activeApi },
+    $client () {
+      return this.activeApi
+    },
     params: {
       query: paramsQuery,
       manual: true,
       result ({ data, loading }) {
         if (!loading && !this.params.length) {
-          Object.keys(data.params).forEach(key => { Vue.set(this.params, key, data.params[key]) })
+          Object.keys(data.params).forEach(key => {
+            Vue.set(this.params, key, data.params[key])
+          })
         }
         // console.log('received params: ' + this.params.length)
       },

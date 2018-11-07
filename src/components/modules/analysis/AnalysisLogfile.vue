@@ -40,12 +40,16 @@ export default {
   },
 
   computed: {
-    activeApi () { return this.$store.state.activeApi }
+    activeApi () {
+      return this.$store.state.activeApi
+    }
   },
 
   // This is ugly, we should do a reactive parameter query to fetch a single entry
   apollo: {
-    $client () { return this.activeApi },
+    $client () {
+      return this.activeApi
+    },
     mavlogs: {
       query: mavlogsQuery
     }
@@ -61,7 +65,6 @@ export default {
       })
     }
   }
-
 }
 </script>
 

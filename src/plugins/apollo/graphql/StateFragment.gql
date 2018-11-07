@@ -1,0 +1,12 @@
+fragment StateMessage on StateMessage {
+  id
+  seq
+  secs
+  nsecs
+  frameId
+  connected
+  armed
+  guided
+  mode
+  systemStatus
+}

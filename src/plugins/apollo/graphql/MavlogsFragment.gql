@@ -1,0 +1,12 @@
+fragment Mavlog on Mavlog {
+  id
+  filename
+  start
+  finish
+  source
+  ekf2
+  ekf3
+  ekf2ekf3
+  description
+  state
+}
