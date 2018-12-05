@@ -85,7 +85,6 @@ export default new Vuex.Store({
       state.activeApi = api
     },
     setApiState (state, data) {
-      console.log(`api: ${data.api}, value: ${data.value}`)
       state.apis[data.api].state = data.value
     },
     setNavState (state, value) {

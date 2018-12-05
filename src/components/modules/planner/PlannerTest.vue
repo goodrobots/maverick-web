@@ -256,19 +256,19 @@ export default {
             // Mark the api state to active if not already set
             const api = key.replace('navSatFixMessage_', '')
             if (!this.$store.state.apis[api].state && 'navSatFixMessage' in data.data && data.data.navSatFixMessage.longitude) {
-              console.log(`setting state to true for api ${api}`)
+              // console.log(`setting state to true for api ${api}`)
               this.$store.commit('setApiState', {
                 api: api,
                 value: true
               })
             } else if (this.$store.state.apis[api].state && (!('navSatFixMessage' in data.data) && !data.data.navSatFixMessage.longitude)) {
-              console.log(`setting state to false for api ${api}`)
+              // console.log(`setting state to false for api ${api}`)
               this.$store.commit('setApiState', {
                 api: api,
                 value: false
               })
             }
-            console.log(this.apis)
+            // console.log(this.apis)
           }
         },
         /*
