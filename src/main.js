@@ -20,3 +20,5 @@ window.App = new Vue({
   render: h => h(App),
   apolloProvider: createProvider()
 }).$mount('#app')
+
+console.log('%c ** Welcome to Maverick Web GCS ** ', 'background: blue; color: white; display: block; padding: 2px 4px; border-radius: 3px; font-weight: bold;')

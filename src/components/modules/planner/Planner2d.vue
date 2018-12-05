@@ -184,6 +184,7 @@ export default {
             this.navSatFixMessage = data.navSatFixMessage
             this.tickers.navSatFixMessage = false // Turn the ticker off until the next interval
           }
+          // console.log(this.navSatFixMessage)
         }
       },
       waypoints: {

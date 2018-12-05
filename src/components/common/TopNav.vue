@@ -15,31 +15,38 @@ div
                 v-btn(flat @click="statusTextMessages = []")
                   v-icon(small) delete
               v-list-tile(v-for="(message, index) in statusTextMessages" :key="index")
-                v-list-tile-content
+                v-list-tile-content(v-if="message")
                   v-list-tile-title(v-text="message.message")
                   v-list-tile-sub-title(v-text="(fcTime - message.secs > 60) ? Math.round((fcTime - message.secs) / 60) + ' minutes ago' : fcTime - message.secs + ' seconds ago'")
         // Armed/Disarmed button
-        v-btn(v-if="stateMessage.armed" color="yellow" flat) ARMED
+        v-btn(v-if="stateMessage && 'armed' in stateMessage" color="yellow" flat) ARMED
         v-btn.transparent(v-else flat ripple=false) DISARMED
         // Mode button
-        v-btn.transparent(v-html="stateMessage.mode" depressed)
+        v-btn.transparent(v-if="stateMessage" v-html="stateMessage.mode" depressed)
         // v-select(:items="flightModes" overflow :label="stateMessage.mode")
         // Altitude button
-        v-btn.transparent(v-if="vfrHudMessage.altitude" v-html="'Alt<br>' + vfrHudMessage.altitude.toFixed(2) + 'm'" flat ripple=false)
+        v-btn.transparent(v-if="vfrHudMessage && vfrHudMessage.altitude" v-html="'Alt<br>' + vfrHudMessage.altitude.toFixed(2) + 'm'" flat ripple=false)
         // Heading button
-        v-btn.transparent(v-if="vfrHudMessage.heading && !$vuetify.breakpoint.smAndDown" v-html="'Hdg<br>' + vfrHudMessage.heading" flat ripple=false)
+        v-btn.transparent(v-if="vfrHudMessage && vfrHudMessage.heading && !$vuetify.breakpoint.smAndDown" v-html="'Hdg<br>' + vfrHudMessage.heading" flat ripple=false)
         // Speed button
-        v-btn.transparent(v-if="vfrHudMessage.groundspeed && !$vuetify.breakpoint.smAndDown" v-html="'Spd<br>' + vfrHudMessage.groundspeed.toFixed(2)" flat ripple=false)
+        v-btn.transparent(v-if="vfrHudMessage && vfrHudMessage.groundspeed && !$vuetify.breakpoint.smAndDown" v-html="'Spd<br>' + vfrHudMessage.groundspeed.toFixed(2)" flat ripple=false)
       v-spacer
       v-toolbar-items
-        v-menu(offset-y)
-          v-btn(flat slot="activator" v-text="apis[activeApi]")
+        v-menu(offset-y transition="scale-transition")
+          v-btn(flat slot="activator" v-text="apis[activeApi]['name']")
           v-list
-            v-list-tile(v-for="(api, key) in apis" :key="api" @click='changeApi(key)')
-              v-list-tile-title(v-text="api")
+            v-list-tile(v-if="'status'" v-for="(api, key) in apis" :key="key" @click='changeApi(key)')
+              v-list-tile-action
+                v-icon(v-if="apis[key].state" color='success' small left) check_circle_outline
+                v-icon(v-if="!apis[key].state" color='error' small left) highlight_off
+              v-list-tile-content
+                v-list-tile-title {{ api['name'] }}
+                v-list-tile-sub-title api info here
+                  v-icon(v-if="apis[key].state" color='success' small left) check_circle_outline
+                  v-icon(v-if="!apis[key].state" color='error' small left) highlight_off
       v-fade-transition(mode="out-in")
         v-toolbar-side-icon(v-if="navIcon" @click.stop="toggleDrawer")
-  v-snackbar(:timeout="6000" color="red" :top="true" v-model="snackbar") {{ statusTextMessage.message }}
+  v-snackbar(v-if="statusTextMessage" :timeout="6000" color="red" :top="true" v-model="snackbar") {{ statusTextMessage.message }}
     v-btn(flat @click.native="snackbar = false") CLOSE
 </template>
 

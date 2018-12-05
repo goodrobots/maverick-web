@@ -36,7 +36,39 @@ module.exports = {
 
   // tweak internal webpack configuration.
   // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
-  chainWebpack: config => {},
+  chainWebpack: config => {
+    const rule = config.module
+      .rule('gql')
+      .test(/\.(gql|graphql)$/)
+      .include
+      .end()
+      /*
+      .use('cache-loader')
+      .loader('cache-loader')
+      .end()
+      */
+
+    rule
+      .use('gql-loader')
+      .loader('graphql-tag/loader')
+      .end()
+    /*
+    config.module
+      .rule('vue')
+      .use('vue-loader')
+      .tap(options =>
+        merge(options, {
+          transformAssetUrls: {
+            video: ['src', 'poster'],
+            source: 'src',
+            img: 'src',
+            image: 'xlink:href',
+            'vl-style-icon': 'src',
+          },
+        })
+      )
+    */
+  },
 
   configureWebpack: {
     /*

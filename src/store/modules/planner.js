@@ -1,7 +1,8 @@
 const state = {
   viewState: false,
-  mapZoom: 15,
+  mapZoom: 16,
   mapCenter: true,
+  mapVehicleInfo: true,
   mapLayer: 'googleterrain'
 }
 
@@ -17,6 +18,9 @@ const mutations = {
   },
   setMapLayer (state, layer) {
     state.mapLayer = layer
+  },
+  setMapVehicleInfo (state, active) {
+    state.mapVehicleInfo = active
   }
 }
 
