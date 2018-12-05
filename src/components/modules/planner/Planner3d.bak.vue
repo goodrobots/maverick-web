@@ -4,6 +4,8 @@
 </template>
 
 <script>
+import Cesium from 'cesium/Cesium'
+import 'cesium/Widgets/widgets.css'
 
 import {
   navSatFixQuery,
@@ -38,7 +40,6 @@ export default {
     }
   },
 
-  /*
   watch: {
     navSatFixMessage (oldSat, newSat) {
       // If the viewer hasn't been constructed yet and we have a position, construct it
@@ -55,9 +56,11 @@ export default {
             newSat.latitude - oldSat.latitude > -this.posChangeThreshold))
       ) {
         // Update the camera to center on the vheicle
-        // this.viewer.camera.setView({
-        //   destination: Cesium.Cartesian3.fromDegrees(newSat.longitude, newSat.latitude, 1000)
-        // })
+        /*
+        this.viewer.camera.setView({
+          destination: Cesium.Cartesian3.fromDegrees(newSat.longitude, newSat.latitude, 1000)
+        })
+        */
         // Update the marker position
         const entity = this.viewer.entities.getById('vehicle')
         entity.position = Cesium.Cartesian3.fromDegrees(
@@ -68,16 +71,12 @@ export default {
       }
     }
   },
-  */
 
-  /*
   beforeDestroy () {
     Cesium.destroyObject(this.viewer, 'This viewer has been destroyed')
   },
-  */
 
   methods: {
-    /*
     constructViewer () {
       Cesium.BingMapsApi.defaultKey =
         'Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG'
@@ -115,15 +114,12 @@ export default {
       // this.viewer.terrainProvider = Cesium.createWorldTerrain()
       this.constructVehicle()
     },
-    */
     constructVehicle () {
-      /*
       const position = Cesium.Cartesian3.fromDegrees(
         this.navSatFixMessage.longitude,
         this.navSatFixMessage.latitude,
         this.vfrHudMessage.altitude
       )
-      */
       /*
       var heading = 0
       var pitch = 0
@@ -132,7 +128,6 @@ export default {
       var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr)
       const vehicleOffset = new Cesium.Cartesian3(vehicle_offset_x,vehicle_offset_y,vehicle_offset_z)
       */
-      /*
       this.vehicleEntity = this.viewer.entities.add({
         name: 'Vehicle',
         id: 'vehicle',
@@ -145,7 +140,6 @@ export default {
           outlineColor: Cesium.Color.BLACK
         }
       })
-      */
     }
   },
 
@@ -192,7 +186,6 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  // height: 400px;
   top: 0;
   left: 0;
   margin: 0;

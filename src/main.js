@@ -6,6 +6,7 @@ import store from './store'
 import { createProvider } from './plugins/apollo/vue-apollo'
 import './plugins/vuetify'
 import './plugins/vuelayers'
+import './plugins/vuecesium'
 import './plugins/vuetimers'
 import './plugins/registerServiceWorker'
 
