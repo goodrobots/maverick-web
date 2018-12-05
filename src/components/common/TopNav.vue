@@ -35,15 +35,23 @@ div
         v-menu(offset-y transition="scale-transition")
           v-btn(flat slot="activator" v-text="apis[activeApi]['name']")
           v-list
-            v-list-tile(v-if="'status'" v-for="(api, key) in apis" :key="key" @click='changeApi(key)')
-              v-list-tile-action
-                v-icon(v-if="apis[key].state" color='success' small left) check_circle_outline
-                v-icon(v-if="!apis[key].state" color='error' small left) highlight_off
+            v-list-tile(v-if="'status'" avatar v-for="(api, key) in apis" :key="key" @click='changeApi(key)')
+              v-list-tile-avatar
+                v-icon(v-if="api['name'].search('Copter') != -1") toys
+                v-icon(v-else-if="api['name'].search('Plane') != -1") airplanemode_active
+                v-icon(v-else-if="api['name'].search('Rover') != -1") directions_car
+                v-icon(v-else-if="api['name'].search('Sub') != -1") directions_boat
               v-list-tile-content
                 v-list-tile-title {{ api['name'] }}
-                v-list-tile-sub-title api info here
-                  v-icon(v-if="apis[key].state" color='success' small left) check_circle_outline
-                  v-icon(v-if="!apis[key].state" color='error' small left) highlight_off
+                v-list-tile-sub-title
+                  template(v-if="apis[key].state")
+                    div
+                      v-icon(color='success' small) check_circle
+                      span &nbsp; Good Link
+                  template(v-else-if="!apis[key].state")
+                    div
+                      v-icon(color='error' small) block
+                      span &nbsp; No Link
       v-fade-transition(mode="out-in")
         v-toolbar-side-icon(v-if="navIcon" @click.stop="toggleDrawer")
   v-snackbar(v-if="statusTextMessage" :timeout="6000" color="red" :top="true" v-model="snackbar") {{ statusTextMessage.message }}
