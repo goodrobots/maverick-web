@@ -1,21 +1,17 @@
 <template lang='pug'>
 v-container
-  // div.plannerContent
-  plannerTest()
-  // planner2d(v-if="!plannerViewState" :key="activeApi")
+  planner2d(v-if="!plannerViewState" :key="activeApi")
   // planner3d(v-if="plannerViewState" :key="activeApi")
 </template>
 
 <script>
-import PlannerTest from './PlannerTest'
-// import Planner2d from './Planner2d'
+import Planner2d from './Planner2d'
 // import Planner3d from './Planner3d'
 
 export default {
   name: 'PlannerModule',
   components: {
-    PlannerTest
-    // Planner2d
+    Planner2d
     // Planner3d
   },
   data () {
@@ -31,14 +27,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.plannerContent {
-  position: fixed !important;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-</style>

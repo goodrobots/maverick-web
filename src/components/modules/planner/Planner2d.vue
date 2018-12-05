@@ -1,39 +1,64 @@
 <template lang='pug'>
 div.planner-map
   vl-map(ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true", :controls="{attribution: false, zoom: false}")
-    vl-view(v-if="xycenter.length > 0" :zoom="mapZoom" :center="xycenter" :rotation="0")
+    vl-view(v-if="xycenter && xycenter.length > 0" :zoom="mapZoom" :center="xycenter" :rotation="0")
     // Add markers for mission waypoints
-    vl-feature
-      vl-geom-multi-point(v-if="waypoints.length > 0" :coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
+    vl-feature(:id="'w_' + api" :ref="'w_' + api" v-for="(data, api) in waypointsData" :key="'w_' + api")
+      vl-geom-multi-point(v-if="data && data.length > 0" :coordinates="data.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
       vl-style-box
-        vl-style-circle(:radius="10")
-          vl-style-fill(color="rgba(35,245,35,0.5)")
-          vl-style-stroke(color="#666666" :width="1")
+        vl-style-circle(:radius="api == activeApi ? 8 : 4")
+          vl-style-fill(:color="apis[api]['color-light']")
+          vl-style-stroke(:color="apis[api]['color-dark']" :width="api == activeApi ? 2 : 1")
     // Add numbers for mission waypoint marker
-    vl-feature(v-if="waypoints.length > 0" v-for="(waypoint, index) in waypoints" :key="'markernumber'+index")
-      vl-overlay(v-if="waypoint.longitude && waypoint.latitude" :position="[waypoint.longitude, waypoint.latitude]")
+    vl-feature(v-for="(data, index) in waypointsData[activeApi]" :key="'wn_' + index")
+      vl-overlay(v-if="data.longitude && data.latitude" :position="[data.longitude, data.latitude]")
         span.markernumber.caption(v-html="index")
     // Add lines to join the markers
-    vl-feature
-      vl-geom-line-string(v-if="waypoints.length > 0" :coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
-    // Add marker for vehicle
-    vl-feature(id="vehiclemarker" ref="vehiclemarker")
-      vl-geom-point(v-if="xy.length > 0" :coordinates="xy")
+    vl-feature(:id="'wl_' + api" :ref="'wl_' + api" v-for="(data, api) in waypointsData" :key="'wl_' + api")
+      vl-geom-line-string(v-if="data && data.length > 0" :coordinates="data.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
       vl-style-box
-        vl-style-circle(:radius="6")
-          vl-style-fill(color="rgba(245,35,35,0.8)")
-          vl-style-stroke(color="#666666" :width="1")
+        vl-style-stroke(:color="apis[api]['color-dark']")
+        // vl-style-fill(:color="apis[api]['color-dark']")
+    // Add marker for vehicle
+    vl-feature(:id="'v_' + api" :ref="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api")
+      vl-geom-point(v-if="data && 'longitude' in data" :coordinates="[data.longitude, data.latitude]")
+      vl-style-box
+        // vl-style-icon(src="red.png" :scale="0.5" :anchor="[0.5, 1]")
+        vl-style-circle(:radius="api == activeApi ? 6 : 4")
+          vl-style-fill(:color="apis[api]['color-dark']")
+          vl-style-stroke(color="#666666" :width="api == activeApi ? 2 : 1")
+    // Add overlay for vehicle data
+    vl-overlay(v-if="mapVehicleInfo && activeApi in navSatFixData && navSatFixData[activeApi] && 'longitude' in navSatFixData[activeApi]" :position="[navSatFixData[activeApi].longitude + 0.0003, navSatFixData[activeApi].latitude]")
+      template
+        table.vehicle
+          thead
+            tr
+              th(colspan=2) {{ apis[activeApi]['name'] }}
+          tbody
+            tr
+              td Longitude
+              td.value {{ navSatFixData[activeApi].longitude.toFixed(6) }}
+            tr
+              td Latitude
+              td.value {{ navSatFixData[activeApi].latitude.toFixed(6) }}
+            tr
+              td Altitude
+              td.value {{ navSatFixData[activeApi].altitude.toFixed(2) }}
+            tr
+              td Waypoints
+              td.value(v-if="activeApi in waypointsData") {{ waypointsData[activeApi].length }}
+              td.value(v-else) None
     // Draw the map layer
     vl-layer-tile(v-if="mapLayer=='osm'")
       vl-source-osm
     vl-layer-tile(v-if="mapLayer=='bingroad'")
-      vl-source-bing-maps(:api-key="bingMapsKey" imagery-set="Road" hidpi=true )
+      vl-source-bingmaps(:api-key="bingMapsKey" imagery-set="Road" hidpi=true )
     vl-layer-tile(v-if="mapLayer=='bingsatellite'")
-      vl-source-bing-maps(:api-key="bingMapsKey" imagery-set="Aerial" hidpi=true )
+      vl-source-bingmaps(:api-key="bingMapsKey" imagery-set="Aerial" hidpi=true )
     vl-layer-tile(v-if="mapLayer=='binghybrid'")
-      vl-source-bing-maps(:api-key="bingMapsKey" imagery-set="AerialWithLabels" hidpi=true )
+      vl-source-bingmaps(:api-key="bingMapsKey" imagery-set="AerialWithLabels" hidpi=true )
     vl-layer-tile(v-if="mapLayer=='bingbirdseye'")
-      vl-source-bing-maps(:api-key="bingMapsKey" imagery-set="BirdseyeV2WithLabels" hidpi=true )
+      vl-source-bingmaps(:api-key="bingMapsKey" imagery-set="BirdseyeV2WithLabels" hidpi=true )
     vl-layer-tile(v-if="mapLayer=='googleroad'")
       vl-source-xyz(key="googleroad" url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}")
     vl-layer-tile(v-if="mapLayer=='googlesatellite'")
@@ -46,23 +71,49 @@ div.planner-map
     v-menu(offset-x :close-on-content-click="false" :nudge-width="200" :nudge-right="10" v-model="mapmenu")
       v-btn(:color="navColor" slot="activator") Map Options
       v-card
+        // v-list
+          v-list-tile
+            v-list-tile-title Zoom
+            v-list-tile-action
+              v-slider(v-model="mapZoom" :min="1" :max="21" :step="1" thumb-label)
+          v-list-tile
+            v-list-tile-title Center
+            v-list-tile-action
+              v-switch(v-model="mapCenter" color="primary")
+          v-list-tile
+            v-list-tile-title Map Layer
+            v-list-tile-action
+              v-select(:items="maplayers" v-model="mapLayer")
         v-card-text
           v-layout(row wrap)
-            v-flex(xs3)
-              v-subheader.subheading Zoom
-            v-flex(xs9)
-              v-slider(v-model="mapZoom" :min="1" :max="21" :step="1" thumb-label)
-          v-divider
+            v-flex(xs12)
+              .v-input.v-input--slider.v-input--slider--thumb-label.v-input--is-label-active.v-input--is-dirty
+                .v-input__control
+                  .v-input__slot
+                    label.v-label Vehicle Info
+                    v-switch(v-model="mapVehicleInfo" color="primary")
           v-layout(row wrap)
-            v-flex(xs3)
-              v-subheader.subheading Layer
-            v-flex(xs9)
-              v-overflow-btn(:items="maplayers" v-model="mapLayer" label="Map Layer")
+            v-flex(xs12)
+              .v-input.v-input--slider.v-input--slider--thumb-label.v-input--is-label-active.v-input--is-dirty
+                .v-input__control
+                  .v-input__slot
+                    label.v-label Center
+                    v-switch(v-model="mapCenter" color="primary")
           v-layout(row wrap)
-            v-flex(xs3)
-              v-subheader.subheading Center
-            v-flex(xs9)
-              v-switch(v-model="mapCenter" color="primary")
+            v-flex(xs12)
+              .v-input.v-input--slider.v-input--slider--thumb-label.v-input--is-label-active.v-input--is-dirty
+                .v-input__control
+                  .v-input__slot
+                    label.v-label Zoom
+                    v-slider(v-model="mapZoom" :min="1" :max="21" :step="1" thumb-label)
+          v-layout(row wrap)
+            v-flex(xs12)
+              .v-input.v-input--slider.v-input--slider--thumb-label.v-input--is-label-active.v-input--is-dirty
+                .v-input__control
+                  .v-input__slot
+                    label.v-label Map Type
+                    // v-overflow-btn(:items="maplayers" v-model="mapLayer" label="Map Layer")
+                    v-select(:items="maplayers" v-model="mapLayer")
 </template>
 
 <script>
@@ -78,9 +129,10 @@ import {
 export default {
   data () {
     return {
-      navSatFixMessage: [],
-      waypoints: [],
+      navSatFixData: {},
+      waypointsData: {},
       mapmenu: false,
+      xycenter: [],
       maplayers: [
         { value: 'osm', text: 'OpenStreetMap' },
         { value: 'bingroad', text: 'Bing Roadmap' },
@@ -98,19 +150,31 @@ export default {
   },
 
   // Use timers to set intervals for each message so we can limit the update frequency in the client
+  // TOOD: Create tickers per vehicle, at the moment we still have a single global ticker
   timers: {
     setTickers: { time: 500, autostart: true, repeat: true }
   },
 
   computed: {
-    bingMapsKey () {
-      return this.$store.state.bingMapsKey
+    apis () {
+      return this.$store.state.apis
     },
     activeApi () {
       return this.$store.state.activeApi
     },
+    bingMapsKey () {
+      return this.$store.state.bingMapsKey
+    },
     navColor () {
       return this.$store.state.navColor
+    },
+    mapVehicleInfo: {
+      get () {
+        return this.$store.state.planner.mapVehicleInfo
+      },
+      set (value) {
+        return this.$store.commit('planner/setMapVehicleInfo', value)
+      }
     },
     mapCenter: {
       get () {
@@ -135,67 +199,130 @@ export default {
       set (value) {
         this.$store.commit('planner/setMapZoom', value)
       }
-    },
-    xy () {
-      // xy computes EPSG:3857 coordinates from EPSG:4326.  If both x,y are not values then return nothing as vl components get upset otherwise
-      // const xy = VueLayers.core.projHelper.fromLonLat([this.navSatFixMessage.longitude, this.navSatFixMessage.latitude])
-      // Note: This is no longer necessary, instead set data-projection in the vl-map component use
-      const xy = [
-        this.navSatFixMessage.longitude,
-        this.navSatFixMessage.latitude
-      ]
-      return xy[0] && xy[1] ? xy : []
-    },
-    xycenter () {
-      return this.centercoords
-    },
-    centercoords () {
-      // If follow option set, or centercoords empty, set centercoords from current position
-      if (
-        this.mapCenter ||
-        (this.centercoords.length === 0 && this.xy.length > 0)
-      ) {
-        return this.xy
-      }
+    }
+  },
+
+  created () {
+    // Iterate through each configured API backend
+    for (var api in this.$store.state.apis) {
+      // Add a navSatFix SmartQuery for this API backend
+      this.$apollo.addSmartQuery('navSatFixMessage_' + api, {
+        client: api,
+        query: navSatFixQuery,
+        manual: true,
+        result: function (data, key) {
+          // Note: Must use this.$set to add object property, to keep new property reactive
+          this.$set(this.navSatFixData, api, data.data.navSatFixMessage)
+          // Update map center coordinates
+          this.centercoords()
+        }
+        /*
+        error: function (error) {
+          // console.log({ error })
+        }
+        */
+      })
+      // Add a waypoints SmartQuery for this API backend
+      this.$apollo.addSmartQuery('waypoints_' + api, {
+        client: api,
+        query: waypointsQuery,
+        manual: true,
+        result: function (data, key) {
+          // Note: Must use this.$set to add object property, to keep new property reactive
+          this.$set(this.waypointsData, key.replace('waypoints_', ''), data.data.waypoints)
+        }
+        /*
+        error: function (error) {
+          // console.log(error)
+        }
+        */
+      })
+      // Add a navSatFixMessage SmartSubscription for this API backend
+      this.$apollo.addSmartSubscription('navSatFixMessage_' + api, {
+        client: api,
+        query: navSatFixSubscription,
+        manual: true,
+        result: function (data, key) {
+          // Only update if position has changed and ticker is turned on
+          if (
+            this.navSatFixData[key.replace('navSatFixMessage_', '')] !== data.data.navSatFixMessage &&
+            this.tickers.navSatFixMessage
+          ) {
+            // console.log(`Updating ${key} with ${data.data.navSatFixMessage.longitude}|${data.data.navSatFixMessage.latitude}|${data.data.navSatFixMessage.altitude}`)
+            this.navSatFixData[key.replace('navSatFixMessage_', '')] = data.data.navSatFixMessage
+            this.tickers.navSatFixMessage = false // Turn the ticker off until the next interval
+            // Update map center coordinates
+            this.centercoords()
+            // Mark the api state to active if not already set
+            const api = key.replace('navSatFixMessage_', '')
+            if (!this.$store.state.apis[api].state && 'navSatFixMessage' in data.data && data.data.navSatFixMessage.longitude) {
+              // console.log(`setting state to true for api ${api}`)
+              this.$store.commit('setApiState', {
+                api: api,
+                value: true
+              })
+            } else if (this.$store.state.apis[api].state && (!('navSatFixMessage' in data.data) && !data.data.navSatFixMessage.longitude)) {
+              // console.log(`setting state to false for api ${api}`)
+              this.$store.commit('setApiState', {
+                api: api,
+                value: false
+              })
+            }
+            // console.log(this.apis)
+          }
+        },
+        /*
+        error: function (error) {
+          // console.log(error)
+        },
+        */
+        skip () {
+          return this.apis[api].state
+        }
+      })
+      // Add a waypoints SmartSubscription for this API backend
+      this.$apollo.addSmartSubscription('waypoints_' + api, {
+        client: api,
+        query: waypointsSubscription,
+        manual: true,
+        result: function (data, key) {
+          this.waypointsData[key.replace('waypoints_', '')] = data.data.waypoints
+          console.log(`Updating ${key.replace('waypoints_', '')} with ${data.data.waypoints}`)
+        },
+        /*
+        error: function (error) {
+          // console.log(error)
+        },
+        */
+        skip () {
+          return this.apis[api].state
+        }
+      })
     }
   },
 
   methods: {
     setTickers () {
       this.tickers.navSatFixMessage = true
-    }
-  },
-
-  apollo: {
-    $client () {
-      return this.activeApi
     },
-    navSatFixMessage: navSatFixQuery,
-    waypoints: waypointsQuery,
-    $subscribe: {
-      navSatFixMessage: {
-        query: navSatFixSubscription,
-        result ({ data }) {
-          // Only update if position has changed and ticker is turned on
-          if (
-            this.navSatFixMessage !== data.navSatFixMessage &&
-            this.tickers.navSatFixMessage
-          ) {
-            this.navSatFixMessage = data.navSatFixMessage
-            this.tickers.navSatFixMessage = false // Turn the ticker off until the next interval
-          }
-          // console.log(this.navSatFixMessage)
-        }
-      },
-      waypoints: {
-        query: waypointsSubscription,
-        result ({ data }) {
-          console.log('waypoints subscription:')
-          console.log(data)
-        }
+    centercoords () {
+      let xy = []
+      if (this.activeApi in this.navSatFixData && this.navSatFixData[this.activeApi] && 'longitude' in this.navSatFixData[this.activeApi] && this.navSatFixData[this.activeApi].longitude > 0) {
+        xy = [
+          this.navSatFixData[this.activeApi].longitude,
+          this.navSatFixData[this.activeApi].latitude
+        ]
+      }
+      // If follow option set, or centercoords empty, set centercoords from current position
+      if (
+        this.mapCenter ||
+        (this.xycenter.length === 0 && xy.length > 0)
+      ) {
+        this.xycenter = xy
       }
     }
   }
+
 }
 </script>
 
@@ -212,13 +339,24 @@ export default {
 }
 .mapmenu {
   position: absolute;
-  bottom: 50px;
-  left: 50px;
+  bottom: 25px;
+  left: 25px;
 }
 .markernumber {
   position: relative;
   left: -5px;
   top: -10px;
   color: #333;
+}
+table.vehicle {
+  background-color: rgba(33, 33, 33, 0.5);
+  border: none;
+  color: #fff
+}
+table.vehicle thead tr {
+  background-color: rgba(33, 33, 33, 0.8)
+}
+table.vehicle td.value {
+  font-weight: bold;
 }
 </style>
