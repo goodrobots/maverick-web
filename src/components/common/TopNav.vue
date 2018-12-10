@@ -19,11 +19,11 @@ div
                   v-list-tile-title(v-text="message.message")
                   v-list-tile-sub-title(v-text="(fcTime - message.secs > 60) ? Math.round((fcTime - message.secs) / 60) + ' minutes ago' : fcTime - message.secs + ' seconds ago'")
         // Armed/Disarmed button
-        v-btn(v-if="stateMessage && 'armed' in stateMessage" color="yellow" flat) ARMED
-        v-btn.transparent(v-else flat ripple=false) DISARMED
+        v-btn(v-if="stateData[activeApi] && 'armed' in stateData[activeApi]" color="yellow" flat) ARMED
+        v-btn.transparent(v-else-if="stateData[activeApi]" flat ripple=false) DISARMED
         // Mode button
-        v-btn.transparent(v-if="stateMessage" v-html="stateMessage.mode" depressed)
-        // v-select(:items="flightModes" overflow :label="stateMessage.mode")
+        v-btn.transparent(v-if="stateData[activeApi]" v-html="stateData[activeApi].mode" depressed)
+        // v-select(:items="flightModes" overflow :label="stateData[activeApi].mode")
         // Altitude button
         v-btn.transparent(v-if="vfrHudMessage && vfrHudMessage.altitude" v-html="'Alt<br>' + vfrHudMessage.altitude.toFixed(2) + 'm'" flat ripple=false)
         // Heading button
@@ -76,7 +76,7 @@ export default {
   name: 'TopNav',
   data () {
     return {
-      stateMessage: [],
+      stateData: {},
       vfrHudMessage: [],
       flightModes: ['Guided', 'Stabilize'],
       tickers: {
@@ -119,6 +119,47 @@ export default {
     }
   },
 
+  created () {
+    // Iterate through each configured API backend
+    for (var api in this.$store.state.apis) {
+      // Add a state SmartQuery for this API backend
+      this.$apollo.addSmartQuery('stateMessage_' + api, {
+        client: api,
+        query: stateQuery,
+        manual: true,
+        result: function (data, key) {
+          api = key.replace('stateMessage_', '')
+          if (data.data && 'stateMessage' in data.data) {
+            // Store the message data and set the api state to active
+            this.$set(this.stateData, api, data.data.stateMessage) // Note: Must use this.$set to add object property, to keep new property reactive
+            this.$store.commit('setApiState', { api: api, value: true })
+          }
+        }
+      })
+
+      // Add a stateMessage SmartSubscription for this API backend
+      this.$apollo.addSmartSubscription('stateMessage_' + api, {
+        client: api,
+        query: stateSubscription,
+        manual: true,
+        result: function (data, key) {
+          api = key.replace('stateMessage_', '')
+          // Only update if state has changed and ticker is turned on
+          if (data.data && 'stateMessage' in data.data && this.stateData[api] !== data.data.stateMessage) {
+            // Store the message data and set the api state to active if inactive
+            this.stateData[api] = data.data.stateMessage
+            if (!this.$store.state.apis[api].state && 'stateMessage' in data.data) {
+              this.$store.commit('setApiState', { api: api, value: true })
+            }
+          }
+        },
+        skip () {
+          return this.apis[api].state
+        }
+      })
+    }
+  },
+
   methods: {
     changeApi (api) {
       this.$store.commit('setApi', api)
@@ -140,7 +181,7 @@ export default {
     // Setup apollo queries
     statusTextMessage: statusTextQuery,
     vfrHudMessage: vfrHudQuery,
-    stateMessage: stateQuery,
+    // stateMessage: stateQuery,
 
     // Setup apollo subscriptions to run once every ticker interval
     $subscribe: {
@@ -156,6 +197,7 @@ export default {
           }
         }
       },
+      /*
       stateMessage: {
         query: stateSubscription,
         result ({ data }) {
@@ -169,6 +211,7 @@ export default {
           }
         }
       },
+      */
       statusTextMessage: {
         query: statusTextSubscription,
         result ({ data }) {
