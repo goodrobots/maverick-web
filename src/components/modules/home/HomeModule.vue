@@ -27,15 +27,6 @@ v-content
 
 <script>
 export default {
-  name: 'HomeModule',
-  components: {},
-  data () {
-    return {}
-  },
-  computed: {
-    activeApi () {
-      return this.$store.state.activeApi
-    }
-  }
+  name: 'HomeModule'
 }
 </script>

@@ -1,13 +1,11 @@
 <template lang='pug'>
 div#fullscreen
   v-app(:dark="darkUi")
-    // top-nav(v-if="navState" :key="activeApi")
     top-nav(v-if="navState")
     v-fade-transition(mode="out-in")
       // cache the planner module to prevent from being destroyed on component change
       keep-alive(include="PlannerModule")
         router-view
-    // bottom-nav(v-if="navState && $vuetify.breakpoint.smAndDown")
   action-button(v-if="this.moduleName !== 'home'" :dark="darkUi")
 </template>
 
@@ -43,6 +41,9 @@ export default {
         case /^\/analysis/.test(this.$store.state.route.path):
           this.$store.commit('setModuleName', 'analysis')
           break
+        case /^\/test/.test(this.$store.state.route.path):
+          this.$store.commit('setModuleName', 'test')
+          break
         default:
           this.$store.commit('setModuleName', 'home')
       }
@@ -63,6 +64,10 @@ export default {
           this.$store.commit('setNavColor', 'mavgreen')
           this.$store.commit('setNavIcon', false)
           break
+        case 'test':
+          this.$store.commit('setNavColor', 'mavpurple')
+          this.$store.commit('setNavIcon', false)
+          break
         default:
           this.$store.commit('setNavColor', null)
           this.$store.commit('setNavIcon', false)
@@ -70,7 +75,7 @@ export default {
       return this.$store.state.moduleName
     },
     navState () {
-      return this.moduleName === 'home' ? false : this.$store.state.navState // Return false if home screen, otherwise from vuex state
+      return this.moduleName === 'home' || this.moduleName === 'test' ? false : this.$store.state.navState // Return false if home screen, otherwise from vuex state
     }
   }
 }

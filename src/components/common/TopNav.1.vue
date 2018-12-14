@@ -108,6 +108,12 @@ export default {
     navDrawer () {
       return this.$store.state.navDrawer
     },
+    apis () {
+      return this.$store.state.apis
+    },
+    activeApi () {
+      return this.$store.state.activeApi
+    },
     height () {
       return window.innerHeight
     }

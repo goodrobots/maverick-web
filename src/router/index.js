@@ -16,6 +16,8 @@ import AnalysisModule from '../components/modules/analysis/AnalysisModule'
 import AnalysisIndex from '../components/modules/analysis/AnalysisIndex'
 import AnalysisLogfile from '../components/modules/analysis/AnalysisLogfile'
 
+import TestModule from '../components/modules/test/TestModule'
+
 Vue.use(Router)
 
 export default new Router({
@@ -29,6 +31,10 @@ export default new Router({
     {
       path: '/',
       component: HomeModule
+    },
+    {
+      path: '/test',
+      component: TestModule
     },
     {
       path: '/cockpit',
