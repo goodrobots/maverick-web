@@ -10,6 +10,11 @@ pipeline {
     stage('Test') {
       steps {
         echo 'Testing'
+        sh '''
+          npm -g install @vue/cli
+          yarn install
+          yarn run build --report
+          '''
       }
     }
     stage('Deploy') {
