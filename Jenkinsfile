@@ -4,17 +4,16 @@ pipeline {
     stage('Build') {
       steps {
         echo 'Building'
-        sh 'pwd'
+        sh '''
+          yarn install
+          yarn run build --report
+          '''
       }
     }
     stage('Test') {
       steps {
         echo 'Testing'
-        sh '''
-          npm -g install @vue/cli
-          yarn install
-          yarn run build --report
-          '''
+        
       }
     }
     stage('Deploy') {
