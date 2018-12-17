@@ -6,6 +6,7 @@ pipeline {
         echo 'Building'
         sh '''
           yarn install
+          yarn run lint
           yarn run build --report
           '''
       }
