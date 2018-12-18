@@ -2,7 +2,7 @@
 v-content
   v-container(fluid fill-height)
     v-layout(align-center justify-center)
-      v-flex(xs12 sm6 md6)
+      v-flex(xs12)
         table
           tr(v-for="(data, api) in apis")
             td {{ api }}

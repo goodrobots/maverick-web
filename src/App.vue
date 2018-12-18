@@ -98,6 +98,10 @@ export default {
     }
   },
 
+  created () {
+    this.logBanner('** Welcome to Maverick Web GCS **')
+  },
+
   methods: {
     checkApis () {
       // If an api hasn't been seen for more than 10 seconds, mark it as dead

@@ -50,7 +50,7 @@ const plugin = {
         createQuery (message, gql, api, container, callback = null, errorCallback = null) {
           const queryKey = [message, '_', api].join('')
           if (!this.$apollo.queries[queryKey] && this.$apollo.provider.clients[api]) {
-            console.log(`api: ${api}, message: ${message}, queryKey: ${queryKey}, callback: ${callback}`)
+            this.logInfo(`Creating GQL Query: api: ${api}, message: ${message}, queryKey: ${queryKey}`)
             // If a callback function has been passed use it as the result processor, otherwise use a default function
             const resultFunction = (callback instanceof Function) ? callback : function (data, key) {
               api = key.replace([message, '_'].join(''), '')
@@ -68,15 +68,13 @@ const plugin = {
               result: resultFunction,
               error: errorCallback
             })
-          } else {
-            console.log(`query ${queryKey} already exists`)
           }
         },
 
         createSubscription (message, gql, api, container, callback = null, errorCallback = null) {
           const subKey = [message, '_', api].join('')
           if (!this.$apollo.subscriptions[subKey] && this.$apollo.provider.clients[api]) {
-            console.log(`subscription :: api: ${api}, message: ${message}, subKey: ${subKey}`)
+            this.logInfo(`Creating GQL Subscription: api: ${api}, message: ${message}, subKey: ${subKey}`)
             // If a callback function has been passed use it as the result processor, otherwise use a default function
             const resultFunction = (callback instanceof Function) ? callback : function (data, key) {
               api = key.replace([message, '_'].join(''), '')
@@ -95,8 +93,6 @@ const plugin = {
               result: resultFunction,
               error: errorCallback
             })
-          } else {
-            console.log(`subscription ${subKey} already exists`)
           }
         }
       }
