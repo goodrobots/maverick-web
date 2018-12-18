@@ -26,7 +26,7 @@ Vue.config.productionTip = false
 window.app = new Vue({
   router,
   store,
-  render: h => h(App),
-  apolloProvider: createProvider()
+  apolloProvider: createProvider(),
+  render: h => h(App)
 }).$mount('#app')
 console.log('%c ** Welcome to Maverick Web GCS ** ', 'background: blue; color: white; display: block; padding: 2px 4px; border-radius: 3px; font-weight: bold;')

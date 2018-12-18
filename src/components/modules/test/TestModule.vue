@@ -7,26 +7,16 @@ v-content
           tr(v-for="(data, api) in apis")
             td {{ api }}
             td: strong {{ data }}
-            td(v-html="stateData[api]")
-          tr
-            td ActiveApi
-            td: strong {{ activeApi }}
+            td(v-html="statusData[api]")
 </template>
 
 <script>
-import { stateQuery, stateSubscription } from '../../../plugins/apollo/graphql/StateMessage.gql'
 
 export default {
   name: 'TestModule',
-  data () {
-    return {}
-  },
-  watch: {
-    apis () {
-      for (const api in this.apis) {
-        this.createQuery('stateMessage', stateQuery, api, 'stateData')
-        this.createSubscription('stateMessage', stateSubscription, api, 'stateData')
-      }
+  computed: {
+    statusData () {
+      return this.$store.state.statusData
     }
   }
 }

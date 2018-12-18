@@ -95,7 +95,8 @@ export function createApolloClient ({
   // Web socket
   if (wsEndpoint) {
     wsClient = new SubscriptionClient(wsEndpoint, {
-      reconnect: false,
+      reconnect: true,
+      reconnectionAttempts: 1000,
       connectionParams: () => {
         const authorization = getAuth(tokenName)
         return authorization ? { authorization } : {}

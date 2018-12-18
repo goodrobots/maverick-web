@@ -1,0 +1,5 @@
+fragment Status on Status {
+  id
+  currentTime
+  currentStatus
+}

@@ -1,0 +1,19 @@
+#import "./StatusFragment.gql"
+
+query statusQuery {
+  Status {
+    ...Status
+  }
+}
+
+subscription statusSubscription {
+  Status {
+    ...Status
+  }
+}
+
+mutation statusMutate {
+  Status {
+    ...Status
+  }
+}

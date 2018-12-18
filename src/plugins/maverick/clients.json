@@ -16,12 +16,11 @@
     "colorDark": "#336666"
   },
   "py3-api": {
-    "httpEndpoint": "http://dev.maverick.one/web/api/apsitl_py3/graphql",
-    "wsEndpoint": "ws://dev.maverick.one/web/api/apsitl_py3/subscriptions",
+    "httpEndpoint": "http://dev.maverick.one:6795/graphql",
+    "wsEndpoint": "ws://dev.maverick.one:6795/subscriptions",
     "websocketsOnly": false,
     "name": "Py3 API",
     "colorLight": "#336633",
     "colorDark": "#336633"
-
   }
 }

@@ -31,9 +31,11 @@ div
         // Speed button
         v-btn.transparent(v-if="vfrHudMessage && vfrHudMessage.groundspeed && !$vuetify.breakpoint.smAndDown" v-html="'Spd<br>' + vfrHudMessage.groundspeed.toFixed(2)" flat ripple=false)
       v-spacer
+
       v-toolbar-items
         v-menu(offset-y transition="scale-transition")
-          v-btn(flat slot="activator" v-text="apis[activeApi]['name']")
+          v-btn(v-if="activeApi" flat slot="activator" v-text="apis[activeApi]['name']")
+          v-btn.text--blue-grey.lighten-5(v-else flat slot="activator") No Active API
           v-list
             v-list-tile(v-if="'status'" avatar v-for="(api, key) in apis" :key="key" @click='changeApi(key)')
               v-list-tile-avatar
@@ -59,6 +61,7 @@ div
 </template>
 
 <script>
+/*
 import {
   vfrHudQuery,
   vfrHudSubscription
@@ -71,7 +74,7 @@ import {
   statusTextQuery,
   statusTextSubscription
 } from '../../plugins/apollo/graphql/StatusTextMessage.gql'
-
+*/
 export default {
   name: 'TopNav',
   data () {
@@ -115,6 +118,7 @@ export default {
 
   created () {
     // Iterate through each configured API backend
+    /*
     for (var api in this.$store.state.apis) {
       // Add a state SmartQuery for this API backend
       this.$apollo.addSmartQuery('stateMessage_' + api, {
@@ -152,6 +156,7 @@ export default {
         }
       })
     }
+    */
   },
 
   methods: {
@@ -165,8 +170,9 @@ export default {
       this.tickers.stateMessage = true
       this.tickers.vfrHudMessage = true
     }
-  },
+  }
 
+  /*
   apollo: {
     $client () {
       return this.activeApi
@@ -191,7 +197,6 @@ export default {
           }
         }
       },
-      /*
       stateMessage: {
         query: stateSubscription,
         result ({ data }) {
@@ -205,7 +210,6 @@ export default {
           }
         }
       },
-      */
       statusTextMessage: {
         query: statusTextSubscription,
         result ({ data }) {
@@ -216,6 +220,7 @@ export default {
       }
     }
   }
+  */
 }
 </script>
 

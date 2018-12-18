@@ -14,18 +14,24 @@ import BottomNav from './components/common/BottomNav'
 import TopNav from './components/common/TopNav'
 import ActionButton from './components/common/ActionButton'
 
+import { statusQuery, statusSubscription } from './plugins/apollo/graphql/Status.gql'
+
 export default {
   name: 'App',
   components: { BottomNav, TopNav, ActionButton },
   data () {
-    return {}
+    return {
+      epoch: performance.now()
+    }
   },
+
+  timers: {
+    checkApis: { time: 1000, autostart: true, repeat: true }
+  },
+
   computed: {
     darkUi () {
       return this.$store.state.darkUi
-    },
-    activeApi () {
-      return this.$store.state.activeApi
     },
     moduleName () {
       switch (true) {
@@ -75,7 +81,52 @@ export default {
       return this.$store.state.moduleName
     },
     navState () {
-      return this.moduleName === 'home' || this.moduleName === 'test' ? false : this.$store.state.navState // Return false if home screen, otherwise from vuex state
+      return this.moduleName === 'home' ? false : this.$store.state.navState // Return false if home screen, otherwise from vuex state
+    }
+  },
+
+  watch: {
+    // Watch apis state for any change and process
+    apis: {
+      handler: function (newValue) {
+        for (const api in this.apis) {
+          this.createQuery('Status', statusQuery, api, null, this.processStatusQuery)
+          this.createSubscription('Status', statusSubscription, api, null, this.processStatusSubscription)
+        }
+      },
+      deep: true
+    }
+  },
+
+  methods: {
+    checkApis () {
+      // If an api hasn't been seen for more than 10 seconds, mark it as dead
+      for (const api in this.apis) {
+        if (performance.now() - this.$store.state.apiTimestamps[api] > 10000) {
+          console.log(`deadapi? api: ${api}, timestamp: ${this.$store.state.apiTimestamps[api]}`)
+          this.$store.commit('setApiState', { api: api, value: false })
+        }
+      }
+    },
+    processStatusQuery (data, key) {
+      const api = key.replace('Status_', '')
+      if (data.data && 'Status' in data.data) {
+        // Store the message data and set the api state to active, only for the first callback
+        if (this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
+        if (this.$store.state.apiTimestamps[api] === null) this.$store.commit('setApiSeen', { api: api, value: performance.now() })
+        if (!(api in this.$store.state.statusData)) {
+          this.$store.commit('setStatusData', { api: api, message: data.data.Status })
+        }
+      }
+    },
+    processStatusSubscription (data, key) {
+      const api = key.replace('Status_', '')
+      // Store the message data and set the api state to active, for subsequent subscription callbacks
+      if (this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
+      this.$store.commit('setApiSeen', { api: api, value: performance.now() })
+      if (this.$store.state.statusData[api] !== data.data.Status) {
+        this.$store.commit('setStatusData', { api: api, message: data.data.Status })
+      }
     }
   }
 }

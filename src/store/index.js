@@ -24,6 +24,8 @@ export default new Vuex.Store({
     fullScreen: false,
     moduleName: null,
     apis: {},
+    apiTimestamps: {},
+    statusData: {},
     activeApi: null,
     bingMapsKey:
       'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6'
@@ -50,6 +52,16 @@ export default new Vuex.Store({
     },
     setApiState (state, data) {
       state.apis[data.api].state = data.value
+    },
+    setApiSeen (state, data) {
+      state.apiTimestamps[data.api] = data.value
+    },
+    setStatusData (state, data) {
+      if (data.api in state.statusData) {
+        state.statusData[data.api] = data.message
+      } else {
+        Vue.set(state.statusData, data.api, data.message)
+      }
     },
     setNavState (state, value) {
       state.navState = value
