@@ -14,7 +14,7 @@ import {
   imuQuery,
   imuSubscription,
   imuMutate
-} from '../../../plugins/apollo/graphql/ImuMessage.gql'
+} from '../../../plugins/apollo/graphql/Imu.gql'
 import {
   vfrHudQuery,
   vfrHudSubscription,

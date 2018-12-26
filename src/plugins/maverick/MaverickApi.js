@@ -61,13 +61,17 @@ const plugin = {
                 this.$store.commit('setApiState', { api: api, value: true })
               }
             }
-            this.$apollo.addSmartQuery(queryKey, {
+            let queryFields = {
               client: api,
               query: gql,
               manual: true,
-              result: resultFunction,
-              error: errorCallback
-            })
+              result: resultFunction
+            }
+            // If errorCallback is set, merge into queryFields
+            if (errorCallback instanceof Function) {
+              queryFields = { ...queryFields, error: errorCallback }
+            }
+            this.$apollo.addSmartQuery(queryKey, queryFields)
           }
         },
 
@@ -86,13 +90,18 @@ const plugin = {
                 }
               }
             }
-            this.$apollo.addSmartSubscription(subKey, {
+            let subscriptionFields = {
               client: api,
               query: gql,
               manual: true,
-              result: resultFunction,
-              error: errorCallback
-            })
+              result: resultFunction
+            }
+            // If errorCallback is set, merge into queryFields
+            if (errorCallback instanceof Function) {
+              this.logInfo('errorCallback')
+              subscriptionFields = { ...subscriptionFields, error: errorCallback }
+            }
+            this.$apollo.addSmartSubscription(subKey, subscriptionFields)
           }
         }
       }

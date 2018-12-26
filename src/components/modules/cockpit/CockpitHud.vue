@@ -4,7 +4,7 @@ import { colorToInt } from 'vuetify/es5/util/colorUtils'
 import {
   imuQuery,
   imuSubscription
-} from '../../../plugins/apollo/graphql/ImuMessage.gql'
+} from '../../../plugins/apollo/graphql/Imu.gql'
 
 export default {
   inject: ['EventBus', 'CockpitObject'],

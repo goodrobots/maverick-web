@@ -3,10 +3,8 @@ fragment StateMessage on StateMessage {
   seq
   secs
   nsecs
-  frameId
   connected
   armed
   guided
   mode
-  systemStatus
 }
