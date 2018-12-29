@@ -1,10 +1,18 @@
 {
-  "py3-api": {
-    "httpEndpoint": "http://dev.maverick.one:6795/graphql",
-    "wsEndpoint": "ws://dev.maverick.one:6795/subscriptions",
+  "sitl1": {
+    "httpEndpoint": "http://dev.maverick.one:7000/graphql",
+    "wsEndpoint": "ws://dev.maverick.one:7000/subscriptions",
     "websocketsOnly": false,
-    "name": "Py3 API",
-    "colorLight": "#336633",
-    "colorDark": "#336633"
+    "name": "SITL Copter 1",
+    "colorLight": "rgba(11,11,11,0.3)",
+    "colorDark": "rgba(11,11,11,0.9)"
+  },
+  "copter2": {
+    "httpEndpoint": "http://dev.maverick.one:7010/graphql",
+    "wsEndpoint": "ws://dev.maverick.one:7010/subscriptions",
+    "websocketsOnly": false,
+    "name": "SITL Copter 2",
+    "colorLight": "#336666",
+    "colorDark": "#336666"
   }
 }

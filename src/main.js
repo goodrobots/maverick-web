@@ -13,7 +13,7 @@ import './plugins/vuelayers'
 import './plugins/vuecesium'
 import './plugins/vuetimers'
 import './plugins/registerServiceWorker'
-import { createProvider } from './plugins/apollo/vue-apollo'
+import { createProvider } from './plugins/graphql/vue-apollo'
 
 // Load maverick plugins
 import './plugins/maverick'

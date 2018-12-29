@@ -143,7 +143,7 @@ import {
   paramsQuery,
   paramsSubscription,
   updateParam
-} from '../../../plugins/apollo/graphql/Parameters.gql'
+} from '../../../plugins/graphql/gql/Parameters.gql'
 
 export default {
   name: 'ConfigParamFilter',

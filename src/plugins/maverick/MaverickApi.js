@@ -1,4 +1,4 @@
-import { createClient } from '../apollo/apollo-functions'
+import { createClient } from '../graphql/apollo-functions'
 import clients from './clients.json'
 
 const plugin = {

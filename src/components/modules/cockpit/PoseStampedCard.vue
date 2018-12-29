@@ -24,7 +24,7 @@ import {
   poseStampedQuery,
   poseStampedSubscription,
   poseStampedMutate
-} from '../../../plugins/apollo/graphql/gql/PoseStampedMessage.gql'
+} from '../../../plugins/graphql/gql/gql/PoseStampedMessage.gql'
 
 export default {
   name: 'PoseStampedCard',

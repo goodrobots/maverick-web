@@ -25,11 +25,11 @@ div
         v-btn.transparent(v-if="stateData[activeApi]" v-html="stateData[activeApi].mode" depressed)
         // v-select(:items="flightModes" overflow :label="stateData[activeApi].mode")
         // Altitude button
-        v-btn.transparent(v-if="vfrHudMessage && vfrHudMessage.altitude" v-html="'Alt<br>' + vfrHudMessage.altitude.toFixed(2) + 'm'" flat ripple=false)
+        v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].altitude" v-html="'Alt<br>' + vfrHudData[activeApi].altitude.toFixed(2) + 'm'" flat ripple=false)
         // Heading button
-        v-btn.transparent(v-if="vfrHudMessage && vfrHudMessage.heading && !$vuetify.breakpoint.smAndDown" v-html="'Hdg<br>' + vfrHudMessage.heading" flat ripple=false)
+        v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].heading && !$vuetify.breakpoint.smAndDown" v-html="'Hdg<br>' + vfrHudData[activeApi].heading" flat ripple=false)
         // Speed button
-        v-btn.transparent(v-if="vfrHudMessage && vfrHudMessage.groundspeed && !$vuetify.breakpoint.smAndDown" v-html="'Spd<br>' + vfrHudMessage.groundspeed.toFixed(2)" flat ripple=false)
+        v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].groundspeed && !$vuetify.breakpoint.smAndDown" v-html="'Spd<br>' + vfrHudData[activeApi].groundspeed.toFixed(2)" flat ripple=false)
       v-spacer
 
       v-toolbar-items
@@ -61,26 +61,14 @@ div
 </template>
 
 <script>
-/*
-import {
-  vfrHudQuery,
-  vfrHudSubscription
-} from '../../plugins/apollo/graphql/VfrHudMessage.gql'
-import {
-  stateQuery,
-  stateSubscription
-} from '../../plugins/apollo/graphql/StateMessage.gql'
-import {
-  statusTextQuery,
-  statusTextSubscription
-} from '../../plugins/apollo/graphql/StatusTextMessage.gql'
-*/
+import { stateQuery, stateSubscription } from '../../plugins/graphql/gql/State.gql'
+import { vfrHudQuery, vfrHudSubscription } from '../../plugins/graphql/gql/VfrHud.gql'
 export default {
   name: 'TopNav',
   data () {
     return {
       stateData: {},
-      vfrHudMessage: [],
+      vfrHudData: [],
       flightModes: ['Guided', 'Stabilize'],
       tickers: {
         stateMessage: false,
@@ -99,6 +87,9 @@ export default {
   },
 
   computed: {
+    activeApi () {
+      return this.$store.state.activeApi
+    },
     routePath () {
       return this.$store.state.route.path
     },
@@ -116,47 +107,18 @@ export default {
     }
   },
 
-  created () {
-    // Iterate through each configured API backend
-    /*
-    for (var api in this.$store.state.apis) {
-      // Add a state SmartQuery for this API backend
-      this.$apollo.addSmartQuery('stateMessage_' + api, {
-        client: api,
-        query: stateQuery,
-        manual: true,
-        result: function (data, key) {
-          api = key.replace('stateMessage_', '')
-          if (data.data && 'stateMessage' in data.data) {
-            // Store the message data and set the api state to active
-            this.$set(this.stateData, api, data.data.stateMessage) // Note: Must use this.$set to add object property, to keep new property reactive
-            this.$store.commit('setApiState', { api: api, value: true })
-          }
+  watch: {
+    // Watch apis state for any change and process
+    apis: {
+      handler: function (newValue) {
+        for (const api in this.apis) {
+          this.createQuery('StateMessage', stateQuery, api, 'stateData')
+          this.createQuery('VfrHudMessage', vfrHudQuery, api, 'vfrHudData')
+          this.createSubscription('StateMessage', stateSubscription, api, 'stateData')
+          this.createSubscription('VfrHudMessage', vfrHudSubscription, api, 'vfrHudData')
         }
-      })
-
-      // Add a stateMessage SmartSubscription for this API backend
-      this.$apollo.addSmartSubscription('stateMessage_' + api, {
-        client: api,
-        query: stateSubscription,
-        manual: true,
-        result: function (data, key) {
-          api = key.replace('stateMessage_', '')
-          // Only update if state has changed and ticker is turned on
-          if (data.data && 'stateMessage' in data.data && this.stateData[api] !== data.data.stateMessage) {
-            // Store the message data and set the api state to active if inactive
-            this.stateData[api] = data.data.stateMessage
-            if (!this.$store.state.apis[api].state && 'stateMessage' in data.data) {
-              this.$store.commit('setApiState', { api: api, value: true })
-            }
-          }
-        },
-        skip () {
-          return this.apis[api].state
-        }
-      })
+      }
     }
-    */
   },
 
   methods: {
@@ -171,56 +133,6 @@ export default {
       this.tickers.vfrHudMessage = true
     }
   }
-
-  /*
-  apollo: {
-    $client () {
-      return this.activeApi
-    },
-
-    // Setup apollo queries
-    statusTextMessage: statusTextQuery,
-    vfrHudMessage: vfrHudQuery,
-    // stateMessage: stateQuery,
-
-    // Setup apollo subscriptions to run once every ticker interval
-    $subscribe: {
-      vfrHudMessage: {
-        query: vfrHudSubscription,
-        result ({ data }) {
-          if (
-            this.vfrHudMessage !== data.vfrHudMessage &&
-            this.tickers.vfrHudMessage
-          ) {
-            this.vfrHudMessage = data.vfrHudMessage
-            this.tickers.vfrHudMessage = false // Turn the ticker off until the next interval
-          }
-        }
-      },
-      stateMessage: {
-        query: stateSubscription,
-        result ({ data }) {
-          if (
-            this.stateMessage !== data.stateMessage &&
-            this.tickers.stateMessage
-          ) {
-            this.stateMessage = data.stateMessage
-            this.tickers.stateMessage = false // Turn the ticker off until the next interval
-            this.fcTime = data.stateMessage.secs
-          }
-        }
-      },
-      statusTextMessage: {
-        query: statusTextSubscription,
-        result ({ data }) {
-          this.statusTextMessage = data.statusTextMessage
-          this.statusTextMessages.unshift(data.statusTextMessage)
-          this.snackbar = true
-        }
-      }
-    }
-  }
-  */
 }
 </script>
 

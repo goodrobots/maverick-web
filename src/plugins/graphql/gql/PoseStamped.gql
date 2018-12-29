@@ -1,19 +1,19 @@
 #import "./PoseStampedFragment.gql"
 
 query poseStampedQuery {
-  poseStampedMessage {
+  PoseStampedMessage {
     ...PoseStampedMessage
   }
 }
 
 subscription poseStampedSubscription {
-  poseStampedMessage {
+  PoseStampedMessage {
     ...PoseStampedMessage
   }
 }
 
 mutation poseStampedMutate {
-  poseStampedMessage {
+  PoseStampedMessage {
     ...PoseStampedMessage
   }
 }

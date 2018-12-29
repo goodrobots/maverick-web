@@ -36,7 +36,7 @@ import {
   vfrHudQuery,
   vfrHudSubscription,
   vfrHudMutate
-} from '../../../plugins/apollo/graphql/gql/VfrHudMessage.gql'
+} from '../../../plugins/graphql/gql/gql/VfrHudMessage.gql'
 
 export default {
   name: 'VfrHudCard',

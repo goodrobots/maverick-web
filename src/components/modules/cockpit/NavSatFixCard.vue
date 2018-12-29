@@ -24,7 +24,7 @@ import {
   navSatFixQuery,
   navSatFixSubscription,
   navSatFixMutate
-} from '../../../plugins/apollo/graphql/gql/NavSatFixMessage.gql'
+} from '../../../plugins/graphql/gql/gql/NavSatFix.gql'
 
 export default {
   name: 'NavSatFixCard',

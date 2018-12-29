@@ -62,15 +62,15 @@ div
 import {
   vfrHudQuery,
   vfrHudSubscription
-} from '../../plugins/apollo/graphql/VfrHudMessage.gql'
+} from '../../plugins/graphql/gql/VfrHudMessage.gql'
 import {
   stateQuery,
   stateSubscription
-} from '../../plugins/apollo/graphql/StateMessage.gql'
+} from '../../plugins/graphql/gql/StateMessage.gql'
 import {
   statusTextQuery,
   statusTextSubscription
-} from '../../plugins/apollo/graphql/StatusTextMessage.gql'
+} from '../../plugins/graphql/gql/StatusTextMessage.gql'
 
 export default {
   name: 'TopNav',

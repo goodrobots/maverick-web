@@ -23,7 +23,7 @@ v-container(fluid grid-list-xl)
 </template>
 
 <script>
-import { mavlogsQuery } from '../../../plugins/apollo/graphql/Mavlogs.gql'
+import { mavlogsQuery } from '../../../plugins/graphql/gql/Mavlogs.gql'
 
 export default {
   name: 'AnalysisIndex',

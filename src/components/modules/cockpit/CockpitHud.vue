@@ -1,10 +1,7 @@
 <script>
 import colors from 'vuetify/es5/util/colors'
 import { colorToInt } from 'vuetify/es5/util/colorUtils'
-import {
-  imuQuery,
-  imuSubscription
-} from '../../../plugins/apollo/graphql/Imu.gql'
+import { imuQuery, imuSubscription } from '../../../plugins/graphql/gql/Imu.gql'
 
 export default {
   inject: ['EventBus', 'CockpitObject'],
@@ -30,9 +27,9 @@ export default {
       filledHorizon: true,
       ladderSteps: 6,
       ladderWidth: 50,
-      imuMessage: [],
+      ImuMessage: [],
       tickers: {
-        imuMessage: false,
+        ImuMessage: false,
         drawHud: false
       }
     }
@@ -94,26 +91,26 @@ export default {
       const rpy = {}
       rpy.roll = -Math.atan2(
         2.0 *
-          (this.imuMessage.orientationZ * this.imuMessage.orientationY +
-            this.imuMessage.orientationW * this.imuMessage.orientationX),
+          (this.ImuMessage.orientation_z * this.ImuMessage.orientation_y +
+            this.ImuMessage.orientation_w * this.ImuMessage.orientation_x),
         1.0 -
           2.0 *
-            (this.imuMessage.orientationX * this.imuMessage.orientationX +
-              this.imuMessage.orientationY * this.imuMessage.orientationY)
+            (this.ImuMessage.orientation_x * this.ImuMessage.orientation_x +
+              this.ImuMessage.orientation_y * this.ImuMessage.orientation_y)
       )
       rpy.pitch = -Math.asin(
         2.0 *
-          (this.imuMessage.orientationY * this.imuMessage.orientationW -
-            this.imuMessage.orientationZ * this.imuMessage.orientationX)
+          (this.ImuMessage.orientation_y * this.ImuMessage.orientation_w -
+            this.ImuMessage.orientation_z * this.ImuMessage.orientation_x)
       )
       rpy.yaw = -Math.atan2(
         2.0 *
-          (this.imuMessage.orientationZ * this.imuMessage.orientationW +
-            this.imuMessage.orientationX * this.imuMessage.orientationY),
+          (this.ImuMessage.orientation_z * this.ImuMessage.orientation_w +
+            this.ImuMessage.orientation_x * this.ImuMessage.orientation_y),
         -1.0 +
           2.0 *
-            (this.imuMessage.orientationW * this.imuMessage.orientationW +
-              this.imuMessage.orientationX * this.imuMessage.orientationX)
+            (this.ImuMessage.orientation_w * this.ImuMessage.orientation_w +
+              this.ImuMessage.orientation_x * this.ImuMessage.orientation_x)
       )
       return rpy
     }
@@ -122,24 +119,16 @@ export default {
   timers: {
     setTickers: { time: 200, autostart: true, repeat: true }
   },
-  // Setup grqphql imu message stream
-  apollo: {
-    $client () {
-      return this.activeApi
-    },
-    imuMessage: imuQuery,
-    $subscribe: {
-      imuMessage: {
-        query: imuSubscription,
-        result ({ data }) {
-          if (this.imuMessage !== data.imuMessage && this.tickers.imuMessage) {
-            this.imuMessage = data.imuMessage
-            this.tickers.imuMessage = false // Turn the ticker off until the next interval
-          }
-        }
+
+  watch: {
+    activeApi: {
+      handler: function (newValue) {
+        this.createQuery('ImuMessage', imuQuery, newValue, 'imuData')
+        this.createSubscription('ImuMessage', imuSubscription, newValue, 'imuData')
       }
     }
   },
+
   mounted () {
     this.addState = false
     this.EventBus.$on('ready', () => {
@@ -173,7 +162,7 @@ export default {
   },
   methods: {
     setTickers () {
-      this.tickers.imuMessage = true
+      this.tickers.ImuMessage = true
       this.tickers.drawHud = true
       this.tickerUpdate()
     },

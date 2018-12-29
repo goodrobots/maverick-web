@@ -117,14 +117,8 @@ div.planner-map
 </template>
 
 <script>
-import {
-  navSatFixQuery,
-  navSatFixSubscription
-} from '../../../plugins/apollo/graphql/NavSatFixMessage.gql'
-import {
-  waypointsQuery,
-  waypointsSubscription
-} from '../../../plugins/apollo/graphql/Waypoints.gql'
+import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/graphql/gql/NavSatFix.gql'
+import { waypointsQuery, waypointsSubscription } from '../../../plugins/graphql/gql/Waypoints.gql'
 
 export default {
   data () {
@@ -132,7 +126,6 @@ export default {
       navSatFixData: {},
       waypointsData: {},
       mapmenu: false,
-      xycenter: [],
       maplayers: [
         { value: 'osm', text: 'OpenStreetMap' },
         { value: 'bingroad', text: 'Bing Roadmap' },
@@ -164,6 +157,26 @@ export default {
     },
     bingMapsKey () {
       return this.$store.state.bingMapsKey
+    },
+    centercoords () {
+      let xy = []
+      if (this.activeApi in this.navSatFixData && this.navSatFixData[this.activeApi] && 'longitude' in this.navSatFixData[this.activeApi] && this.navSatFixData[this.activeApi].longitude > 0) {
+        xy = [
+          this.navSatFixData[this.activeApi].longitude,
+          this.navSatFixData[this.activeApi].latitude
+        ]
+      }
+      return xy
+    },
+    xycenter () {
+      // If follow option set, or centercoords empty, set centercoords from current position
+      if (
+        this.mapCenter ||
+        // (this.xycenter.length === 0 && xy.length > 0)
+        this.centercoords.length > 0
+      ) {
+        return this.centercoords
+      }
     },
     navColor () {
       return this.$store.state.navColor
@@ -202,6 +215,7 @@ export default {
     }
   },
 
+  /*
   created () {
     // Iterate through each configured API backend
     for (var api in this.$store.state.apis) {
@@ -216,11 +230,6 @@ export default {
           // Update map center coordinates
           this.centercoords()
         }
-        /*
-        error: function (error) {
-          // console.log({ error })
-        }
-        */
       })
       // Add a waypoints SmartQuery for this API backend
       this.$apollo.addSmartQuery('waypoints_' + api, {
@@ -231,11 +240,6 @@ export default {
           // Note: Must use this.$set to add object property, to keep new property reactive
           this.$set(this.waypointsData, key.replace('waypoints_', ''), data.data.waypoints)
         }
-        /*
-        error: function (error) {
-          // console.log(error)
-        }
-        */
       })
       // Add a navSatFixMessage SmartSubscription for this API backend
       this.$apollo.addSmartSubscription('navSatFixMessage_' + api, {
@@ -271,11 +275,6 @@ export default {
             // console.log(this.apis)
           }
         },
-        /*
-        error: function (error) {
-          // console.log(error)
-        },
-        */
         skip () {
           return this.apis[api].state
         }
@@ -289,22 +288,33 @@ export default {
           this.waypointsData[key.replace('waypoints_', '')] = data.data.waypoints
           console.log(`Updating ${key.replace('waypoints_', '')} with ${data.data.waypoints}`)
         },
-        /*
-        error: function (error) {
-          // console.log(error)
-        },
-        */
         skip () {
           return this.apis[api].state
         }
       })
     }
   },
+  */
+
+  watch: {
+    // Watch apis state for any change and process
+    apis: {
+      handler: function (newValue) {
+        for (const api in this.apis) {
+          this.createQuery('NavSatFixMessage', navSatFixQuery, api, 'navSatFixData')
+          this.createQuery('Waypoints', waypointsQuery, api, 'waypointsData')
+          this.createSubscription('NavSatFixMessage', navSatFixSubscription, api, 'navSatFixData')
+          this.createSubscription('Waypoints', waypointsSubscription, api, 'waypointsData')
+        }
+      }
+    }
+  },
 
   methods: {
     setTickers () {
       this.tickers.navSatFixMessage = true
-    },
+    }
+    /*
     centercoords () {
       let xy = []
       if (this.activeApi in this.navSatFixData && this.navSatFixData[this.activeApi] && 'longitude' in this.navSatFixData[this.activeApi] && this.navSatFixData[this.activeApi].longitude > 0) {
@@ -321,6 +331,7 @@ export default {
         this.xycenter = xy
       }
     }
+    */
   }
 
 }

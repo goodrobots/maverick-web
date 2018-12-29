@@ -1,9 +1,0 @@
-fragment PoseStampedMessage on PoseStampedMessage {
-  posePositionX
-  posePositionY
-  posePositionZ
-  poseOrientationX
-  poseOrientationY
-  poseOrientationZ
-  poseOrientationW
-}

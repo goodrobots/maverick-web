@@ -1,6 +1,8 @@
 fragment StatusTextMessage on StatusTextMessage {
   seq
   secs
+  nsecs
+  frame_id
   level
   message
 }

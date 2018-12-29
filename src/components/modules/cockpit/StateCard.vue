@@ -58,7 +58,7 @@ import {
   stateQuery,
   stateSubscription,
   stateMutate
-} from '../../../plugins/apollo/graphql/gql/StateMessage.gql'
+} from '../../../plugins/graphql/gql/gql/StateMessage.gql'
 
 export default {
   name: 'StateCard',

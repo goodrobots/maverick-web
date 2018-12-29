@@ -1,4 +1,8 @@
 fragment VfrHudMessage on VfrHudMessage {
+  seq
+  secs
+  nsecs
+  frame_id
   airspeed
   groundspeed
   heading

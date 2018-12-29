@@ -60,18 +60,19 @@ v-container.fluid.grid-list-xl
 </template>
 
 <script>
-import Vue from 'vue'
+// import Vue from 'vue'
 import {
   paramsQuery,
-  paramsSubscription,
-  updateParam
-} from '../../../plugins/apollo/graphql/Parameters.gql'
+  paramsSubscription
+  // updateParam
+} from '../../../plugins/graphql/gql/Parameters.gql'
 
 export default {
   name: 'ConfigParamSummary',
   data () {
     return {
-      params: []
+      params: [],
+      paramData: []
     }
   },
   computed: {
@@ -79,9 +80,18 @@ export default {
       return this.$store.state.activeApi
     }
   },
-  destroyed () {
-    // this.$apollo.destroy()
+
+  watch: {
+    // Watch apis state for any change and process
+    activeApi: {
+      handler: function (newValue) {
+        this.logDebug('activeApi changed: ' + newValue)
+        this.createQuery('params', paramsQuery, newValue, 'paramData', this.processParamQuery)
+        this.createSubscription('params', paramsSubscription, newValue, 'paramData')
+      }
+    }
   },
+
   methods: {
     valueFormat (param) {
       if (param && param.meta && param.meta.units) {
@@ -99,9 +109,22 @@ export default {
     },
     findParam (id) {
       return this.params.find(x => x.id === id)
+    },
+    processParamQuery (data, key) {
+      const api = key.replace('Status_', '')
+      this.logDebug(data.data)
+      if (data.data && 'Status' in data.data) {
+        // Store the message data and set the api state to active, only for the first callback
+        if (this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
+        if (this.$store.state.apiTimestamps[api] === null) this.$store.commit('setApiSeen', { api: api, value: performance.now() })
+        if (!(api in this.$store.state.statusData)) {
+          this.$store.commit('setStatusData', { api: api, message: data.data.Status })
+        }
+      }
     }
-  },
+  }
 
+  /*
   apollo: {
     $client () {
       return this.activeApi
@@ -117,31 +140,6 @@ export default {
         }
         // console.log('received params: ' + this.params.length)
       },
-      /*
-      subscribeToMore: {
-        document: paramsSubscription,
-        // If we receive updated param, iterate through the existing params (previousResult) and carefully update just the updated parameter
-        updateQuery: (previousResult, { subscriptionData }) => {
-          const update = subscriptionData.data.params
-          if (!/^STAT_/.test(update.id)) {
-            console.log('Updating parameter: ' + update.id)
-            return {
-              params: previousResult.params.map(param => {
-                // We can't update immutable apollo data, so instead create a deep copy and return that into the array map
-                if (param.id === update.id) {
-                  let paramcopy = JSON.parse(JSON.stringify(param))
-                  paramcopy.value = update.value
-                  return paramcopy
-                // Otherwise return the array object by reference
-                } else {
-                  return param
-                }
-              })
-            }
-          }
-        }
-      },
-      */
       mutation: updateParam
     },
     $subscribe: {
@@ -155,5 +153,6 @@ export default {
       }
     }
   }
+  */
 }
 </script>

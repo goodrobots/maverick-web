@@ -1,13 +1,13 @@
 #import "./ParametersFragment.gql"
 
 query paramsQuery {
-  params {
+  Params {
     ...Parameter
   }
 }
 
 subscription paramsSubscription {
-  params {
+  Params {
     ...Parameter
   }
 }
@@ -15,7 +15,7 @@ subscription paramsSubscription {
 mutation updateParam ($id: ID, $value: ParamValueType) {
   updateParam(id: $id, value: $value) {
     ok
-    param {
+    Param {
       id
       value
     }

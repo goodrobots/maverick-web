@@ -4,18 +4,18 @@ div.cockpit-map
     vl-view(v-if="xy.length > 0" :zoom="14" :center="xy" :rotation="0")
     // Add markers for mission waypoints
     vl-feature
-      vl-geom-multi-point(v-if="waypoints.length > 0" :coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
+      vl-geom-multi-point(v-if="waypointsData.length > 0" :coordinates="waypointsData.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
       vl-style-box
         vl-style-circle(:radius="10")
           vl-style-fill(color="rgba(35,245,35,0.5)")
           vl-style-stroke(color="#666666" :width="1")
     // Add numbers for mission waypoint marker
-    vl-feature(v-if="waypoints.length > 0" v-for="(waypoint, index) in waypoints" :key="'markernumber'+index")
+    vl-feature(v-if="waypointsData.length > 0" v-for="(waypoint, index) in waypointsData" :key="'markernumber'+index")
       vl-overlay(v-if="waypoint.longitude && waypoint.latitude" :position="[waypoint.longitude, waypoint.latitude]")
         span.markernumber.caption(v-html="index")
     // Add lines to join the markers
     vl-feature
-      vl-geom-line-string(v-if="waypoints.length > 0" :coordinates="waypoints.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
+      vl-geom-line-string(v-if="waypointsData.length > 0" :coordinates="waypointsData.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
     // Add marker for vehicle
     vl-feature(id="vehiclemarker" ref="vehiclemarker")
       vl-geom-point(v-if="xy.length > 0" :coordinates="xy")
@@ -29,20 +29,14 @@ div.cockpit-map
 </template>
 
 <script>
-import {
-  navSatFixQuery,
-  navSatFixSubscription
-} from '../../../plugins/apollo/graphql/NavSatFixMessage.gql'
-import {
-  waypointsQuery,
-  waypointsSubscription
-} from '../../../plugins/apollo/graphql/Waypoints.gql'
+import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/graphql/gql/NavSatFix.gql'
+import { waypointsQuery, waypointsSubscription } from '../../../plugins/graphql/gql/Waypoints.gql'
 
 export default {
   data () {
     return {
-      navSatFixMessage: [],
-      waypoints: []
+      navSatFixData: [],
+      waypointsData: []
     }
   },
 
@@ -57,13 +51,25 @@ export default {
     xy () {
       // const xy = VueLayers.core.projHelper.fromLonLat([this.navSatFixMessage.longitude, this.navSatFixMessage.latitude])
       const xy = [
-        this.navSatFixMessage.longitude,
-        this.navSatFixMessage.latitude
+        this.navSatFixData.longitude,
+        this.navSatFixData.latitude
       ]
       return xy[0] && xy[1] ? xy : []
     }
   },
 
+  watch: {
+    activeApi: {
+      handler: function (newValue) {
+        this.createQuery('NavSatFixMessage', navSatFixQuery, newValue, 'navSatFixData')
+        this.createSubscription('NavSatFixMessage', navSatFixSubscription, newValue, 'navSatFixData')
+        this.createQuery('Waypoints', waypointsQuery, newValue, 'waypointsData')
+        this.createSubscription('Waypoints', waypointsSubscription, newValue, 'waypointsData')
+      }
+    }
+  }
+
+  /*
   apollo: {
     $client () {
       return this.activeApi
@@ -102,6 +108,7 @@ export default {
       }
     }
   }
+  */
 }
 </script>
 

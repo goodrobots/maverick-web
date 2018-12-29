@@ -1,13 +1,13 @@
 #import "./WaypointsFragment.gql"
 
 query waypointsQuery {
-  waypoints {
+  Waypoints {
     ...Waypoint
   }
 }
 
 subscription waypointsSubscription {
-  waypoints {
+  Waypoints {
     ...Waypoint
   }
 }

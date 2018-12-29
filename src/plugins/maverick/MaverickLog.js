@@ -23,6 +23,13 @@ const plugin = {
             'background: blue; color: white; display: block; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
             message
           )
+        },
+        logDebug (message) {
+          console.log(
+            '%cDebug',
+            'background: purple; color: white; display: block; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
+            message
+          )
         }
       }
     })

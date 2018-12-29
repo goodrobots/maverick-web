@@ -28,7 +28,7 @@ import {
   imuQuery,
   imuSubscription,
   imuMutate
-} from '../../../plugins/apollo/graphql/gql/Imu.gql'
+} from '../../../plugins/graphql/gql/gql/Imu.gql'
 
 export default {
   name: 'ImuCard',

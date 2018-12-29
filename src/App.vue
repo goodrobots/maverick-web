@@ -14,7 +14,7 @@ import BottomNav from './components/common/BottomNav'
 import TopNav from './components/common/TopNav'
 import ActionButton from './components/common/ActionButton'
 
-import { statusQuery, statusSubscription } from './plugins/apollo/graphql/Status.gql'
+import { statusQuery, statusSubscription } from './plugins/graphql/gql/Status.gql'
 
 export default {
   name: 'App',

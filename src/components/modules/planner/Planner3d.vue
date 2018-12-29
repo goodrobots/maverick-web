@@ -9,17 +9,17 @@ import {
   navSatFixQuery,
   navSatFixSubscription,
   navSatFixMutate
-} from '../../../plugins/apollo/graphql/NavSatFixMessage.gql'
+} from '../../../plugins/graphql/gql/NavSatFix.gql'
 import {
   imuQuery,
   imuSubscription,
   imuMutate
-} from '../../../plugins/apollo/graphql/Imu.gql'
+} from '../../../plugins/graphql/gql/Imu.gql'
 import {
   vfrHudQuery,
   vfrHudSubscription,
   vfrHudMutate
-} from '../../../plugins/apollo/graphql/VfrHudMessage.gql'
+} from '../../../plugins/graphql/gql/VfrHud.gql'
 
 export default {
   data () {
