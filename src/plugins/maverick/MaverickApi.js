@@ -1,4 +1,4 @@
-import { createClient } from '../graphql/apollo-functions'
+import { createClient, onLogin } from '../graphql/apollo-functions'
 import clients from './clients.json'
 
 const plugin = {
@@ -35,16 +35,23 @@ const plugin = {
       methods: {
         createClient (api, clientdata) {
           // Add an apollo client
-          this.$set(this.$apollo.provider.clients, api, createClient({
+          const client = createClient({
             httpEndpoint: clientdata.httpEndpoint,
             wsEndpoint: clientdata.wsEndpoint,
             websocketsOnly: clientdata.websocketsOnly
-          }))
+          })
+          this.$set(this.$apollo.provider.clients, api, client)
           // Add a vuex apis entry
           this.$store.commit('addApi', {
             title: api,
             value: { ...clientdata, ...{ state: false } }
           })
+          // Set the client auth token
+          if (clientdata.authToken) {
+            // this.logDebug(`Setting auth token: ${clientdata.authToken}`)
+            this.logDebug(`Setting auth token`)
+            onLogin(client, clientdata.authToken)
+          }
         },
 
         createQuery (message, gql, api, container, callback = null, errorCallback = null) {

@@ -32,7 +32,8 @@ v-content
 </template>
 
 <script>
-import { stateQuery, stateSubscription } from '../../../plugins/graphql/gql/State.gql'
+// import { stateQuery, stateSubscription } from '../../../plugins/graphql/gql/State.gql'
+import { stateQuery } from '../../../plugins/graphql/gql/State.gql'
 /*
 import { imuQuery, imuSubscription } from '../../../plugins/graphql/gql/Imu.gql'
 import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/graphql/gql/NavSatFix.gql'
@@ -67,7 +68,7 @@ export default {
       handler: function (newValue) {
         for (const api in this.apis) {
           this.createQuery('StateMessage', stateQuery, api, 'stateData')
-          this.createSubscription('StateMessage', stateSubscription, api, 'stateData')
+          // this.createSubscription('StateMessage', stateSubscription, api, 'stateData')
 
           /*
           this.createQuery('ImuMessage', imuQuery, api, 'imuData')

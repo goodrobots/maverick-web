@@ -81,7 +81,7 @@ export default {
       return this.$store.state.moduleName
     },
     navState () {
-      return this.moduleName === 'home' ? false : this.$store.state.navState // Return false if home screen, otherwise from vuex state
+      return this.moduleName === 'home' || this.moduleName === 'test' ? false : this.$store.state.navState // Return false if home screen, otherwise from vuex state
     }
   },
 
