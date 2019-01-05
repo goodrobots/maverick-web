@@ -6,14 +6,14 @@ fragment Parameter on Parameter {
     decimal
     documentation
     group
-    human_group
-    human_name
+    humanGroup
+    humanName
     increment
     max
     min
-    reboot_required
+    rebootRequired
     type
-    unit_text
+    unitText
     units
     values
   }

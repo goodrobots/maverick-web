@@ -1,19 +1,19 @@
 #import "./ImuFragment.gql"
 
 query imuQuery {
-  ImuMessage {
-    ...ImuMessage
+  Imu {
+    ...Imu
   }
 }
 
 subscription imuSubscription {
-  ImuMessage {
-    ...ImuMessage
+  Imu {
+    ...Imu
   }
 }
 
 mutation imuMutate {
-  ImuMessage {
-    ...ImuMessage
+  Imu {
+    ...Imu
   }
 }

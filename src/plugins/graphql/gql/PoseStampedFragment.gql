@@ -1,13 +1,13 @@
-fragment PoseStampedMessage on PoseStampedMessage {
+fragment PoseStamped on PoseStamped {
   seq
   secs
   nsecs
-  frame_id
-  pose_position_x
-  pose_position_y
-  pose_position_z
-  pose_orientation_x
-  pose_orientation_y
-  pose_orientation_z
-  pose_orientation_w
+  frameId
+  posePositionX
+  posePositionY
+  posePositionZ
+  poseOrientationX
+  poseOrientationY
+  poseOrientationZ
+  poseOrientationW
 }

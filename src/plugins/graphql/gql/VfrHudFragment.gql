@@ -1,8 +1,8 @@
-fragment VfrHudMessage on VfrHudMessage {
+fragment VfrHud on VfrHud {
   seq
   secs
   nsecs
-  frame_id
+  frameId
   airspeed
   groundspeed
   heading

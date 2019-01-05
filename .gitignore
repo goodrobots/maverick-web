@@ -21,3 +21,4 @@ yarn-error.log*
 *.sw*
 
 clients.json
+src/plugins/maverick/clients.json

@@ -7,23 +7,23 @@ div
       v-toolbar-items
         // StatusText Messages
         transition(name="fade-transition" mode="out-in")
-          v-menu(offset-y v-if="statusTextMessages.length > 0" :max-height="height - 100")
+          v-menu(offset-y v-if="statusTexts.length > 0" :max-height="height - 100")
             v-btn(flat slot="activator")
               v-icon warning
             v-list(two-line subheader dense)
               v-subheader Messages
-                v-btn(flat @click="statusTextMessages = []")
+                v-btn(flat @click="statusTexts = []")
                   v-icon(small) delete
-              v-list-tile(v-for="(message, index) in statusTextMessages" :key="index")
+              v-list-tile(v-for="(message, index) in statusTexts" :key="index")
                 v-list-tile-content(v-if="message")
                   v-list-tile-title(v-text="message.message")
                   v-list-tile-sub-title(v-text="(fcTime - message.secs > 60) ? Math.round((fcTime - message.secs) / 60) + ' minutes ago' : fcTime - message.secs + ' seconds ago'")
         // Armed/Disarmed button
-        v-btn(v-if="stateData[activeApi] && 'armed' in stateData[activeApi]" color="yellow" flat) ARMED
-        v-btn.transparent(v-else-if="stateData[activeApi]" flat ripple=false) DISARMED
+        v-btn(v-if="vehicleStateData[activeApi] && 'armed' in vehicleStateData[activeApi]" color="yellow" flat) ARMED
+        v-btn.transparent(v-else-if="vehicleStateData[activeApi]" flat ripple=false) DISARMED
         // Mode button
-        v-btn.transparent(v-if="stateData[activeApi]" v-html="stateData[activeApi].mode" depressed)
-        // v-select(:items="flightModes" overflow :label="stateData[activeApi].mode")
+        v-btn.transparent(v-if="vehicleStateData[activeApi]" v-html="vehicleStateData[activeApi].mode" depressed)
+        // v-select(:items="flightModes" overflow :label="vehicleStateData[activeApi].mode")
         // Altitude button
         v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].altitude" v-html="'Alt<br>' + vfrHudData[activeApi].altitude.toFixed(2) + 'm'" flat ripple=false)
         // Heading button
@@ -56,27 +56,27 @@ div
                       span &nbsp; No Link
       v-fade-transition(mode="out-in")
         v-toolbar-side-icon(v-if="navIcon" @click.stop="toggleDrawer")
-  v-snackbar(v-if="statusTextMessage" :timeout="6000" color="red" :top="true" v-model="snackbar") {{ statusTextMessage.message }}
+  v-snackbar(v-if="statusText" :timeout="6000" color="red" :top="true" v-model="snackbar") {{ statusText.message }}
     v-btn(flat @click.native="snackbar = false") CLOSE
 </template>
 
 <script>
-import { stateQuery, stateSubscription } from '../../plugins/graphql/gql/State.gql'
+import { vehicleStateQuery, vehicleStateSubscription } from '../../plugins/graphql/gql/VehicleState.gql'
 import { vfrHudQuery, vfrHudSubscription } from '../../plugins/graphql/gql/VfrHud.gql'
 export default {
   name: 'TopNav',
   data () {
     return {
-      stateData: {},
+      vehicleStateData: {},
       vfrHudData: [],
       flightModes: ['Guided', 'Stabilize'],
       tickers: {
-        stateMessage: false,
-        vfrHudMessage: false
+        state: false,
+        vfrHud: false
       },
       snackbar: false,
-      statusTextMessage: '',
-      statusTextMessages: [],
+      statusText: '',
+      statusTexts: [],
       fcTime: null
     }
   },
@@ -112,10 +112,10 @@ export default {
     apis: {
       handler: function (newValue) {
         for (const api in this.apis) {
-          this.createQuery('StateMessage', stateQuery, api, 'stateData')
-          this.createQuery('VfrHudMessage', vfrHudQuery, api, 'vfrHudData')
-          this.createSubscription('StateMessage', stateSubscription, api, 'stateData')
-          this.createSubscription('VfrHudMessage', vfrHudSubscription, api, 'vfrHudData')
+          this.createQuery('VehicleState', vehicleStateQuery, api, 'vehicleStateData')
+          this.createQuery('VfrHud', vfrHudQuery, api, 'vfrHudData')
+          this.createSubscription('VehicleState', vehicleStateSubscription, api, 'vehicleStateData')
+          this.createSubscription('VfrHud', vfrHudSubscription, api, 'vfrHudData')
         }
       }
     }
@@ -129,8 +129,8 @@ export default {
       this.$store.commit('setNavDrawer', !this.$store.state.navDrawer)
     },
     setTickers () {
-      this.tickers.stateMessage = true
-      this.tickers.vfrHudMessage = true
+      this.tickers.vehicleState = true
+      this.tickers.vfrHud = true
     }
   }
 }

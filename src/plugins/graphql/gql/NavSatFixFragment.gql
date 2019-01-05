@@ -1,12 +1,12 @@
-fragment NavSatFixMessage on NavSatFixMessage {
+fragment NavSatFix on NavSatFix {
   seq
   secs
   nsecs
-  frame_id
-  status_status
-  status_service
+  frameId
+  statusStatus
+  statusService
   latitude
   longitude
   altitude
-  position_covariance_type
+  positionCovarianceType
 }

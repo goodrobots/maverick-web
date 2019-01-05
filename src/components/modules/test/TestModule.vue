@@ -12,7 +12,7 @@ v-content
               td(v-html="statusData[api]")
             tr
               td State
-              td(v-html="stateData[api]")
+              td(v-html="vehicleStateData[api]")
             tr
               td Imu
               td(v-html="imuData[api]")
@@ -29,17 +29,22 @@ v-content
               td Waypoints
               td(v-html="waypointsData[api]")
           hr
+        v-flex(xs12)
+          v-btn(v-on:click="testquery()") Test Query
+
 </template>
 
 <script>
-// import { stateQuery, stateSubscription } from '../../../plugins/graphql/gql/State.gql'
-import { stateQuery } from '../../../plugins/graphql/gql/State.gql'
-/*
+import { vehicleStateQuery, vehicleStateSubscription } from '../../../plugins/graphql/gql/VehicleState.gql'
+// import { vehicleStateQuery } from '../../../plugins/graphql/gql/VehicleState.gql'
+// import { imuQuery } from '../../../plugins/graphql/gql/Imu.gql'
 import { imuQuery, imuSubscription } from '../../../plugins/graphql/gql/Imu.gql'
 import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/graphql/gql/NavSatFix.gql'
+// import { navSatFixQuery } from '../../../plugins/graphql/gql/NavSatFix.gql'
 import { vfrHudQuery, vfrHudSubscription } from '../../../plugins/graphql/gql/VfrHud.gql'
+// import { vfrHudQuery } from '../../../plugins/graphql/gql/VfrHud.gql'
 import { poseStampedQuery, poseStampedSubscription } from '../../../plugins/graphql/gql/PoseStamped.gql'
-*/
+// import { poseStampedQuery } from '../../../plugins/graphql/gql/PoseStamped.gql'
 // import { waypointsQuery, waypointsSubscription } from '../../../plugins/graphql/gql/Waypoints.gql'
 
 export default {
@@ -47,7 +52,7 @@ export default {
 
   data () {
     return {
-      stateData: {},
+      vehicleStateData: {},
       imuData: {},
       navSatFixData: {},
       vfrHudData: {},
@@ -62,33 +67,41 @@ export default {
       return this.$store.state.statusData
     }
   },
+
   watch: {
     // Watch apis state for any change and process
     apis: {
       handler: function (newValue) {
         for (const api in this.apis) {
-          this.createQuery('StateMessage', stateQuery, api, 'stateData')
-          // this.createSubscription('StateMessage', stateSubscription, api, 'stateData')
+          this.createQuery('VehicleState', vehicleStateQuery, api, 'vehicleStateData', null, null, function () { return !this.apis[api].auth })
+          this.createSubscription('VehicleState', vehicleStateSubscription, api, 'vehicleStateData', null, null, function () { return !this.apis[api].auth })
 
-          /*
-          this.createQuery('ImuMessage', imuQuery, api, 'imuData')
-          this.createSubscription('ImuMessage', imuSubscription, api, 'imuData')
+          this.createQuery('Imu', imuQuery, api, 'imuData', null, null, function () { return !this.apis[api].auth })
+          this.createSubscription('Imu', imuSubscription, api, 'imuData', null, null, function () { return !this.apis[api].auth })
 
-          this.createQuery('NavSatFixMessage', navSatFixQuery, api, 'navSatFixData')
-          this.createSubscription('NavSatFixMessage', navSatFixSubscription, api, 'navSatFixData')
+          this.createQuery('NavSatFix', navSatFixQuery, api, 'navSatFixData', null, null, function () { return !this.apis[api].auth })
+          this.createSubscription('NavSatFix', navSatFixSubscription, api, 'navSatFixData', null, null, function () { return !this.apis[api].auth })
 
-          this.createQuery('VfrHudMessage', vfrHudQuery, api, 'vfrHudData')
-          this.createSubscription('VfrHudMessage', vfrHudSubscription, api, 'vfrHudData')
+          this.createQuery('VfrHud', vfrHudQuery, api, 'vfrHudData', null, null, function () { return !this.apis[api].auth })
+          this.createSubscription('VfrHud', vfrHudSubscription, api, 'vfrHudData', null, null, function () { return !this.apis[api].auth })
 
-          this.createQuery('PoseStampedMessage', poseStampedQuery, api, 'poseStampedData')
-          this.createSubscription('PoseStampedMessage', poseStampedSubscription, api, 'poseStampedData')
-          */
+          this.createQuery('PoseStamped', poseStampedQuery, api, 'poseStampedData', null, null, function () { return !this.apis[api].auth })
+          this.createSubscription('PoseStamped', poseStampedSubscription, api, 'poseStampedData', null, null, function () { return !this.apis[api].auth })
 
           // this.createQuery('Waypoints', waypointsQuery, api, 'waypointsData')
           // this.createSubscription('Waypoints', waypointsSubscription, api, 'waypointsData')
         }
       },
       deep: true
+    }
+  },
+
+  methods: {
+    testquery () {
+      this.logDebug('creating test query ImuMessage')
+      this.createQuery('ImuMessage', imuQuery, 'sitl1', 'imuData')
+      console.log(this.$apollo.queries)
+      this.$apollo.queries.ImuMessage_sitl1.refresh()
     }
   }
 }

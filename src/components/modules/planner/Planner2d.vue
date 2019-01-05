@@ -118,7 +118,7 @@ div.planner-map
 
 <script>
 import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/graphql/gql/NavSatFix.gql'
-import { waypointsQuery, waypointsSubscription } from '../../../plugins/graphql/gql/Waypoints.gql'
+// import { waypointsQuery, waypointsSubscription } from '../../../plugins/graphql/gql/Waypoints.gql'
 
 export default {
   data () {
@@ -137,7 +137,7 @@ export default {
         { value: 'googleterrain', text: 'Google Terrain' }
       ],
       tickers: {
-        navSatFixMessage: false
+        navSatFix: false
       }
     }
   },
@@ -301,10 +301,10 @@ export default {
     apis: {
       handler: function (newValue) {
         for (const api in this.apis) {
-          this.createQuery('NavSatFixMessage', navSatFixQuery, api, 'navSatFixData')
-          this.createQuery('Waypoints', waypointsQuery, api, 'waypointsData')
-          this.createSubscription('NavSatFixMessage', navSatFixSubscription, api, 'navSatFixData')
-          this.createSubscription('Waypoints', waypointsSubscription, api, 'waypointsData')
+          this.createQuery('NavSatFix', navSatFixQuery, api, 'navSatFixData')
+          // this.createQuery('Waypoints', waypointsQuery, api, 'waypointsData')
+          this.createSubscription('NavSatFix', navSatFixSubscription, api, 'navSatFixData')
+          // this.createSubscription('Waypoints', waypointsSubscription, api, 'waypointsData')
         }
       }
     }
@@ -312,7 +312,7 @@ export default {
 
   methods: {
     setTickers () {
-      this.tickers.navSatFixMessage = true
+      this.tickers.navSatFix = true
     }
     /*
     centercoords () {

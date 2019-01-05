@@ -1,6 +1,6 @@
 fragment Waypoint on Waypoint {
   id
-  is_current
+  isCurrent
   autocontinue
   frame
   command

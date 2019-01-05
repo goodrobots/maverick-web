@@ -1,8 +1,8 @@
-fragment StatusTextMessage on StatusTextMessage {
+fragment StatusText on StatusText {
   seq
   secs
   nsecs
-  frame_id
+  frameId
   level
   message
 }

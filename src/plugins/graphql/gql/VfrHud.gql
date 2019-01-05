@@ -1,19 +1,19 @@
 #import "./VfrHudFragment.gql"
 
 query vfrHudQuery {
-  VfrHudMessage {
-    ...VfrHudMessage
+  VfrHud {
+    ...VfrHud
   }
 }
 
 subscription vfrHudSubscription {
-  VfrHudMessage {
-    ...VfrHudMessage
+  VfrHud {
+    ...VfrHud
   }
 }
 
 mutation vfrHudMutate {
-  VfrHudMessage {
-    ...VfrHudMessage
+  VfrHud {
+    ...VfrHud
   }
 }

@@ -1,19 +1,19 @@
 #import "./NavSatFixFragment.gql"
 
 query navSatFixQuery {
-  NavSatFixMessage {
-    ...NavSatFixMessage
+  NavSatFix {
+    ...NavSatFix
   }
 }
 
 subscription navSatFixSubscription {
-  NavSatFixMessage {
-    ...NavSatFixMessage
+  NavSatFix {
+    ...NavSatFix
   }
 }
 
 mutation navSatFixMutate {
-  NavSatFixMessage {
-    ...NavSatFixMessage
+  NavSatFix {
+    ...NavSatFix
   }
 }
