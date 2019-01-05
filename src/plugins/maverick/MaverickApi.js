@@ -44,17 +44,16 @@ const plugin = {
           // Add a vuex apis entry
           this.$store.commit('addApi', {
             title: api,
-            value: { ...clientdata, ...{ state: false } }
+            value: { ...clientdata, ...{ state: false, auth: false } }
           })
           // Set the client auth token
           if (clientdata.authToken) {
-            // this.logDebug(`Setting auth token: ${clientdata.authToken}`)
-            this.logDebug(`Setting auth token`)
-            onLogin(client, clientdata.authToken)
+            this.logDebug(`Setting auth token: ${clientdata.authToken}`)
+            onLogin(client, clientdata.authToken, api, this.$store)
           }
         },
 
-        createQuery (message, gql, api, container, callback = null, errorCallback = null) {
+        createQuery (message, gql, api, container, callback = null, errorCallback = null, skip = false, variables = null) {
           const queryKey = [message, '_', api].join('')
           if (!this.$apollo.queries[queryKey] && this.$apollo.provider.clients[api]) {
             this.logInfo(`Creating GQL Query: api: ${api}, message: ${message}, queryKey: ${queryKey}`)
@@ -72,17 +71,22 @@ const plugin = {
               client: api,
               query: gql,
               manual: true,
-              result: resultFunction
+              result: resultFunction,
+              skip: skip
             }
             // If errorCallback is set, merge into queryFields
             if (errorCallback instanceof Function) {
               queryFields = { ...queryFields, error: errorCallback }
             }
+            // If variables is set, merge into queryFields
+            if (variables instanceof Function || variables instanceof String) {
+              queryFields = { ...queryFields, variables: variables }
+            }
             this.$apollo.addSmartQuery(queryKey, queryFields)
           }
         },
 
-        createSubscription (message, gql, api, container, callback = null, errorCallback = null) {
+        createSubscription (message, gql, api, container, callback = null, errorCallback = null, skip = false, variables = null) {
           const subKey = [message, '_', api].join('')
           if (!this.$apollo.subscriptions[subKey] && this.$apollo.provider.clients[api]) {
             this.logInfo(`Creating GQL Subscription: api: ${api}, message: ${message}, subKey: ${subKey}`)
@@ -101,12 +105,17 @@ const plugin = {
               client: api,
               query: gql,
               manual: true,
-              result: resultFunction
+              result: resultFunction,
+              skip: skip
             }
             // If errorCallback is set, merge into queryFields
             if (errorCallback instanceof Function) {
               this.logInfo('errorCallback')
               subscriptionFields = { ...subscriptionFields, error: errorCallback }
+            }
+            // If variables is set, merge into queryFields
+            if (variables instanceof Function || variables instanceof String) {
+              subscriptionFields = { ...subscriptionFields, variables: variables }
             }
             this.$apollo.addSmartSubscription(subKey, subscriptionFields)
           }
