@@ -1,0 +1,12 @@
+fragment VehicleState on VehicleState {
+  uuid
+  seq
+  frameId
+  secs
+  nsecs
+  systemStatus
+  connected
+  armed
+  guided
+  mode
+}

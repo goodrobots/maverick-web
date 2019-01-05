@@ -1,0 +1,19 @@
+#import "./VehicleStateFragment.gql"
+
+query vehicleStateQuery {
+  VehicleState {
+    ...VehicleState
+  }
+}
+
+subscription vehicleStateSubscription {
+  VehicleState {
+    ...VehicleState
+  }
+}
+
+mutation vehicleStateMutate {
+  VehicleState {
+    ...VehicleState
+  }
+}
