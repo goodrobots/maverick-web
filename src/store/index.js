@@ -26,6 +26,7 @@ export default new Vuex.Store({
     apis: {},
     apiTimestamps: {},
     statusData: {},
+    vehicleData: {},
     activeApi: null,
     bingMapsKey:
       'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6'
@@ -53,6 +54,9 @@ export default new Vuex.Store({
     setApiState (state, data) {
       state.apis[data.api].state = data.value
     },
+    setApiAuth (state, data) {
+      state.apis[data.api].auth = data.value
+    },
     setApiSeen (state, data) {
       state.apiTimestamps[data.api] = data.value
     },
@@ -61,6 +65,13 @@ export default new Vuex.Store({
         state.statusData[data.api] = data.message
       } else {
         Vue.set(state.statusData, data.api, data.message)
+      }
+    },
+    setVehicleData (state, data) {
+      if (data.api in state.vehicleData) {
+        state.vehicleData[data.api] = data.message
+      } else {
+        Vue.set(state.vehicleData, data.api, data.message)
       }
     },
     setNavState (state, value) {

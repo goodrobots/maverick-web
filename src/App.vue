@@ -15,6 +15,7 @@ import TopNav from './components/common/TopNav'
 import ActionButton from './components/common/ActionButton'
 
 import { statusQuery, statusSubscription } from './plugins/graphql/gql/Status.gql'
+import { vehicleInfoQuery } from './plugins/graphql/gql/VehicleInfo.gql'
 
 export default {
   name: 'App',
@@ -92,6 +93,7 @@ export default {
         for (const api in this.apis) {
           this.createQuery('Status', statusQuery, api, null, this.processStatusQuery)
           this.createSubscription('Status', statusSubscription, api, null, this.processStatusSubscription)
+          this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, this.processVehicleInfoQuery, null, null, { uuid: '' })
         }
       },
       deep: true
@@ -130,6 +132,12 @@ export default {
       this.$store.commit('setApiSeen', { api: api, value: performance.now() })
       if (this.$store.state.statusData[api] !== data.data.Status) {
         this.$store.commit('setStatusData', { api: api, message: data.data.Status })
+      }
+    },
+    processVehicleInfoQuery (data, key) {
+      const api = key.replace('VehicleInfo_', '')
+      if (this.$store.state.vehicleData[api] !== data.data.VehicleInfo) {
+        this.$store.commit('setVehicleData', { api: api, message: data.data.VehicleInfo })
       }
     }
   }

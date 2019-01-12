@@ -1,0 +1,19 @@
+#import "./VehicleInfoFragment.gql"
+
+query vehicleInfoQuery($uuid: String!) {
+  VehicleInfo(uuid: $uuid) {
+    ...VehicleInfo
+  }
+}
+
+subscription vehicleInfoSubscription($uuid: String!) {
+  VehicleInfo(uuid: $uuid) {
+    ...VehicleInfo
+  }
+}
+
+mutation vehicleInfoMutate($uuid: String!) {
+  VehicleInfo(uuid: $uuid) {
+    ...VehicleInfo
+  }
+}

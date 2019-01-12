@@ -1,0 +1,18 @@
+fragment VehicleInfo on VehicleInfo {
+  uuid
+  sysid
+  compid
+  autopilot
+  autopilotString
+  type
+  typeString
+  capabilities
+  flightSoftwareVersion
+  middlewareSoftwareVersion
+  osSoftwareVersion
+  boardVersion
+  vendorId
+  productId
+  uid
+  updateTime
+}
