@@ -18,7 +18,10 @@ export async function onLogin (apolloClient, token, api, store) {
   try {
     await apolloClient.resetStore()
     // Set vuex client auth state to true
-    store.state.apis[api].auth = true
+    store.commit('setApiAuth', {
+      api: api,
+      value: true
+    })
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log('%cError on cache reset (login)', 'color: orange;', e.message)
