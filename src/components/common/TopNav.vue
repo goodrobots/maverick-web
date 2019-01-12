@@ -37,14 +37,14 @@ div
           v-btn(v-if="activeApi" flat slot="activator" v-text="apis[activeApi]['name']")
           v-btn.text--blue-grey.lighten-5(v-else flat slot="activator") No Active API
           v-list
-            v-list-tile(v-if="'status'" avatar v-for="(api, key) in apis" :key="key" @click='changeApi(key)')
+            v-list-tile(avatar v-for="(data, key) in vehicleData" :key="key" @click='changeApi(key)')
               v-list-tile-avatar
-                v-icon(v-if="api['name'].search('Copter') != -1") toys
-                v-icon(v-else-if="api['name'].search('Plane') != -1") airplanemode_active
-                v-icon(v-else-if="api['name'].search('Rover') != -1") directions_car
-                v-icon(v-else-if="api['name'].search('Sub') != -1") directions_boat
+                v-icon(v-if="data.typeString == 'Copter'") toys
+                v-icon(v-else-if="data.typeString == 'Plane'") airplanemode_active
+                v-icon(v-else-if="data.typeString == 'Rover'") directions_car
+                v-icon(v-else-if="data.typeString == 'Sub'") directions_boat
               v-list-tile-content
-                v-list-tile-title {{ api['name'] }}
+                v-list-tile-title {{ apis[key].name }}
                 v-list-tile-sub-title
                   template(v-if="apis[key].state")
                     div
@@ -104,6 +104,12 @@ export default {
     },
     height () {
       return window.innerHeight
+    },
+    statusData () {
+      return this.$store.state.statusData
+    },
+    vehicleData () {
+      return this.$store.state.vehicleData
     }
   },
 
@@ -113,8 +119,8 @@ export default {
       handler: function (newValue) {
         for (const api in this.apis) {
           this.createQuery('VehicleState', vehicleStateQuery, api, 'vehicleStateData')
-          this.createQuery('VfrHud', vfrHudQuery, api, 'vfrHudData')
           this.createSubscription('VehicleState', vehicleStateSubscription, api, 'vehicleStateData')
+          this.createQuery('VfrHud', vfrHudQuery, api, 'vfrHudData')
           this.createSubscription('VfrHud', vfrHudSubscription, api, 'vfrHudData')
         }
       }
