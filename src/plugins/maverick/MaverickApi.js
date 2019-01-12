@@ -79,7 +79,7 @@ const plugin = {
               queryFields = { ...queryFields, error: errorCallback }
             }
             // If variables is set, merge into queryFields
-            if (variables instanceof Function || variables instanceof String) {
+            if (variables instanceof Object || variables instanceof String) {
               queryFields = { ...queryFields, variables: variables }
             }
             this.$apollo.addSmartQuery(queryKey, queryFields)
@@ -114,7 +114,7 @@ const plugin = {
               subscriptionFields = { ...subscriptionFields, error: errorCallback }
             }
             // If variables is set, merge into queryFields
-            if (variables instanceof Function || variables instanceof String) {
+            if (variables instanceof Object || variables instanceof String) {
               subscriptionFields = { ...subscriptionFields, variables: variables }
             }
             this.$apollo.addSmartSubscription(subKey, subscriptionFields)
