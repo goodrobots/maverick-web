@@ -9850,10 +9850,10 @@ void-elements@^2.0.1:
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
   integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
 
-vue-apollo@^3.0.0-beta.26:
-  version "3.0.0-beta.26"
-  resolved "https://registry.yarnpkg.com/vue-apollo/-/vue-apollo-3.0.0-beta.26.tgz#d78874d737d61656743adf59e65e6b98cf35ef5d"
-  integrity sha512-nWaPoKBGq1NR8g6kBnLy5yCCcoHkaxWQwPrY7vCcoBgYU8ZmA0czYN1na7hurtWLZdEiMC6B9LbaJWc+FRcUEA==
+vue-apollo@^3.0.0-beta.27:
+  version "3.0.0-beta.27"
+  resolved "https://registry.yarnpkg.com/vue-apollo/-/vue-apollo-3.0.0-beta.27.tgz#d071d7bbaf83c9689bdf992d9ef762c17af29623"
+  integrity sha512-0NcYSLReOI5vsZesX9rLVVKR8iZaJRAKsBG7eAUJ4RRIDzYBVpPET8C7v9oyhHymENN/FhImurq/krTk8z9ZYw==
   dependencies:
     chalk "^2.4.1"
     throttle-debounce "^2.0.0"
