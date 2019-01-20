@@ -140,7 +140,6 @@ export default {
       vehicleInfoData: {},
       waypointsData: {},
       viewExtents: null,
-      viewSize: null,
       mapmenu: false,
       maplayers: [
         { value: 'osm', text: 'OpenStreetMap' },
@@ -256,12 +255,7 @@ export default {
     // Watch apis state for any change and process
     apis: {
       handler: function (newValue) {
-        for (const api in this.apis) {
-          this.createQuery('NavSatFix', navSatFixQuery, api, 'navSatFixData')
-          this.createSubscription('NavSatFix', navSatFixSubscription, api, 'navSatFixData')
-          this.createQuery('VehicleInfo', vehicleInfoQuery, api, 'vehicleInfoData', null, null, null, { uuid: '' })
-          this.createSubscription('VehicleInfo', vehicleInfoSubscription, api, 'vehicleInfoData', null, null, null, { uuid: '' })
-        }
+        this.createQlQueries()
       }
     },
     centercoords: {
@@ -287,7 +281,7 @@ export default {
         ) {
           // Fetch extents of the vector source layer
           this.viewExtents = this.$refs.vectorSource.$source.getExtent()
-          this.viewSize = this.$refs.map.$map.getSize()
+          this.logDebug(this.viewExtents)
           // If there is a finite extent, then fit the view (fits all vehicles within view)
           if (!this.viewExtents.includes(Infinity)) {
             this.$refs.mapView.$view.fit(this.viewExtents, {
@@ -302,11 +296,20 @@ export default {
   },
 
   mounted () {
+    this.createQlQueries()
   },
 
   methods: {
     setTickers () {
       this.tickers.navSatFix = true
+    },
+    createQlQueries () {
+      for (const api in this.apis) {
+        this.createQuery('NavSatFix', navSatFixQuery, api, 'navSatFixData')
+        this.createSubscription('NavSatFix', navSatFixSubscription, api, 'navSatFixData')
+        this.createQuery('VehicleInfo', vehicleInfoQuery, api, 'vehicleInfoData', null, null, null, { uuid: '' })
+        this.createSubscription('VehicleInfo', vehicleInfoSubscription, api, 'vehicleInfoData', null, null, null, { uuid: '' })
+      }
     }
   }
 }
