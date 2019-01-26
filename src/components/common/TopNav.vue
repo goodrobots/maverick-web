@@ -33,7 +33,7 @@ div
       v-spacer
 
       v-toolbar-items
-        v-menu(offset-y transition="scale-transition")
+        v-menu(offset-y transition="scale-transition" left="true")
           v-btn(v-if="activeApi" flat slot="activator" v-text="apis[activeApi]['name']")
           v-btn.text--blue-grey.lighten-5(v-else flat slot="activator") No Active API
           v-list
