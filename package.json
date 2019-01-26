@@ -22,6 +22,7 @@
     "pixi.js": "^4.8.5",
     "register-service-worker": "^1.5.2",
     "subscriptions-transport-ws": "^0.9.15",
+    "v-tooltip": "^2.0.0-rc.33",
     "vue": "^2.5.22",
     "vue-apollo": "^3.0.0-beta.27",
     "vue-cesium": "^0.0.14",
@@ -29,7 +30,7 @@
     "vue-router": "^3.0.2",
     "vue-timers": "^1.10.0",
     "vuelayers": "0.11.1",
-    "vuetify": "^1.4.2",
+    "vuetify": "^1.4.3",
     "vuex": "^3.1.0",
     "vuex-router-sync": "^5.0.0"
   },
