@@ -1,0 +1,20 @@
+fragment MissionDatabase on MissionDatabase {
+  id
+  missions {
+    id
+    mission {
+      seq
+      isCurrent
+      autocontinue
+      frame
+      command
+      param1
+      param2
+      param3
+      param4
+      latitude
+      longitude
+      altitude
+    }
+  }
+}

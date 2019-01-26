@@ -1,0 +1,19 @@
+#import "./MissionDatabaseFragment.gql"
+
+query missionDatabaseQuery($id: String!) {
+  MissionDatabase(id: $id) {
+    ...MissionDatabase
+  }
+}
+
+subscription missionDatabaseSubscription($id: String!) {
+  MissionDatabase(id: $id) {
+    ...MissionDatabase
+  }
+}
+
+mutation missionDatabaseMutate($id: String!) {
+  MissionDatabase(id: $id) {
+    ...MissionDatabase
+  }
+}
