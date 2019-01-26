@@ -115,7 +115,7 @@ export default {
       }
     },
     processStatusQuery (data, key) {
-      const api = key.replace('Status_', '')
+      const api = key.split('___')[0]
       if (data.data && 'Status' in data.data) {
         // Store the message data and set the api state to active, only for the first callback
         if (this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
@@ -126,7 +126,7 @@ export default {
       }
     },
     processStatusSubscription (data, key) {
-      const api = key.replace('Status_', '')
+      const api = key.split('___')[0]
       // Store the message data and set the api state to active, for subsequent subscription callbacks
       if (this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
       this.$store.commit('setApiSeen', { api: api, value: performance.now() })
@@ -135,7 +135,7 @@ export default {
       }
     },
     processVehicleInfoQuery (data, key) {
-      const api = key.replace('VehicleInfo_', '')
+      const api = key.split('___')[0]
       if (this.$store.state.vehicleData[api] !== data.data.VehicleInfo) {
         this.$store.commit('setVehicleData', { api: api, message: data.data.VehicleInfo })
       }

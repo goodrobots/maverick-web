@@ -54,17 +54,20 @@ const plugin = {
         },
 
         createQuery (message, gql, api, container, callback = null, errorCallback = null, skip = false, variables = null) {
-          const queryKey = [message, '_', api].join('')
+          // Generate query key
+          const varvalues = variables && Object.values(variables) ? Object.values(variables).join('~') : ''
+          const queryKey = [api, message, varvalues].join('___')
+          // If a query with the calculated key doesn't exist, and the client appears to exist, then create the query
           if (!this.$apollo.queries[queryKey] && this.$apollo.provider.clients[api]) {
-            this.logInfo(`Creating GQL Query: api: ${api}, message: ${message}, queryKey: ${queryKey}`)
+            this.logDebug(`Creating GQL Query: api: ${api}, message: ${message}, queryKey: ${queryKey}, container: ${container}`)
             // If a callback function has been passed use it as the result processor, otherwise use a default function
             const resultFunction = (callback instanceof Function) ? callback : function (data, key) {
-              api = key.replace([message, '_'].join(''), '')
+              const cbapi = key.split('___')[0]
               if (data.data && message in data.data) {
                 // Store the message data and set the api state to active
                 // Note: Must use this.$set to add object property, to keep new property reactive
-                this.$set(this[container], api, data.data[message])
-                this.$store.commit('setApiState', { api: api, value: true })
+                this.$set(this[container], cbapi, data.data[message])
+                this.$store.commit('setApiState', { api: cbapi, value: true })
               }
             }
             let queryFields = {
@@ -87,17 +90,19 @@ const plugin = {
         },
 
         createSubscription (message, gql, api, container, callback = null, errorCallback = null, skip = false, variables = null) {
-          const subKey = [message, '_', api].join('')
+          // Generate subscription key
+          const varvalues = variables && Object.values(variables) ? Object.values(variables).join('~') : ''
+          const subKey = [api, message, varvalues].join('___')
           if (!this.$apollo.subscriptions[subKey] && this.$apollo.provider.clients[api]) {
-            this.logInfo(`Creating GQL Subscription: api: ${api}, message: ${message}, subKey: ${subKey}`)
+            this.logDebug(`Creating GQL Subscription: api: ${api}, message: ${message}, subKey: ${subKey}`)
             // If a callback function has been passed use it as the result processor, otherwise use a default function
             const resultFunction = (callback instanceof Function) ? callback : function (data, key) {
-              api = key.replace([message, '_'].join(''), '')
-              if (data.data && message in data.data && this[container][api] !== data.data[message]) {
+              const cbapi = key.split('___')[0]
+              if (data.data && message in data.data && this[container][cbapi] !== data.data[message]) {
                 // Store the message data and set the api state to active
-                this[container][api] = data.data[message]
-                if (!this.$store.state.apis[api].state && message in data.data) {
-                  this.$store.commit('setApiState', { api: api, value: true })
+                this[container][cbapi] = data.data[message]
+                if (this.$store && this.$store.state.apis[cbapi] && !this.$store.state.apis[cbapi].state && message in data.data) {
+                  this.$store.commit('setApiState', { api: cbapi, value: true })
                 }
               }
             }

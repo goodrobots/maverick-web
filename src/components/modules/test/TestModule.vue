@@ -26,11 +26,17 @@ v-content
               td PoseStamped
               td(v-html="poseStampedData[api]")
             tr
-              td MissionList
-              td(v-html="missionListData[api]")
-            tr
               td VehicleInfo
               td(v-html="vehicleData[api]")
+            tr
+              td MissionList - 'Loaded'
+              td(v-html="missionListData[api]")
+            tr
+              td MissionList - 'Test'
+              td(v-html="missionTestData[api]")
+            tr
+              td MissionDatabase
+              td(v-html="missionDatabaseData[api]")
           hr
 </template>
 
@@ -41,6 +47,7 @@ import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/graphql/
 import { vfrHudQuery, vfrHudSubscription } from '../../../plugins/graphql/gql/VfrHud.gql'
 import { poseStampedQuery, poseStampedSubscription } from '../../../plugins/graphql/gql/PoseStamped.gql'
 import { missionListQuery, missionListSubscription } from '../../../plugins/graphql/gql/MissionList.gql'
+import { missionDatabaseQuery, missionDatabaseSubscription } from '../../../plugins/graphql/gql/MissionDatabase.gql'
 export default {
   name: 'TestModule',
 
@@ -51,7 +58,9 @@ export default {
       navSatFixData: {},
       vfrHudData: {},
       poseStampedData: {},
-      missionListData: {}
+      missionListData: {},
+      missionTestData: {},
+      missionDatabaseData: {}
     }
   },
 
@@ -86,6 +95,12 @@ export default {
 
           this.createQuery('MissionList', missionListQuery, api, 'missionListData', null, null, null, { id: 'loaded' })
           this.createSubscription('MissionList', missionListSubscription, api, 'missionListData', null, null, null, { id: 'loaded' })
+
+          this.createQuery('MissionList', missionListQuery, api, 'missionTestData', null, null, null, { id: 'test' })
+          this.createSubscription('MissionList', missionListSubscription, api, 'missionTestData', null, null, null, { id: 'test' })
+
+          this.createQuery('MissionDatabase', missionDatabaseQuery, api, 'missionDatabaseData', null, null, null, { id: '' })
+          this.createSubscription('MissionDatabase', missionDatabaseSubscription, api, 'missionDatabaseData', null, null, null, { id: '' })
         }
       },
       deep: true

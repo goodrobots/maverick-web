@@ -30,7 +30,7 @@ div.cockpit-map
 
 <script>
 import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/graphql/gql/NavSatFix.gql'
-import { waypointsQuery, waypointsSubscription } from '../../../plugins/graphql/gql/Waypoints.gql'
+// import { waypointsQuery, waypointsSubscription } from '../../../plugins/graphql/gql/Waypoints.gql'
 
 export default {
   data () {
@@ -63,8 +63,8 @@ export default {
       handler: function (newValue) {
         this.createQuery('NavSatFixMessage', navSatFixQuery, newValue, 'navSatFixData')
         this.createSubscription('NavSatFixMessage', navSatFixSubscription, newValue, 'navSatFixData')
-        this.createQuery('Waypoints', waypointsQuery, newValue, 'waypointsData')
-        this.createSubscription('Waypoints', waypointsSubscription, newValue, 'waypointsData')
+        // this.createQuery('Waypoints', waypointsQuery, newValue, 'waypointsData')
+        // this.createSubscription('Waypoints', waypointsSubscription, newValue, 'waypointsData')
       }
     }
   }
