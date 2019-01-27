@@ -75,7 +75,8 @@ const plugin = {
               query: gql,
               manual: true,
               result: resultFunction,
-              skip: skip
+              skip: skip,
+              deep: true
             }
             // If errorCallback is set, merge into queryFields
             if (errorCallback instanceof Function) {
@@ -83,7 +84,7 @@ const plugin = {
             }
             // If variables is set, merge into queryFields
             if (variables instanceof Object || variables instanceof String) {
-              queryFields = { ...queryFields, variables: variables }
+              queryFields = { ...queryFields, variables () { return variables } }
             }
             this.$apollo.addSmartQuery(queryKey, queryFields)
           }
@@ -111,7 +112,8 @@ const plugin = {
               query: gql,
               manual: true,
               result: resultFunction,
-              skip: skip
+              skip: skip,
+              deep: true
             }
             // If errorCallback is set, merge into queryFields
             if (errorCallback instanceof Function) {
@@ -120,7 +122,7 @@ const plugin = {
             }
             // If variables is set, merge into queryFields
             if (variables instanceof Object || variables instanceof String) {
-              subscriptionFields = { ...subscriptionFields, variables: variables }
+              subscriptionFields = { ...subscriptionFields, variables () { return variables } }
             }
             this.$apollo.addSmartSubscription(subKey, subscriptionFields)
           }
