@@ -1,6 +1,6 @@
 <template lang='pug'>
 div.planner-map
-  vl-map(ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true", :controls="{attribution: false, zoom: false}")
+  vl-map(ref="map" :load-tiles-while-animating="false" :load-tiles-while-interacting="false", :controls="{attribution: false, zoom: false}")
     vl-view(ref="mapView" :zoom.sync="mapZoom" :center.sync="xycenter" :rotation="0")
 
     // Draw the map layer
@@ -24,7 +24,7 @@ div.planner-map
       vl-source-xyz(key="googleterrain" url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}")
 
     // Interactions
-    // vl-interaction-select(:features.sync="selectedFeatures")
+    vl-interaction-select(:features.sync="selectedFeatures")
       template(slot-scope="select")
         // Select Styles
         vl-style-box
@@ -42,7 +42,7 @@ div.planner-map
         vl-overlay.feature-popup(v-for="feature in select.features" :key="feature.id" :id="feature.id"
                     :position="pointOnSurface(feature.geometry)" :auto-pan="true" :auto-pan-animation="{ duration: 300 }")
           template(slot-scope="popup")
-            // section.card
+            section.card
               header.card-header
                 p.card-header-titl Feature ID {{ feature.id }}
                 a.card-header-icon(title="Close" @click="selectedFeatures = selectedFeatures.filter(f => f.id !== feature.id)")
@@ -52,37 +52,11 @@ div.planner-map
                   p Overlay popup content for Feature with ID <strong>{{ feature.id }}</strong>
                   p Popup {{ JSON.stringify(popup) }}
                   p Feature {{ JSON.stringify({ id: feature.id, properties: feature.properties }) }}
-            // v-menu(v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-x)
-              v-card
-                v-list
-                  v-list-tile avatar
-                    v-list-tile-avatar
-                      img(src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John")
-                    v-list-tile-content
-                      v-list-tile-title John Leider
-                      v-list-tile-sub-title Founder of Vuetify.js
-                    v-list-tile-action
-                      v-btn(:class="fav ? 'red--text' : ''" icon @click="fav = !fav")
-                        v-icon favorite
-                v-divider
-                v-list
-                  v-list-tile
-                    v-list-tile-action
-                      v-switch(v-model="message" color="purple")
-                    v-list-tile-title Enable messages
-                  v-list-tile
-                    v-list-tile-action
-                      v-switch(v-model="hints" color="purple")
-                    v-list-tile-title Enable hints
-                v-card-actions
-                  v-spacer
-                  v-btn(flat @click="menu = false") Cancel
-                  v-btn(color="primary" flat @click="menu = false") Save
 
     // Add marker for vehicle
     vl-layer-vector
       vl-source-vector(ref="vectorSource")
-        vl-feature(:id="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api")
+        vl-feature(:id="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api" v-tooltip="'test'")
           vl-geom-point(v-if="data && 'longitude' in data" :coordinates="[data.longitude, data.latitude]")
           vl-style-box
             vl-style-circle(:radius="api == activeApi ? 6 : 4")
@@ -90,7 +64,7 @@ div.planner-map
               vl-style-stroke(color="#666666" :width="api == activeApi ? 2 : 1")
 
     // Add overlay for vehicle data
-    vl-overlay(v-if="mapVehicleInfo && activeApi in navSatFixData && navSatFixData[activeApi] && 'longitude' in navSatFixData[activeApi]" :position="[navSatFixData[activeApi].longitude + 0.0003, navSatFixData[activeApi].latitude]")
+    // vl-overlay(v-if="mapVehicleInfo && activeApi in navSatFixData && navSatFixData[activeApi] && 'longitude' in navSatFixData[activeApi]" :position="[navSatFixData[activeApi].longitude + 0.0001, navSatFixData[activeApi].latitude]")
       template
         table.vehicle
           thead
@@ -114,46 +88,35 @@ div.planner-map
               td.value {{ navSatFixData[activeApi].altitude.toFixed(2) }}
             tr
               td Mission Waypoints
-              td.value(v-if="activeApi in missionListData") {{ missionListData[activeApi].total }}
+              td.value(v-if="activeApi in missionActive") {{ missionActive[activeApi].total }}
               td.value(v-else) None
 
     // Add markers for mission waypoints
     vl-layer-vector
       vl-source-vector
-        vl-feature(:id="'w_' + api" :ref="'w_' + api" v-for="(data, api) in missionListData" :key="'w_' + api")
+        vl-feature(:id="'w_' + api" :ref="'w_' + api" v-for="(data, api) in missionActive" :key="'w_' + api")
           vl-geom-multi-point(v-if="data && data.mission && data.total > 0" :coordinates="data.mission.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
           vl-style-box
             vl-style-circle(:radius="api == activeApi ? 8 : 4")
               vl-style-fill(:color="apis[api]['colorLight']")
               vl-style-stroke(:color="apis[api]['colorDark']" :width="api == activeApi ? 2 : 1")
         // Add numbers for mission waypoint marker
-        // vl-feature(v-if="missionListData[activeApi].mission" v-for="(data, index) in missionListData[activeApi].mission" :key="'wn_' + index")
-          vl-overlay(v-if="data.longitude && data.latitude" :position="[data.longitude, data.latitude]")
-            span.markernumber.caption(v-html="index")
+        template(v-if="activeApi && selectedMission")
+          vl-feature(v-if="missionActive[activeApi]" v-for="(waypoint, index) in missionActive[activeApi].mission" :key="'wn_' + index")
+            vl-overlay(v-if="waypoint.longitude && waypoint.latitude" :position="[waypoint.longitude, waypoint.latitude]")
+              span.markernumber.caption(v-html="index")
         // Add lines to join the markers
-        // vl-feature(v-for="(data, api) in missionListData" :id="'wl_' + api" :ref="'wl_' + api" :key="'wl_' + api")
-          vl-geom-line-string(v-if="data && data.mission && data.total > 0" :coordinates="data.mission.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
-          vl-style-box
-            vl-style-stroke(:color="apis[api]['colorDark']")
-            // vl-style-fill(:color="apis[api]['colorDark']")
+        template(v-if="activeApi && selectedMission")
+          vl-feature(v-for="(waypoint, api) in missionActive" :id="'wl_' + api" :ref="'wl_' + api" :key="'wl_' + api")
+            vl-geom-line-string(v-if="waypoint && waypoint.mission && waypoint.total > 0" :coordinates="waypoint.mission.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
+            vl-style-box
+              vl-style-stroke(:color="apis[api]['colorDark']")
+              // vl-style-fill(:color="apis[api]['colorDark']")
 
   div.mapmenu
     v-menu(offset-x :close-on-content-click="false" :nudge-width="200" :nudge-right="10" v-model="mapmenu")
       v-btn(:color="navColor" slot="activator") Map Options
       v-card
-        // v-list
-          v-list-tile
-            v-list-tile-title Zoom
-            v-list-tile-action
-              v-slider(v-model="mapZoom" :min="1" :max="21" :step="1" thumb-label)
-          v-list-tile
-            v-list-tile-title Center
-            v-list-tile-action
-              v-switch(v-model="mapCenter" color="primary")
-          v-list-tile
-            v-list-tile-title Map Layer
-            v-list-tile-action
-              v-select(:items="maplayers" v-model="mapLayer")
         v-card-text
           v-layout(row wrap)
             v-flex(xs12)
@@ -186,29 +149,48 @@ div.planner-map
                     v-select(:items="maplayers" v-model="mapLayer")
 
   div.missionmenu(v-if="activeApi")
-    v-menu(offset-x :close-on-content-click="false" :nudge-width="200" :nudge-left="10" v-model="missionmenu")
-      v-btn(:color="navColor" slot="activator") Map Options
-      v-card
-        v-list
-          v-list-tile(v-for="(mission, ix) in missionDatabaseData[activeApi].missions" :key="`mdb_${ix}`")
-            v-list-tile-title {{ ix }}
-            v-list-tile-action {{ mission }}
-        // v-list
-          v-list-tile
-            v-list-tile-title Zoom
-            v-list-tile-action
-              v-slider(v-model="mapZoom" :min="1" :max="21" :step="1" thumb-label)
-          v-list-tile
-            v-list-tile-title Center
-            v-list-tile-action
-              v-switch(v-model="mapCenter" color="primary")
-          v-list-tile
-            v-list-tile-title Map Layer
-            v-list-tile-action
-              v-select(:items="maplayers" v-model="mapLayer")
-        // v-card-text
-          v-layout(row wrap)
+    v-menu(offset-y v-model="missionmenu")
+      v-btn(:color="navColor" slot="activator") Mission Database
+      v-list(two-line)
+        v-list-tile(@click="selectedMission='loaded'")
+          v-list-tile-content
+            v-list-tile-title Loaded Mission
+            v-list-tile-sub-title Waypoints: <strong>{{ missionActive[activeApi].total }}</strong>
+      v-divider(inset)
+      v-list(two-line subheader)
+        v-subheader Database Missions
+        v-list-tile(v-for="(mission, ix) in missionDatabaseData[activeApi].missions" :key="`mdb_${ix}`" @click="selectedMission=mission.id")
+          v-list-tile-content
+            v-list-tile-title {{ mission.id }}
+            v-list-tile-sub-title Waypoints: {{ mission.total }}
 
+  div.missionlist.scroll-y(v-if="activeApi && selectedMission")
+    v-list(subheader two-line dense)
+      v-subheader Mission Summary
+      v-list-tile
+        v-list-tile-content
+          v-list-tile-title {{ missionActive[activeApi].id }}
+          v-list-tile-sub-title Waypoints: <strong>{{ missionActive[activeApi].total }}</strong>
+    v-divider
+    v-list(subheader dense)
+      v-subheader Mission Waypoints
+      v-list-group(v-if="missionActive[activeApi]" v-for="(waypoint, ix) in missionActive[activeApi].mission" :key="`waypoint_${ix}`")
+        v-list-tile(slot="activator")
+          v-list-tile-content
+            v-list-tile-title {{ waypoint.seq }}: <strong>{{ mavlinkEnum('MAV_CMD', waypoint.command) }}</strong>
+        v-list-tile
+          v-list-tile-content
+            div Current? <strong>{{ waypoint.isCurrent }}</strong>
+        v-list-tile
+          v-list-tile-title Altitude: <strong>{{ waypoint.altitude }}</strong>
+        v-list-tile
+          v-list-tile-title Longitude: <strong>{{ waypoint.longitude }}</strong>
+        v-list-tile
+          v-list-tile-title Latitude: <strong>{{ waypoint.latitude }}</strong>
+        v-list-tile
+          v-list-tile-title AutoContinue: <strong>{{ waypoint.autocontinue }}</strong>
+        v-list-tile
+          v-list-tile-title Frame: <strong>{{ waypoint.frame }}</strong>
 </template>
 
 <script>
@@ -229,8 +211,9 @@ export default {
 
       navSatFixData: {},
       vehicleInfoData: {},
-      missionListData: {},
+      missionActive: {},
       missionDatabaseData: {},
+      selectedMission: 'loaded',
       viewExtents: null,
       selectedFeatures: [],
 
@@ -335,8 +318,7 @@ export default {
       handler: function (newValue, oldValue) {
         // Fit mapview to show all vehicles, if mapcenter is selected, or on first load, and if a single api has not been chosen (which gets priority)
         if (
-          (this.mapCenter || !this.viewExtents || this.viewExtents.length === 0) &&
-          !this.activeApi
+          (this.mapCenter || !this.viewExtents || this.viewExtents.length === 0)
         ) {
           // Fetch extents of the vector source layer
           this.viewExtents = this.$refs.vectorSource.$source.getExtent()
@@ -344,12 +326,23 @@ export default {
           if (!this.viewExtents.includes(Infinity)) {
             this.$refs.mapView.$view.fit(this.viewExtents, {
               size: this.$refs.map.$map.getSize(),
-              duration: 1000
+              duration: 50
             })
           }
         }
       },
       deep: true
+    },
+    selectedMission: {
+      handler: function (newValue, oldValue) {
+        // We have to destroy and recreate the mission query and subscription, because vue-apollo reactive variables aren't working correctly
+        // Remove old query and subscription
+        this.$apollo.queries[this.activeApi + '___MissionList___' + oldValue] = null
+        this.$apollo.subscriptions[this.activeApi + '___MissionList___' + oldValue] = null
+        // Create new query and subscription
+        this.createQuery('MissionList', missionListQuery, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
+        this.createSubscription('MissionList', missionListSubscription, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
+      }
     }
   },
 
@@ -367,10 +360,25 @@ export default {
         this.createSubscription('NavSatFix', navSatFixSubscription, api, 'navSatFixData', !api.state)
         this.createQuery('VehicleInfo', vehicleInfoQuery, api, 'vehicleInfoData', !api.state, null, null, { uuid: '' })
         this.createSubscription('VehicleInfo', vehicleInfoSubscription, api, 'vehicleInfoData', !api.state, null, null, { uuid: '' })
-        this.createQuery('MissionList', missionListQuery, api, 'missionListData', !api.state, null, null, { id: 'loaded' })
-        this.createSubscription('MissionList', missionListSubscription, api, 'missionListData', !api.state, null, null, { id: 'loaded' })
+        this.createQuery('MissionList', missionListQuery, api, 'missionActive', !api.state, null, null, { id: this.selectedMission })
+        this.createSubscription('MissionList', missionListSubscription, api, 'missionActive', !api.state, null, null, { id: this.selectedMission })
         this.createQuery('MissionDatabase', missionDatabaseQuery, api, 'missionDatabaseData', null, null, null, { id: '' })
         this.createSubscription('MissionDatabase', missionDatabaseSubscription, api, 'missionDatabaseData', null, null, null, { id: '' })
+      }
+    },
+    waypointCommand (command) {
+      // Define command mappings
+      const commands = {
+        16: 'Waypoint',
+        21: 'Land',
+        22: 'Takeoff',
+        82: 'Spline Waypoint'
+      }
+      // Return command text if available
+      if (command in commands) {
+        return commands[command]
+      } else {
+        return command
       }
     },
     pointOnSurface: findPointOnSurface
@@ -396,14 +404,20 @@ export default {
 }
 .missionmenu {
   position: absolute;
+  bottom: 25px;
+  left: 175px;
+}
+.missionlist {
+  position: absolute;
   top: 75px;
-  right: 25px;
+  left: 25px;
+  max-height: 75vh;
 }
 .markernumber {
   position: relative;
   left: -5px;
   top: -10px;
-  color: #333;
+  color: #fff;
 }
 table.vehicle {
   background-color: rgba(33, 33, 33, 0.5);

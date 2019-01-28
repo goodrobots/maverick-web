@@ -18,6 +18,7 @@ import { createProvider } from './plugins/graphql/vue-apollo'
 
 // Load maverick plugins
 import './plugins/maverick'
+import './plugins/mavlink'
 
 // Sync the vuex store with router
 sync(store, router)
