@@ -1,6 +1,6 @@
 <template lang='pug'>
 div.planner-map
-  vl-map(ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true", :controls="{attribution: false, zoom: false}")
+  vl-map(ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true" :controls="{attribution: false, zoom: false}")
     vl-view(ref="mapView" :zoom.sync="mapZoom" :center.sync="xycenter" :rotation="0" projection="EPSG:4326")
 
     // Draw the map layer
@@ -24,7 +24,7 @@ div.planner-map
       vl-source-xyz(key="googleterrain" url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}")
 
     // Interactions
-    vl-interaction-select(:features.sync="selectedFeatures")
+    // vl-interaction-select(:features.sync="selectedFeatures")
       template(slot-scope="select")
         // Select Styles
         vl-style-box
@@ -54,11 +54,12 @@ div.planner-map
                   p Feature {{ JSON.stringify({ id: feature.id, properties: feature.properties }) }}
 
     // Add marker for vehicles
-    vl-layer-vector
+    vl-layer-vector(declutter=true)
       vl-source-vector(ref="vehicleLayer")
         vl-feature(:id="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api" v-tooltip="'test'")
           vl-geom-point(v-if="data && 'longitude' in data" :coordinates="[data.longitude, data.latitude]")
           vl-style-box
+            vl-style-icon(:src="vehicleIcon(vehicleData[api].typeString)" :anchor="[0.5, 1]" :scale="api == activeApi ? 1 : 0.5" :opacity="api == activeApi ? 1 : 0.5")
             vl-style-circle(:radius="api == activeApi ? 6 : 4")
               vl-style-fill(:color="apis[api]['colorDark']")
               vl-style-stroke(color="#666666" :width="api == activeApi ? 2 : 1")
@@ -93,7 +94,7 @@ div.planner-map
 
     // Display mission waypoints
     template(v-if="activeApi && selectedMission")
-      vl-layer-vector
+      vl-layer-vector(declutter=true)
         vl-source-vector(ref="waypointLayer")
           vl-feature(v-if="missionActive[activeApi]" v-for="(waypoint, index) in missionActive[activeApi].mission" :key="'wn_' + index")
             vl-geom-point(v-if="waypoint.longitude && waypoint.latitude" :coordinates="[waypoint.longitude, waypoint.latitude]")
@@ -156,7 +157,7 @@ div.planner-map
         v-list-tile(@click="selectedMission='loaded'")
           v-list-tile-content
             v-list-tile-title Loaded Mission
-            v-list-tile-sub-title Waypoints: <strong>{{ missionActive[activeApi].total }}</strong>
+            v-list-tile-sub-title Waypoints: <strong>{{ missionLoaded[activeApi].total }}</strong>
       v-divider(inset)
       v-list(two-line subheader)
         v-subheader Database Missions
@@ -197,7 +198,6 @@ div.planner-map
 
 <script>
 import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/graphql/gql/NavSatFix.gql'
-import { vehicleInfoQuery, vehicleInfoSubscription } from '../../../plugins/graphql/gql/VehicleInfo.gql'
 import { missionListQuery, missionListSubscription } from '../../../plugins/graphql/gql/MissionList.gql'
 import { missionDatabaseQuery, missionDatabaseSubscription } from '../../../plugins/graphql/gql/MissionDatabase.gql'
 
@@ -212,8 +212,8 @@ export default {
       hints: true,
 
       navSatFixData: {},
-      vehicleInfoData: {},
       missionActive: {},
+      missionLoaded: {},
       missionDatabaseData: {},
       selectedMission: 'loaded',
       viewExtents: null,
@@ -258,6 +258,9 @@ export default {
       }
       return xy
     },
+    vehicleData () {
+      return this.$store.state.vehicleData
+    },
     navColor () {
       return this.$store.state.navColor
     },
@@ -301,6 +304,7 @@ export default {
       const oldMission = this.selectedMission
       this.selectedMission = 'loaded'
       this.resetActiveMission(oldMission)
+      this.resetLoadedMission()
       this.fitMapview()
     },
     apis: {
@@ -345,8 +349,8 @@ export default {
       for (const api in this.apis) {
         this.createQuery('NavSatFix', navSatFixQuery, api, 'navSatFixData', !api.state)
         this.createSubscription('NavSatFix', navSatFixSubscription, api, 'navSatFixData', !api.state)
-        this.createQuery('VehicleInfo', vehicleInfoQuery, api, 'vehicleInfoData', !api.state, null, null, { uuid: '' })
-        this.createSubscription('VehicleInfo', vehicleInfoSubscription, api, 'vehicleInfoData', !api.state, null, null, { uuid: '' })
+        // this.createQuery('VehicleInfo', vehicleInfoQuery, api, 'vehicleInfoData', !api.state, null, null, { uuid: '' })
+        // this.createSubscription('VehicleInfo', vehicleInfoSubscription, api, 'vehicleInfoData', !api.state, null, null, { uuid: '' })
         this.createQuery('MissionList', missionListQuery, api, 'missionActive', !api.state, null, null, { id: this.selectedMission })
         this.createSubscription('MissionList', missionListSubscription, api, 'missionActive', !api.state, null, null, { id: this.selectedMission })
         this.createQuery('MissionDatabase', missionDatabaseQuery, api, 'missionDatabaseData', null, null, null, { id: '' })
@@ -362,8 +366,7 @@ export default {
 
         // Otherwise if selected vehicle, center on the vehicle
         } else if (this.activeApi) {
-          this.logDebug(`vehicleLocation: ${this.xycenter}`)
-          this.$refs.mapView.animate({ center: this.xycenter, duration: 250 })
+          this.$refs.mapView.animate({ center: this.xycenter, duration: 500 })
 
         // Otherwise center on all vehicles
         } else {
@@ -372,17 +375,13 @@ export default {
       }
     },
     setExtents (source) {
-      this.logDebug(`setExtents source: ${source}`)
-      this.logDebug(this.$refs[source])
-      this.logDebug(this.$refs[source].$source)
       // Fetch extents of the vehicle vectorsource layer
       this.viewExtents = this.$refs[source].$source.getExtent()
       // If there is a finite extent, then fit the view (fits all waypoints within view)
       if (!this.viewExtents.includes(Infinity)) {
-        this.logDebug(`vehicle extents: ${this.viewExtents}`)
         this.$refs.mapView.$view.fit(this.viewExtents, {
           size: this.$refs.map.$map.getSize(),
-          duration: 250
+          duration: 500
         })
       }
     },
@@ -396,19 +395,30 @@ export default {
       this.createQuery('MissionList', missionListQuery, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
       this.createSubscription('MissionList', missionListSubscription, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
     },
-    waypointCommand (command) {
-      // Define command mappings
-      const commands = {
-        16: 'Waypoint',
-        21: 'Land',
-        22: 'Takeoff',
-        82: 'Spline Waypoint'
-      }
-      // Return command text if available
-      if (command in commands) {
-        return commands[command]
-      } else {
-        return command
+    resetLoadedMission () {
+      this.logDebug('Resetting loaded mission')
+      // We have to destroy and recreate the mission query and subscription, because vue-apollo reactive variables aren't working correctly
+      // Remove old query and subscription
+      this.$apollo.queries[this.activeApi + '___MissionList___loaded'] = null
+      this.$apollo.subscriptions[this.activeApi + '___MissionList___loaded'] = null
+      // Create new query and subscription
+      this.createQuery('MissionList', missionListQuery, this.activeApi, 'missionLoaded', !this.apis[this.activeApi].state, null, null, { id: 'loaded' })
+      this.createSubscription('MissionList', missionListSubscription, this.activeApi, 'missionLoaded', !this.apis[this.activeApi].state, null, null, { id: 'loaded' })
+    },
+    vehicleIcon (vehicleType) {
+      const iconPath = '/img/icons/vehicleIcons/'
+      if (vehicleType === 'Copter') {
+        return iconPath + 'quadcopter.png'
+      } else if (vehicleType === 'Plane') {
+        return iconPath + '035-airplane-1.png'
+      } else if (vehicleType === 'Sub') {
+        return iconPath + '008-submarine-1.png'
+      } else if (vehicleType === 'Heli') {
+        return iconPath + '060-helicopter.png'
+      } else if (vehicleType === 'Rover') {
+        return iconPath + '078-car-3.png'
+      } else if (vehicleType === 'Boat') {
+        return iconPath + '096-boat.png'
       }
     },
     pointOnSurface: findPointOnSurface
