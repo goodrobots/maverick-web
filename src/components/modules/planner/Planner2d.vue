@@ -24,27 +24,22 @@ div.planner-map
       vl-source-xyz(key="googleterrain" url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}")
 
     // Interactions
-    // vl-interaction-select(:features.sync="selectedFeatures")
-      template(slot-scope="select")
-        // Select Styles
-        vl-style-box
-          vl-style-stroke(color="#423e9e" :width="7")
-          vl-style-fill(:color="[254, 178, 76, 0.7]")
-          vl-style-circle(:radius="5")
-            vl-style-stroke(color="#423e9e" :width="7")
-            vl-style-fill(:color="[254, 178, 76, 0.7]")
-        vl-style-box(:z-index="1")
-          vl-style-stroke(color="#d43f45" :width="2")
-          vl-style-circle(:radius="5")
-            vl-style-stroke(color="#d43f45" :width="2")
-
+    vl-interaction-select(:features.sync="selectedFeatures")
+      // template(slot-scope="select")
         // selected feature popup
-        vl-overlay.feature-popup(v-for="feature in select.features" :key="feature.id" :id="feature.id"
-                    :position="pointOnSurface(feature.geometry)" :auto-pan="true" :auto-pan-animation="{ duration: 300 }")
+        vl-overlay.feature-popup(v-for="feature in select.features" :key="feature.id" :id="feature.id" :position="pointOnSurface(feature.geometry)" :auto-pan="false" :auto-pan-animation="{ duration: 300 }")
           template(slot-scope="popup")
-            section.card
+            div Hello
+            div {{ feature }}
+            // v-popover(trigger="manual" open=true offset="16")
+              // button.tooltip-target.b3 Click me
+              div.tooltip-target.b1 Hello
+              template(slot="popover")
+                div Hello this is a tests sdf
+                a(v-close-popover) Close
+            // section.card
               header.card-header
-                p.card-header-titl Feature ID {{ feature.id }}
+                p.card-header-title Feature ID {{ feature.id }}
                 a.card-header-icon(title="Close" @click="selectedFeatures = selectedFeatures.filter(f => f.id !== feature.id)")
                   span icon-close
               div.card-content
@@ -56,10 +51,10 @@ div.planner-map
     // Add marker for vehicles
     vl-layer-vector(declutter=true)
       vl-source-vector(ref="vehicleLayer")
-        vl-feature(:id="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api" v-tooltip="'test'")
+        vl-feature(:id="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api")
           vl-geom-point(v-if="data && 'longitude' in data" :coordinates="[data.longitude, data.latitude]")
           vl-style-box
-            vl-style-icon(:src="vehicleIcon(vehicleData[api].typeString)" :anchor="[0.5, 1]" :scale="api == activeApi ? 1 : 0.5" :opacity="api == activeApi ? 1 : 0.5")
+            vl-style-icon(:src="vehicleIcon(vehicleData[api].typeString)" :anchor="[0.5, 1]" :scale="api == activeApi ? 1 : 0.5" :opacity="api == activeApi ? 1 : 0.75" v-tooltip="'test'")
             vl-style-circle(:radius="api == activeApi ? 6 : 4")
               vl-style-fill(:color="apis[api]['colorDark']")
               vl-style-stroke(color="#666666" :width="api == activeApi ? 2 : 1")
@@ -96,7 +91,7 @@ div.planner-map
     template(v-if="activeApi && selectedMission")
       vl-layer-vector(declutter=true)
         vl-source-vector(ref="waypointLayer")
-          vl-feature(v-if="missionActive[activeApi]" v-for="(waypoint, index) in missionActive[activeApi].mission" :key="'wn_' + index")
+          vl-feature(v-if="missionActive[activeApi]" v-for="(waypoint, index) in missionActive[activeApi].mission" :id="'w_' + index" :key="'w_' + index")
             vl-geom-point(v-if="waypoint.longitude && waypoint.latitude" :coordinates="[waypoint.longitude, waypoint.latitude]")
             vl-style-box
               vl-style-circle(:radius=11)
@@ -313,6 +308,22 @@ export default {
         this.createQlQueries()
       }
     },
+    selectedMission: {
+      handler: function (newValue, oldValue) {
+        this.resetActiveMission(oldValue)
+        this.fitMapview()
+      }
+    },
+    selectedFeatures (newValue, oldValue) {
+      // If a vehicle is selected, change the active API
+      if (newValue.length > 0 && newValue[0].id.startsWith('v_')) {
+        this.$store.commit('setActiveApi', newValue[0].id.replace('v_', ''))
+
+      // If a waypoint is selected, ...
+      } else if (newValue.length > 0 && newValue[0].id.startsWith('w_')) {
+        this.logDebug('Waypoint selected')
+      }
+    },
     vehicleLocation: {
       handler: function (newValue, oldValue) {
         // If mapcenter option set, or vehicleLocation empty, and single api has been chosen, set vehicleLocation from current position
@@ -326,12 +337,6 @@ export default {
             this.fitMapview()
           }
         }
-      }
-    },
-    selectedMission: {
-      handler: function (newValue, oldValue) {
-        this.resetActiveMission(oldValue)
-        this.fitMapview()
       }
     }
   },
@@ -394,6 +399,7 @@ export default {
       // Create new query and subscription
       this.createQuery('MissionList', missionListQuery, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
       this.createSubscription('MissionList', missionListSubscription, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
+      setTimeout(() => { this.logDebug(this.missionActive[this.activeApi]) }, 2000)
     },
     resetLoadedMission () {
       this.logDebug('Resetting loaded mission')
