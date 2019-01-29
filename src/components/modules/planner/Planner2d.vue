@@ -1,7 +1,7 @@
 <template lang='pug'>
 div.planner-map
-  vl-map(ref="map" :load-tiles-while-animating="false" :load-tiles-while-interacting="false", :controls="{attribution: false, zoom: false}")
-    vl-view(ref="mapView" :zoom.sync="mapZoom" :center.sync="xycenter" :rotation="0")
+  vl-map(ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true", :controls="{attribution: false, zoom: false}")
+    vl-view(ref="mapView" :zoom.sync="mapZoom" :center.sync="xycenter" :rotation="0" projection="EPSG:4326")
 
     // Draw the map layer
     vl-layer-tile(v-if="mapLayer=='osm'")
@@ -53,9 +53,9 @@ div.planner-map
                   p Popup {{ JSON.stringify(popup) }}
                   p Feature {{ JSON.stringify({ id: feature.id, properties: feature.properties }) }}
 
-    // Add marker for vehicle
+    // Add marker for vehicles
     vl-layer-vector
-      vl-source-vector(ref="vectorSource")
+      vl-source-vector(ref="vehicleLayer")
         vl-feature(:id="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api" v-tooltip="'test'")
           vl-geom-point(v-if="data && 'longitude' in data" :coordinates="[data.longitude, data.latitude]")
           vl-style-box
@@ -91,28 +91,28 @@ div.planner-map
               td.value(v-if="activeApi in missionActive") {{ missionActive[activeApi].total }}
               td.value(v-else) None
 
-    // Add markers for mission waypoints
-    vl-layer-vector
-      vl-source-vector
-        vl-feature(:id="'w_' + api" :ref="'w_' + api" v-for="(data, api) in missionActive" :key="'w_' + api")
-          vl-geom-multi-point(v-if="data && data.mission && data.total > 0" :coordinates="data.mission.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
-          vl-style-box
-            vl-style-circle(:radius="api == activeApi ? 8 : 4")
-              vl-style-fill(:color="apis[api]['colorLight']")
-              vl-style-stroke(:color="apis[api]['colorDark']" :width="api == activeApi ? 2 : 1")
-        // Add numbers for mission waypoint marker
-        template(v-if="activeApi && selectedMission")
+    // Display mission waypoints
+    template(v-if="activeApi && selectedMission")
+      vl-layer-vector
+        vl-source-vector(ref="waypointLayer")
           vl-feature(v-if="missionActive[activeApi]" v-for="(waypoint, index) in missionActive[activeApi].mission" :key="'wn_' + index")
+            vl-geom-point(v-if="waypoint.longitude && waypoint.latitude" :coordinates="[waypoint.longitude, waypoint.latitude]")
+            vl-style-box
+              vl-style-circle(:radius=11)
+                vl-style-fill(:color="apis[activeApi]['colorLight']")
+                vl-style-stroke(:color="apis[activeApi]['colorDark']" :width=2)
+          // Add lines to join the markers
+          vl-feature(v-if="missionActive[activeApi]")
+            vl-geom-line-string(v-if="missionActive[activeApi].mission.length > 0" :coordinates="missionActive[activeApi].mission.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
+            vl-style-box
+              vl-style-stroke(:color="apis[activeApi]['colorDark']")
+              vl-style-fill(:color="apis[activeApi]['colorDark']")
+          // Add numbers for mission waypoint marker
+          vl-feature(v-if="missionActive[activeApi]" v-for="(waypoint, index) in missionActive[activeApi].mission" :key="'wm_' + index")
             vl-overlay(v-if="waypoint.longitude && waypoint.latitude" :position="[waypoint.longitude, waypoint.latitude]")
               span.markernumber.caption(v-html="index")
-        // Add lines to join the markers
-        template(v-if="activeApi && selectedMission")
-          vl-feature(v-for="(waypoint, api) in missionActive" :id="'wl_' + api" :ref="'wl_' + api" :key="'wl_' + api")
-            vl-geom-line-string(v-if="waypoint && waypoint.mission && waypoint.total > 0" :coordinates="waypoint.mission.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
-            vl-style-box
-              vl-style-stroke(:color="apis[api]['colorDark']")
-              // vl-style-fill(:color="apis[api]['colorDark']")
 
+  // Display mapview menu
   div.mapmenu
     v-menu(offset-x :close-on-content-click="false" :nudge-width="200" :nudge-right="10" v-model="mapmenu")
       v-btn(:color="navColor" slot="activator") Map Options
@@ -148,6 +148,7 @@ div.planner-map
                     // v-overflow-btn(:items="maplayers" v-model="mapLayer" label="Map Layer")
                     v-select(:items="maplayers" v-model="mapLayer")
 
+  // If api chosen, display a mission database menu
   div.missionmenu(v-if="activeApi")
     v-menu(offset-y v-model="missionmenu")
       v-btn(:color="navColor" slot="activator") Mission Database
@@ -164,6 +165,7 @@ div.planner-map
             v-list-tile-title {{ mission.id }}
             v-list-tile-sub-title Waypoints: {{ mission.total }}
 
+  // If api chosen, display a mission list
   div.missionlist.scroll-y(v-if="activeApi && selectedMission")
     v-list(subheader two-line dense)
       v-subheader Mission Summary
@@ -177,7 +179,7 @@ div.planner-map
       v-list-group(v-if="missionActive[activeApi]" v-for="(waypoint, ix) in missionActive[activeApi].mission" :key="`waypoint_${ix}`")
         v-list-tile(slot="activator")
           v-list-tile-content
-            v-list-tile-title {{ waypoint.seq }}: <strong>{{ mavlinkEnum('MAV_CMD', waypoint.command) }}</strong>
+            v-list-tile-title {{ waypoint.seq }}: <strong>{{ mavlinkEnum('MAV_CMD', waypoint.command).replace("NAV_", "") }}</strong>
         v-list-tile
           v-list-tile-content
             div Current? <strong>{{ waypoint.isCurrent }}</strong>
@@ -246,12 +248,12 @@ export default {
     bingMapsKey () {
       return this.$store.state.bingMapsKey
     },
-    centercoords () {
+    vehicleLocation () {
       let xy = []
       if (this.activeApi in this.navSatFixData && this.navSatFixData[this.activeApi] && 'longitude' in this.navSatFixData[this.activeApi] && this.navSatFixData[this.activeApi].longitude > 0) {
         xy = [
-          this.navSatFixData[this.activeApi].longitude,
-          this.navSatFixData[this.activeApi].latitude
+          Math.round(this.navSatFixData[this.activeApi].longitude * 100) / 100,
+          Math.round(this.navSatFixData[this.activeApi].latitude * 100) / 100
         ]
       }
       return xy
@@ -294,60 +296,45 @@ export default {
   },
 
   watch: {
-    // Watch apis state for any change and process
+    activeApi (newValue, oldValue) {
+      // If the selected api changes, reset selected mission to default 'loaded'
+      const oldMission = this.selectedMission
+      this.selectedMission = 'loaded'
+      this.resetActiveMission(oldMission)
+      this.fitMapview()
+    },
     apis: {
+      // Watch apis state for any change and process
       handler: function (newValue) {
         this.createQlQueries()
       }
     },
-    centercoords: {
-      handler: function (newValue) {
-        // If mapcenter option set, or centercoords empty, and single api has been chosen, set centercoords from current position
+    vehicleLocation: {
+      handler: function (newValue, oldValue) {
+        // If mapcenter option set, or vehicleLocation empty, and single api has been chosen, set vehicleLocation from current position
         if (
           (this.mapCenter || (!this.xycenter || this.xycenter.length === 0)) &&
-          this.activeApi
+          this.activeApi &&
+          !oldValue.every(e => newValue.includes(e)) // is oldValue array different to newValue array?
         ) {
           if (newValue.length !== 0 && this.$refs.mapView.$view) {
-            this.$refs.mapView.animate({ center: newValue })
             this.xycenter = newValue
+            this.fitMapview()
           }
         }
       }
     },
-    navSatFixData: {
-      handler: function (newValue, oldValue) {
-        // Fit mapview to show all vehicles, if mapcenter is selected, or on first load, and if a single api has not been chosen (which gets priority)
-        if (
-          (this.mapCenter || !this.viewExtents || this.viewExtents.length === 0)
-        ) {
-          // Fetch extents of the vector source layer
-          this.viewExtents = this.$refs.vectorSource.$source.getExtent()
-          // If there is a finite extent, then fit the view (fits all vehicles within view)
-          if (!this.viewExtents.includes(Infinity)) {
-            this.$refs.mapView.$view.fit(this.viewExtents, {
-              size: this.$refs.map.$map.getSize(),
-              duration: 50
-            })
-          }
-        }
-      },
-      deep: true
-    },
     selectedMission: {
       handler: function (newValue, oldValue) {
-        // We have to destroy and recreate the mission query and subscription, because vue-apollo reactive variables aren't working correctly
-        // Remove old query and subscription
-        this.$apollo.queries[this.activeApi + '___MissionList___' + oldValue] = null
-        this.$apollo.subscriptions[this.activeApi + '___MissionList___' + oldValue] = null
-        // Create new query and subscription
-        this.createQuery('MissionList', missionListQuery, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
-        this.createSubscription('MissionList', missionListSubscription, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
+        this.resetActiveMission(oldValue)
+        this.fitMapview()
       }
     }
   },
 
   mounted () {
     this.createQlQueries()
+    setTimeout(() => { this.fitMapview() }, 2000) // On first mount, give the map time to setup before fitting extents
   },
 
   methods: {
@@ -365,6 +352,49 @@ export default {
         this.createQuery('MissionDatabase', missionDatabaseQuery, api, 'missionDatabaseData', null, null, null, { id: '' })
         this.createSubscription('MissionDatabase', missionDatabaseSubscription, api, 'missionDatabaseData', null, null, null, { id: '' })
       }
+    },
+    fitMapview () {
+      // Fit mapview to show all vehicles, if mapcenter is selected, or on first load
+      if (this.mapCenter || !this.viewExtents || this.viewExtents.length === 0) {
+        // If the selected mission has waypoints then use those to set the view extents
+        if (this.activeApi && this.missionActive[this.activeApi].mission.length > 0) {
+          setTimeout(() => { this.setExtents('waypointLayer') }, 1500)
+
+        // Otherwise if selected vehicle, center on the vehicle
+        } else if (this.activeApi) {
+          this.logDebug(`vehicleLocation: ${this.xycenter}`)
+          this.$refs.mapView.animate({ center: this.xycenter, duration: 250 })
+
+        // Otherwise center on all vehicles
+        } else {
+          setTimeout(() => { this.setExtents('vehicleLayer') }, 1500)
+        }
+      }
+    },
+    setExtents (source) {
+      this.logDebug(`setExtents source: ${source}`)
+      this.logDebug(this.$refs[source])
+      this.logDebug(this.$refs[source].$source)
+      // Fetch extents of the vehicle vectorsource layer
+      this.viewExtents = this.$refs[source].$source.getExtent()
+      // If there is a finite extent, then fit the view (fits all waypoints within view)
+      if (!this.viewExtents.includes(Infinity)) {
+        this.logDebug(`vehicle extents: ${this.viewExtents}`)
+        this.$refs.mapView.$view.fit(this.viewExtents, {
+          size: this.$refs.map.$map.getSize(),
+          duration: 250
+        })
+      }
+    },
+    resetActiveMission (oldValue) {
+      this.logDebug(`Resetting active mission, removing old mission: ${oldValue}`)
+      // We have to destroy and recreate the mission query and subscription, because vue-apollo reactive variables aren't working correctly
+      // Remove old query and subscription
+      this.$apollo.queries[this.activeApi + '___MissionList___' + oldValue] = null
+      this.$apollo.subscriptions[this.activeApi + '___MissionList___' + oldValue] = null
+      // Create new query and subscription
+      this.createQuery('MissionList', missionListQuery, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
+      this.createSubscription('MissionList', missionListSubscription, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
     },
     waypointCommand (command) {
       // Define command mappings

@@ -3,7 +3,7 @@ const state = {
   mapZoom: 16,
   mapCenter: true,
   mapVehicleInfo: true,
-  mapLayer: 'googleterrain'
+  mapLayer: 'osm'
 }
 
 const mutations = {
