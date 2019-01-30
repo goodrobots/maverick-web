@@ -2,6 +2,8 @@ fragment MissionList on MissionList {
   id
   total
   updateTime
+  name
+  description
   mission {
     seq
     isCurrent

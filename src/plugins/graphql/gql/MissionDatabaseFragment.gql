@@ -3,6 +3,9 @@ fragment MissionDatabase on MissionDatabase {
   missions {
     id
     total
+    updateTime
+    name
+    description
     mission {
       seq
       isCurrent

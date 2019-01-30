@@ -158,7 +158,7 @@ div.planner-map
         v-subheader Database Missions
         v-list-tile(v-for="(mission, ix) in missionDatabaseData[activeApi].missions" :key="`mdb_${ix}`" @click="selectedMission=mission.id")
           v-list-tile-content
-            v-list-tile-title {{ mission.id }}
+            v-list-tile-title {{ (mission.name) ? mission.name : mission.id }}
             v-list-tile-sub-title Waypoints: {{ mission.total }}
 
   // If api chosen, display a mission list
@@ -167,7 +167,7 @@ div.planner-map
       v-subheader Mission Summary
       v-list-tile
         v-list-tile-content
-          v-list-tile-title {{ missionActive[activeApi].id }}
+          v-list-tile-title {{ (missionActive[activeApi].name) ? missionActive[activeApi].name : missionActive[activeApi].id }}
           v-list-tile-sub-title Waypoints: <strong>{{ missionActive[activeApi].total }}</strong>
     v-divider
     v-list(subheader dense)
@@ -399,7 +399,6 @@ export default {
       // Create new query and subscription
       this.createQuery('MissionList', missionListQuery, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
       this.createSubscription('MissionList', missionListSubscription, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
-      setTimeout(() => { this.logDebug(this.missionActive[this.activeApi]) }, 2000)
     },
     resetLoadedMission () {
       this.logDebug('Resetting loaded mission')
