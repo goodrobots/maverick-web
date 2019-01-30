@@ -13,6 +13,7 @@ import './plugins/vuelayers'
 import './plugins/vuecesium'
 import './plugins/vuetimers'
 import './plugins/vuetooltip'
+import './plugins/vuelodash'
 import './plugins/registerServiceWorker'
 import { createProvider } from './plugins/graphql/vue-apollo'
 

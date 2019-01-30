@@ -10105,6 +10105,13 @@ vue-loader@^15.4.2:
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
 
+vue-lodash@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/vue-lodash/-/vue-lodash-2.0.0.tgz#07ea4897537a02fe03adefbca476c96e70e8515c"
+  integrity sha512-Y0VRg8DYjVukSBSJtgstuwTvdIoVIQxSyAHy8CH7lZs2njej2YIUx2gFhV/2IvNK933JQlj9vnBpIvxnUgjeMQ==
+  dependencies:
+    lodash "^4.17.5"
+
 vue-resize@^0.4.3:
   version "0.4.5"
   resolved "https://registry.yarnpkg.com/vue-resize/-/vue-resize-0.4.5.tgz#4777a23042e3c05620d9cbda01c0b3cc5e32dcea"
