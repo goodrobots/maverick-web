@@ -2,7 +2,7 @@
 
 > Maverick Web Interface - Highly Experimental - DO NOT USE FOR REAL WORLD APPLICATIONS YET!
 
-[![Build Status](http://newdev.maverick.one/jenkins/buildStatus/icon?job=maverick-web/Jenkins-ci)](http://dev.maverick.one/jenkins/blue/organizations/jenkins/maverick-web/branches/)
+[![Build Status](http://newdev.maverick.one/jenkins/buildStatus/icon?job=maverick-web/Jenkins-ci)](http://dev.maverick.one/jenkins/blue/organizations/jenkins/maverick-web/branches/) [![Greenkeeper badge](https://badges.greenkeeper.io/goodrobots/maverick-web.svg)](https://greenkeeper.io/)
 
 This is a very early experimental repo of a 'next generation' web interface for configuring and controlling UAVs.
 
