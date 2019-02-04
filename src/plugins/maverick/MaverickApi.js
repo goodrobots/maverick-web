@@ -126,6 +126,23 @@ const plugin = {
             }
             this.$apollo.addSmartSubscription(subKey, subscriptionFields)
           }
+        },
+
+        vehicleIcon (vehicleType) {
+          const iconPath = '/img/icons/vehicleIcons/'
+          if (vehicleType === 'Copter') {
+            return iconPath + 'quadcopter.svg'
+          } else if (vehicleType === 'Plane') {
+            return iconPath + '035-airplane-1.svg'
+          } else if (vehicleType === 'ArduSub') {
+            return iconPath + '008-submarine-1.svg'
+          } else if (vehicleType === 'Heli') {
+            return iconPath + '060-helicopter.svg'
+          } else if (vehicleType === 'Rover') {
+            return iconPath + '078-car-3.svg'
+          } else if (vehicleType === 'Boat') {
+            return iconPath + '096-boat.svg'
+          }
         }
       }
     })

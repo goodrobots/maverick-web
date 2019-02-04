@@ -49,12 +49,12 @@ div.planner-map
                   p Feature {{ JSON.stringify({ id: feature.id, properties: feature.properties }) }}
 
     // Add marker for vehicles
-    vl-layer-vector(declutter=true)
+    vl-layer-vector
       vl-source-vector(ref="vehicleLayer")
         vl-feature(:id="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api")
           vl-geom-point(v-if="data && 'longitude' in data" :coordinates="[data.longitude, data.latitude]")
           vl-style-box
-            vl-style-icon(:src="vehicleIcon(vehicleData[api].typeString)" :anchor="[0.5, 1]" :scale="api == activeApi ? 1 : 0.5" :opacity="api == activeApi ? 1 : 0.75" v-tooltip="'test'")
+            vl-style-icon(:src="vehicleIcon(vehicleData[api].typeString)" :anchor="[0.5, 1]" :scale="api == activeApi ? 1 : 0.75" :opacity="api == activeApi ? 1 : 0.75" :rotation="vfrHudData[api].heading * (Math.PI/180)")
             vl-style-circle(:radius="api == activeApi ? 6 : 4")
               vl-style-fill(:color="apis[api]['colorDark']")
               vl-style-stroke(color="#666666" :width="api == activeApi ? 2 : 1")
@@ -145,7 +145,7 @@ div.planner-map
               v-select(:items="maplayers" v-model="mapLayer")
         v-card-actions
           v-btn(color="primary" outline small @click="centerVehicle()") Center Vehicle
-          v-btn(color="primary" outline small @click="centerWaypoints()") Fit Waypoints
+          v-btn(v-if="activeApi" color="primary" outline small @click="centerWaypoints()") Fit Waypoints
 
   // If api chosen, display a mission database menu
   div.missionmenu(v-if="activeApi")
@@ -216,6 +216,7 @@ div.planner-map
 
 <script>
 import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/graphql/gql/NavSatFix.gql'
+import { vfrHudQuery, vfrHudSubscription } from '../../../plugins/graphql/gql/VfrHud.gql'
 import { missionListQuery, missionListSubscription, missionListMutate } from '../../../plugins/graphql/gql/MissionList.gql'
 import { missionDatabaseQuery, missionDatabaseSubscription } from '../../../plugins/graphql/gql/MissionDatabase.gql'
 
@@ -229,6 +230,7 @@ export default {
       message: false,
       hints: true,
 
+      vfrHudData: {},
       navSatFixData: {},
       missionActive: {},
       missionLoaded: {},
@@ -369,6 +371,7 @@ export default {
     },
     vehicleLocation: {
       handler: function (newValue, oldValue) {
+        // this.logDebug(`heading: ${this.vfrHudData[this.activeApi].heading}`)
         // If mapcenter option set, or vehicleLocation empty, and single api has been chosen, set vehicleLocation from current position
         if (
           (this.mapCenter || (!this.xycenter || this.xycenter.length === 0)) &&
@@ -382,6 +385,17 @@ export default {
         }
       }
     },
+    /*
+    vfrHudData: {
+      handler: function (newValue) {
+        // this.logDebug(`heading: ${this.vfrHudData[this.activeApi].heading}`)
+        if (this.activeApi) {
+          // this.logDebug(newValue[this.activeApi].heading)
+        }
+      },
+      deep: true
+    },
+    */
     waypointFeatures: {
       handler: function (newValue, oldValue) {
         // If there is a changed waypoint, try to mutate the coordinates back to the api
@@ -460,6 +474,8 @@ export default {
       for (const api in this.apis) {
         this.createQuery('NavSatFix', navSatFixQuery, api, 'navSatFixData', !api.state)
         this.createSubscription('NavSatFix', navSatFixSubscription, api, 'navSatFixData', !api.state)
+        this.createQuery('VfrHud', vfrHudQuery, api, 'vfrHudData', !api.state)
+        this.createSubscription('VfrHud', vfrHudSubscription, api, 'vfrHudData', !api.state)
         this.createQuery('MissionList', missionListQuery, api, 'missionActive', !api.state, null, null, { id: this.selectedMission })
         this.createSubscription('MissionList', missionListSubscription, api, 'missionActive', !api.state, null, null, { id: this.selectedMission })
         this.createQuery('MissionDatabase', missionDatabaseQuery, api, 'missionDatabaseData', null, null, null, { id: '' })
@@ -574,7 +590,6 @@ export default {
       })
     },
     setExtents (source) {
-      this.logDebug(this.$refs[source])
       // Fetch extents of the vehicle vectorsource layer
       this.viewExtents = this.$refs[source].$source.getExtent()
       // If there is a finite extent, then fit the view (fits all waypoints within view)
@@ -623,22 +638,6 @@ export default {
 
         // Wait for layer to be drawn then fit waypoints to view
         this._.delay(this.fitMapview, 1000)
-      }
-    },
-    vehicleIcon (vehicleType) {
-      const iconPath = '/img/icons/vehicleIcons/'
-      if (vehicleType === 'Copter') {
-        return iconPath + 'quadcopter.png'
-      } else if (vehicleType === 'Plane') {
-        return iconPath + '035-airplane-1.png'
-      } else if (vehicleType === 'Sub') {
-        return iconPath + '008-submarine-1.png'
-      } else if (vehicleType === 'Heli') {
-        return iconPath + '060-helicopter.png'
-      } else if (vehicleType === 'Rover') {
-        return iconPath + '078-car-3.png'
-      } else if (vehicleType === 'Boat') {
-        return iconPath + '096-boat.png'
       }
     },
     pointOnSurface: findPointOnSurface

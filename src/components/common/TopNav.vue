@@ -39,10 +39,7 @@ div
           v-list
             v-list-tile(avatar v-for="(data, key) in vehicleData" :key="key" @click='changeApi(key)')
               v-list-tile-avatar
-                v-icon(v-if="data.typeString == 'Copter'") toys
-                v-icon(v-else-if="data.typeString == 'Plane'") airplanemode_active
-                v-icon(v-else-if="data.typeString == 'Rover'") directions_car
-                v-icon(v-else-if="data.typeString == 'Sub'") directions_boat
+                v-img(v-if="data" :src="vehicleIcon(data.typeString)" contain=true)
               v-list-tile-content
                 v-list-tile-title {{ apis[key].name }}
                 v-list-tile-sub-title
