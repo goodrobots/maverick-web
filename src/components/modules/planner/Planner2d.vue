@@ -119,39 +119,33 @@ div.planner-map
 
   // Display mapview menu
   div.mapmenu
-    v-menu(offset-x :close-on-content-click="false" :nudge-width="200" :nudge-right="10" v-model="mapmenu")
+    v-menu(offset-x :close-on-content-click="false" :nudge-width="200" :nudge-right="5" v-model="mapmenu")
       v-btn(:color="navColor" slot="activator") Map Options
       v-card
-        v-card-text
-          v-layout(row wrap)
-            v-flex(xs12)
-              .v-input.v-input--slider.v-input--slider--thumb-label.v-input--is-label-active.v-input--is-dirty
-                .v-input__control
-                  .v-input__slot
-                    label.v-label Vehicle Info
-                    v-switch(v-model="mapVehicleInfo" color="primary")
-          v-layout(row wrap)
-            v-flex(xs12)
-              .v-input.v-input--slider.v-input--slider--thumb-label.v-input--is-label-active.v-input--is-dirty
-                .v-input__control
-                  .v-input__slot
-                    label.v-label Center
-                    v-switch(v-model="mapCenter" color="primary")
-          v-layout(row wrap)
-            v-flex(xs12)
-              .v-input.v-input--slider.v-input--slider--thumb-label.v-input--is-label-active.v-input--is-dirty
-                .v-input__control
-                  .v-input__slot
-                    label.v-label Zoom
-                    v-slider(v-model="mapZoom" :min="1" :max="21" :step="1" thumb-label)
-          v-layout(row wrap)
-            v-flex(xs12)
-              .v-input.v-input--slider.v-input--slider--thumb-label.v-input--is-label-active.v-input--is-dirty
-                .v-input__control
-                  .v-input__slot
-                    label.v-label Map Type
-                    // v-overflow-btn(:items="maplayers" v-model="mapLayer" label="Map Layer")
-                    v-select(:items="maplayers" v-model="mapLayer")
+        v-list
+          v-list-tile
+            v-list-tile-title Menu Options
+        v-divider
+        v-list
+          v-list-tile
+            v-list-tile-title Vehicle Info
+            v-list-tile-action
+              v-switch(v-model="mapVehicleInfo" color="primary")
+          v-list-tile
+            v-list-tile-title Auto Center
+            v-list-tile-action
+              v-switch(v-model="mapCenter" color="primary")
+          v-list-tile
+            v-list-tile-title Map Zoom
+            v-list-tile-action
+              v-slider(v-model="mapZoom" :min="1" :max="21" :step="1" thumb-label)
+          v-list-tile
+            v-list-tile-title Map Source
+            v-list-tile-action
+              v-select(:items="maplayers" v-model="mapLayer")
+        v-card-actions
+          v-btn(color="primary" outline small @click="centerVehicle()") Center Vehicle
+          v-btn(color="primary" outline small @click="centerWaypoints()") Fit Waypoints
 
   // If api chosen, display a mission database menu
   div.missionmenu(v-if="activeApi")
@@ -282,8 +276,8 @@ export default {
       let xy = []
       if (this.activeApi in this.navSatFixData && this.navSatFixData[this.activeApi] && 'longitude' in this.navSatFixData[this.activeApi] && this.navSatFixData[this.activeApi].longitude > 0) {
         xy = [
-          Math.round(this.navSatFixData[this.activeApi].longitude * 100) / 100,
-          Math.round(this.navSatFixData[this.activeApi].latitude * 100) / 100
+          this._.round(this.navSatFixData[this.activeApi].longitude, 5),
+          this._.round(this.navSatFixData[this.activeApi].latitude, 5)
         ]
       }
       return xy
@@ -447,12 +441,25 @@ export default {
   },
 
   methods: {
+    centerVehicle () {
+      // If a vehicle is active center on that vehicle
+      if (this.activeApi) {
+        this.$refs.mapView.animate({ center: this.vehicleLocation, duration: 500 })
+
+      // Else fit all vehicles to screen
+      } else {
+        this.setExtents('vehicleLayer')
+      }
+    },
+    centerWaypoints () {
+      if (this.activeApi && this.$refs.waypointLayer) {
+        this.setExtents('waypointLayer')
+      }
+    },
     createQlQueries () {
       for (const api in this.apis) {
         this.createQuery('NavSatFix', navSatFixQuery, api, 'navSatFixData', !api.state)
         this.createSubscription('NavSatFix', navSatFixSubscription, api, 'navSatFixData', !api.state)
-        // this.createQuery('VehicleInfo', vehicleInfoQuery, api, 'vehicleInfoData', !api.state, null, null, { uuid: '' })
-        // this.createSubscription('VehicleInfo', vehicleInfoSubscription, api, 'vehicleInfoData', !api.state, null, null, { uuid: '' })
         this.createQuery('MissionList', missionListQuery, api, 'missionActive', !api.state, null, null, { id: this.selectedMission })
         this.createSubscription('MissionList', missionListSubscription, api, 'missionActive', !api.state, null, null, { id: this.selectedMission })
         this.createQuery('MissionDatabase', missionDatabaseQuery, api, 'missionDatabaseData', null, null, null, { id: '' })
@@ -483,15 +490,15 @@ export default {
       if (this.mapCenter || !this.viewExtents || this.viewExtents.length === 0) {
         // If the selected mission has waypoints then use those to set the view extents
         if (this.activeApi && this.missionActive[this.activeApi].mission.length > 0) {
-          setTimeout(() => { this.setExtents('waypointLayer') }, 1500)
+          setTimeout(() => { this.centerWaypoints() }, 1500)
 
         // Otherwise if selected vehicle, center on the vehicle
         } else if (this.activeApi) {
-          this.$refs.mapView.animate({ center: this.xycenter, duration: 500 })
+          this.centerVehicle()
 
         // Otherwise center on all vehicles
         } else {
-          setTimeout(() => { this.setExtents('vehicleLayer') }, 1500)
+          setTimeout(() => { this.centerVehicle() }, 1500)
         }
       }
     },
@@ -567,6 +574,7 @@ export default {
       })
     },
     setExtents (source) {
+      this.logDebug(this.$refs[source])
       // Fetch extents of the vehicle vectorsource layer
       this.viewExtents = this.$refs[source].$source.getExtent()
       // If there is a finite extent, then fit the view (fits all waypoints within view)
