@@ -24,7 +24,7 @@ div.planner-map
       vl-source-xyz(key="googleterrain" url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}")
 
     // Interactions
-    vl-interaction-select(:features.sync="selectedFeatures")
+    // vl-interaction-select(:features.sync="selectedFeatures" v-if="waypointMode == 'select'")
       // template(slot-scope="select")
         // selected feature popup
         vl-overlay.feature-popup(v-for="feature in select.features" :key="feature.id" :id="feature.id" :position="pointOnSurface(feature.geometry)" :auto-pan="false" :auto-pan-animation="{ duration: 300 }")
@@ -35,7 +35,7 @@ div.planner-map
               // button.tooltip-target.b3 Click me
               div.tooltip-target.b1 Hello
               template(slot="popover")
-                div Hello this is a tests sdf
+                div Hello this is a test
                 a(v-close-popover) Close
             // section.card
               header.card-header
@@ -89,8 +89,14 @@ div.planner-map
 
     // Display mission waypoints
     template(v-if="activeApi && selectedMission")
-      vl-layer-vector(declutter=true)
-        vl-source-vector(ref="waypointLayer")
+      vl-layer-vector
+        vl-source-vector(ref="waypointLayer" ident="waypoint-draw-target" :features.sync="waypointFeatures")
+          // vl-style-box
+            vl-style-circle(:radius=11)
+              vl-style-fill(:color="apis[activeApi]['colorLight']")
+              vl-style-stroke(:color="apis[activeApi]['colorDark']" :width=2)
+      // vl-layer-vector
+        vl-source-vector(ref="waypointLayer" ident="waypoint-draw-target" :features.sync="waypointFeatures")
           vl-feature(v-if="missionActive[activeApi]" v-for="(waypoint, index) in missionActive[activeApi].mission" :id="'w_' + index" :key="'w_' + index")
             vl-geom-point(v-if="waypoint.longitude && waypoint.latitude" :coordinates="[waypoint.longitude, waypoint.latitude]")
             vl-style-box
@@ -98,15 +104,18 @@ div.planner-map
                 vl-style-fill(:color="apis[activeApi]['colorLight']")
                 vl-style-stroke(:color="apis[activeApi]['colorDark']" :width=2)
           // Add lines to join the markers
-          vl-feature(v-if="missionActive[activeApi]")
+          // vl-feature(v-if="missionActive[activeApi]")
             vl-geom-line-string(v-if="missionActive[activeApi].mission.length > 0" :coordinates="missionActive[activeApi].mission.map(x => [x.longitude, x.latitude]).filter(x => x[0] && x[1])")
             vl-style-box
               vl-style-stroke(:color="apis[activeApi]['colorDark']")
               vl-style-fill(:color="apis[activeApi]['colorDark']")
           // Add numbers for mission waypoint marker
-          vl-feature(v-if="missionActive[activeApi]" v-for="(waypoint, index) in missionActive[activeApi].mission" :key="'wm_' + index")
+          // vl-feature(v-if="missionActive[activeApi]" v-for="(waypoint, index) in missionActive[activeApi].mission" :key="'wm_' + index")
             vl-overlay(v-if="waypoint.longitude && waypoint.latitude" :position="[waypoint.longitude, waypoint.latitude]")
               span.markernumber.caption(v-html="index")
+      vl-interaction-draw(v-if="waypointMode == 'draw'" source="waypoint-draw-target" :type="waypointDrawMode")
+      vl-interaction-modify(v-if="waypointMode == 'modify'" source="waypoint-draw-target")
+      vl-interaction-snap(source="waypoint-draw-target" :priority="10")
 
   // Display mapview menu
   div.mapmenu
@@ -152,17 +161,17 @@ div.planner-map
         v-list-tile(@click="selectedMission='loaded'")
           v-list-tile-content
             v-list-tile-title Loaded Mission
-            v-list-tile-sub-title Waypoints: <strong>{{ missionLoaded[activeApi].total }}</strong>
+            v-list-tile-sub-title Waypoints: <strong>{{ (missionLoaded[activeApi]) ? missionLoaded[activeApi].total : '---' }}</strong>
       v-divider(inset)
       v-list(two-line subheader)
         v-subheader Database Missions
-        v-list-tile(v-for="(mission, ix) in missionDatabaseData[activeApi].missions" :key="`mdb_${ix}`" @click="selectedMission=mission.id")
+        v-list-tile(v-if="missionDatabaseData[activeApi]" v-for="(mission, ix) in missionDatabaseData[activeApi].missions" :key="`mdb_${ix}`" @click="selectedMission=mission.id")
           v-list-tile-content
             v-list-tile-title {{ (mission.name) ? mission.name : mission.id }}
             v-list-tile-sub-title Waypoints: {{ mission.total }}
 
   // If api chosen, display a mission list
-  div.missionlist.scroll-y(v-if="activeApi && selectedMission")
+  div.missionlist.scroll-y(v-if="activeApi && missionActive[activeApi]")
     v-list(subheader two-line dense)
       v-subheader Mission Summary
       v-list-tile
@@ -172,28 +181,48 @@ div.planner-map
     v-divider
     v-list(subheader dense)
       v-subheader Mission Waypoints
-      v-list-group(v-if="missionActive[activeApi]" v-for="(waypoint, ix) in missionActive[activeApi].mission" :key="`waypoint_${ix}`")
+      v-list-group(v-if="missionActive[activeApi]" v-for="(waypoint, ix) in missionActive[activeApi].mission" v-model="waypointActive[waypoint.seq]" :key="`waypoint_${ix}`")
         v-list-tile(slot="activator")
           v-list-tile-content
-            v-list-tile-title {{ waypoint.seq }}: <strong>{{ mavlinkEnum('MAV_CMD', waypoint.command).replace("NAV_", "") }}</strong>
-        v-list-tile
-          v-list-tile-content
-            div Current? <strong>{{ waypoint.isCurrent }}</strong>
-        v-list-tile
-          v-list-tile-title Altitude: <strong>{{ waypoint.altitude }}</strong>
-        v-list-tile
-          v-list-tile-title Longitude: <strong>{{ waypoint.longitude }}</strong>
-        v-list-tile
-          v-list-tile-title Latitude: <strong>{{ waypoint.latitude }}</strong>
-        v-list-tile
-          v-list-tile-title AutoContinue: <strong>{{ waypoint.autocontinue }}</strong>
-        v-list-tile
-          v-list-tile-title Frame: <strong>{{ waypoint.frame }}</strong>
+            v-list-tile-title {{ waypoint.seq }}: <strong>{{ mavlinkEnum('MAV_CMD', waypoint.command).name.replace("NAV_", "") }}</strong>
+        v-card(color='rgba(99, 99, 99, 0.1)')
+          v-card-text
+            v-layout(row wrap)
+              v-flex(xs12)
+                button.btn.btn-sm.btn-danger(@click="deleteWaypoint(waypoint.seq)") Delete
+                div {{ mavlinkEnum('MAV_CMD', waypoint.command).description }}
+                // Waypoint Type: NAV_WAYPOINT
+                template(v-if="waypoint.command == '16'")
+                  div Hold Time: <strong>{{ waypoint.param1 }}</strong>
+                  div Hit Radius: <strong>{{ waypoint.param2 }}</strong>
+                  div Param3?: <strong>{{ waypoint.param3 }}</strong>
+                  div Yaw Angle: <strong>{{ waypoint.param4 }}</strong>
+                  div Latitude: <strong>{{ _.round(waypoint.latitude, 2) }}</strong>
+                  div Longitude: <strong>{{ _.round(waypoint.longitude, 2) }}</strong>
+                  div Altitude: <strong>{{ _.round(waypoint.altitude, 2) }}</strong>
+                template(v-else-if="waypoint.command == '12'")
+                  div
+                template(v-else)
+                  div {{ waypoint.command }}
+
+    v-divider
+    v-list(subheader dense)
+      v-subheader Waypoints Mode
+      v-list-tile
+        v-list-tile-content
+          v-card
+            v-card-text
+              v-layout(row wrap)
+                v-flex(xs12)
+                  v-radio-group(v-model="waypointMode" row)
+                    v-radio(label="Select" value="select")
+                    v-radio(label="Modify" value="modify")
+                    v-radio(label="Add" value="draw")
 </template>
 
 <script>
 import { navSatFixQuery, navSatFixSubscription } from '../../../plugins/graphql/gql/NavSatFix.gql'
-import { missionListQuery, missionListSubscription } from '../../../plugins/graphql/gql/MissionList.gql'
+import { missionListQuery, missionListSubscription, missionListMutate } from '../../../plugins/graphql/gql/MissionList.gql'
 import { missionDatabaseQuery, missionDatabaseSubscription } from '../../../plugins/graphql/gql/MissionDatabase.gql'
 
 import { findPointOnSurface } from 'vuelayers/lib/ol-ext'
@@ -213,6 +242,12 @@ export default {
       selectedMission: 'loaded',
       viewExtents: null,
       selectedFeatures: [],
+
+      waypointMode: 'select',
+      waypointDrawMode: 'point',
+      waypointFeatures: [],
+      waypointActive: [],
+      selectedWaypoint: null,
 
       missionmenu: false,
       mapmenu: false,
@@ -308,20 +343,34 @@ export default {
         this.createQlQueries()
       }
     },
+    missionActive: {
+      handler: function (newValue, oldValue) {
+        this.logDebug('missionActive changed')
+        this._.delay(this.syncWaypoints, 1000)
+      },
+      deep: true
+    },
+    selectedFeatures (newValue, oldValue) {
+      // If a vehicle is selected, change the active API
+      if (newValue.length > 0 && newValue[0].id && newValue[0].id.startsWith('v_')) {
+        this.$store.commit('setActiveApi', newValue[0].id.replace('v_', ''))
+
+      // If a waypoint is selected, ...
+      } else if (newValue.length === 1 && newValue[0].id && newValue[0].id.startsWith('w_')) {
+        this.selectedWaypoint = newValue[0].id.replace('w_', '')
+        this.logDebug(`Waypoint selected: ${this.selectedWaypoint}`)
+        this.waypointActive[this.selectedWaypoint] = true
+
+      // Otherwise..
+      } else {
+        this.logDebug('something selected')
+        // TODO: unselect all waypoints (and vehicles?)
+      }
+    },
     selectedMission: {
       handler: function (newValue, oldValue) {
         this.resetActiveMission(oldValue)
         this.fitMapview()
-      }
-    },
-    selectedFeatures (newValue, oldValue) {
-      // If a vehicle is selected, change the active API
-      if (newValue.length > 0 && newValue[0].id.startsWith('v_')) {
-        this.$store.commit('setActiveApi', newValue[0].id.replace('v_', ''))
-
-      // If a waypoint is selected, ...
-      } else if (newValue.length > 0 && newValue[0].id.startsWith('w_')) {
-        this.logDebug('Waypoint selected')
       }
     },
     vehicleLocation: {
@@ -338,6 +387,57 @@ export default {
           }
         }
       }
+    },
+    waypointFeatures: {
+      handler: function (newValue, oldValue) {
+        // If there is a changed waypoint, try to mutate the coordinates back to the api
+        const changed = this._.differenceWith(newValue, oldValue, this._.isEqual).filter(feature => feature.id !== 'wayLines')
+
+        // If we have a new waypoint, construct feature object and add
+        /*
+        if (oldValue.length > 0 && newValue.length > oldValue.length) {
+          this.logDebug(`New waypoint added, was ${oldValue.length}, now ${newValue.length}, saving mission`)
+          // Add a waypoint object into missionActive
+          this.missionActive[this.activeApi].mission.push({
+            seq: newValue.length,
+            isCurrent: false,
+            autocontinue: true,
+            frame: 3,
+            command: 16,
+            param1: 0,
+            param2: 0,
+            param3: 0,
+            param4: 0,
+            latitude: changed[0].geometry.coordinates[1],
+            longitude: changed[0].geometry.coordinates[0],
+            altitude: 50
+          })
+          // Remove __typename from all waypoints
+          for (const _mwaypoint of this.missionActive[this.activeApi].mission) {
+            delete _mwaypoint.__typename
+          }
+          // Save the new waypoint mission
+          this.saveMission(this.missionActive[this.activeApi].mission)
+          this.logDebug(this.missionActive[this.activeApi].mission)
+        */
+        // Else if we have a changed waypoint, commit it
+        if (changed) {
+          if (changed.length === 1 && changed[0].id.startsWith('w_')) {
+            const waypoint = this._.toInteger(changed[0].id.replace('w_', ''))
+            this.logDebug(`Waypoint ${waypoint} changed, saving mission`)
+            this.logDebug(changed)
+            // Update the waypoint coordinates into missionActive
+            for (const _mwaypoint of this.missionActive[this.activeApi].mission) {
+              if (_mwaypoint.seq === waypoint) {
+                _mwaypoint.longitude = changed[0].geometry.coordinates[0]
+                _mwaypoint.latitude = changed[0].geometry.coordinates[1]
+              }
+              delete _mwaypoint.__typename
+            }
+            this.saveMission(this.missionActive[this.activeApi].mission)
+          }
+        }
+      }
     }
   },
 
@@ -347,9 +447,6 @@ export default {
   },
 
   methods: {
-    setTickers () {
-      this.tickers.navSatFix = true
-    },
     createQlQueries () {
       for (const api in this.apis) {
         this.createQuery('NavSatFix', navSatFixQuery, api, 'navSatFixData', !api.state)
@@ -361,6 +458,25 @@ export default {
         this.createQuery('MissionDatabase', missionDatabaseQuery, api, 'missionDatabaseData', null, null, null, { id: '' })
         this.createSubscription('MissionDatabase', missionDatabaseSubscription, api, 'missionDatabaseData', null, null, null, { id: '' })
       }
+    },
+    deleteWaypoint (seq) {
+      this.logDebug(`deleteWaypoint: ${seq}`)
+      this.missionActive[this.activeApi].mission = this._.orderBy(this.missionActive[this.activeApi].mission)
+      this.logDebug(this.missionActive[this.activeApi].mission)
+      let waypointFound = false
+      for (const waypoint in this.missionActive[this.activeApi].mission) {
+        // If we've already deleted the waypoint, decrement all future seq numbers
+        if (waypointFound) {
+          this.missionActive[this.activeApi].mission[waypoint].seq -= 1
+        }
+        // Delete the waypoint
+        if (seq === this.missionActive[this.activeApi].mission[waypoint].seq) {
+          this.logDebug(waypoint)
+          waypointFound = true
+          this.missionActive[this.activeApi].mission.splice(waypoint, 1)
+        }
+      }
+      this.saveMission(this.missionActive[this.activeApi].mission)
     },
     fitMapview () {
       // Fit mapview to show all vehicles, if mapcenter is selected, or on first load
@@ -379,6 +495,77 @@ export default {
         }
       }
     },
+    resetActiveMission (oldValue) {
+      this.logDebug(`Resetting active mission, removing old mission: ${oldValue}`)
+      // We have to destroy and recreate the mission query and subscription, because vue-apollo reactive variables aren't working correctly
+      // Remove old query and subscription
+      this.$apollo.queries[this.activeApi + '___MissionList___' + oldValue] = null
+      this.$apollo.subscriptions[this.activeApi + '___MissionList___' + oldValue] = null
+      // Create new query and subscription
+      this.createQuery('MissionList', missionListQuery, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
+      this.createSubscription('MissionList', missionListSubscription, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
+      this._.delay(this.syncWaypoints, 1000)
+    },
+    resetLoadedMission () {
+      this.logDebug('Resetting loaded mission')
+      // We have to destroy and recreate the mission query and subscription, because vue-apollo reactive variables aren't working correctly
+      // Remove old query and subscription
+      this.$apollo.queries[this.activeApi + '___MissionList___loaded'] = null
+      this.$apollo.subscriptions[this.activeApi + '___MissionList___loaded'] = null
+      // Create new query and subscription
+      this.createQuery('MissionList', missionListQuery, this.activeApi, 'missionLoaded', !this.apis[this.activeApi].state, null, null, { id: 'loaded' })
+      this.createSubscription('MissionList', missionListSubscription, this.activeApi, 'missionLoaded', !this.apis[this.activeApi].state, null, null, { id: 'loaded' })
+    },
+    saveMission (data) {
+      // Delete __typename from all waypoints
+      for (let waypoint of data) {
+        delete waypoint.__typename
+      }
+
+      // Mutate mission
+      let mutateFields = {
+        client: this.activeApi,
+        mutation: missionListMutate,
+        variables: {
+          id: this.selectedMission,
+          mission: data
+        }
+        /*
+        update: (store, { data: { updateMission } }) => {
+          // Read the data from our cache for this query.
+          const data = store.readQuery({ query: TAGS_QUERY })
+          // Add our tag from the mutation to the end
+          data.tags.push(addTag)
+          // Write our data back to the cache.
+          store.writeQuery({ query: TAGS_QUERY, data })
+        }
+        */
+        /*
+        // Optimistic UI
+        // Will be treated as a 'fake' result as soon as the request is made
+        // so that the UI can react quickly and the user be happy
+        optimisticResponse: {
+          __typename: 'Mutation',
+          addTag: {
+            __typename: 'Tag',
+            id: -1,
+            label: newTag,
+          },
+        },
+        */
+      }
+      this.$apollo.mutate(
+        mutateFields
+      ).then((data) => {
+        // Result
+        console.log(data)
+      }).catch((error) => {
+        // Error
+        console.error(error)
+        // We restore the initial user input
+        // this.newTag = newTag
+      })
+    },
     setExtents (source) {
       // Fetch extents of the vehicle vectorsource layer
       this.viewExtents = this.$refs[source].$source.getExtent()
@@ -390,25 +577,45 @@ export default {
         })
       }
     },
-    resetActiveMission (oldValue) {
-      this.logDebug(`Resetting active mission, removing old mission: ${oldValue}`)
-      // We have to destroy and recreate the mission query and subscription, because vue-apollo reactive variables aren't working correctly
-      // Remove old query and subscription
-      this.$apollo.queries[this.activeApi + '___MissionList___' + oldValue] = null
-      this.$apollo.subscriptions[this.activeApi + '___MissionList___' + oldValue] = null
-      // Create new query and subscription
-      this.createQuery('MissionList', missionListQuery, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
-      this.createSubscription('MissionList', missionListSubscription, this.activeApi, 'missionActive', !this.apis[this.activeApi].state, null, null, { id: this.selectedMission })
+    setTickers () {
+      this.tickers.navSatFix = true
     },
-    resetLoadedMission () {
-      this.logDebug('Resetting loaded mission')
-      // We have to destroy and recreate the mission query and subscription, because vue-apollo reactive variables aren't working correctly
-      // Remove old query and subscription
-      this.$apollo.queries[this.activeApi + '___MissionList___loaded'] = null
-      this.$apollo.subscriptions[this.activeApi + '___MissionList___loaded'] = null
-      // Create new query and subscription
-      this.createQuery('MissionList', missionListQuery, this.activeApi, 'missionLoaded', !this.apis[this.activeApi].state, null, null, { id: 'loaded' })
-      this.createSubscription('MissionList', missionListSubscription, this.activeApi, 'missionLoaded', !this.apis[this.activeApi].state, null, null, { id: 'loaded' })
+    syncWaypoints () {
+      if (this.missionActive[this.activeApi] && this.$refs.waypointLayer) {
+        const mission = this.missionActive[this.activeApi].mission
+
+        // First clear all existing features from the waypoint layer
+        this.$refs.waypointLayer.clearFeatures()
+        // Add waypoint features
+        let waypoints = mission
+          .filter(waypoint => waypoint.latitude && waypoint.longitude)
+          .map(waypoint => ({
+            geometry: {
+              type: 'Point',
+              coordinates: [waypoint.longitude, waypoint.latitude]
+            },
+            type: 'Feature',
+            id: 'w_' + waypoint.seq
+          }))
+        this.$refs.waypointLayer.addFeatures(waypoints)
+
+        // Draw lines between waypoints
+        let waylines = mission
+          .filter(waypoint => waypoint.latitude && waypoint.longitude)
+          .map(waypoint => [waypoint.longitude, waypoint.latitude])
+        let waylinesFeature = {
+          geometry: {
+            type: 'LineString',
+            coordinates: waylines
+          },
+          type: 'Feature',
+          id: 'wayLines'
+        }
+        this.$refs.waypointLayer.addFeature(waylinesFeature)
+
+        // Wait for layer to be drawn then fit waypoints to view
+        this._.delay(this.fitMapview, 1000)
+      }
     },
     vehicleIcon (vehicleType) {
       const iconPath = '/img/icons/vehicleIcons/'
@@ -474,5 +681,9 @@ table.vehicle thead tr {
 }
 table.vehicle td.value {
   font-weight: bold;
+}
+
+.v-list__group--active {
+  background-color: rgba(99, 99, 99, 0.25)
 }
 </style>

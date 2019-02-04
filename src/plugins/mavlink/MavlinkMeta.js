@@ -15,7 +15,7 @@ const plugin = {
           // Return command text if available
           if (enumGroup in mavlinkEnums) {
             if (enumKey in mavlinkEnums[enumGroup]) {
-              return mavlinkEnums[enumGroup][enumKey].name
+              return mavlinkEnums[enumGroup][enumKey]
             }
           } else {
             return enumKey

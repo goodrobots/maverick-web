@@ -12,8 +12,8 @@ subscription missionListSubscription($id: String!) {
   }
 }
 
-mutation missionListMutate($id: String!) {
-  MissionList(id: $id) {
+mutation missionListMutate($id: String!, $mission: [MissionInput]!) {
+  MissionList(id: $id, mission: $mission) {
     ...MissionList
   }
 }
