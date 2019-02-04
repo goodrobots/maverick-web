@@ -139,6 +139,9 @@ export default {
       if (this.$store.state.vehicleData[api] !== data.data.VehicleInfo) {
         this.$store.commit('setVehicleData', { api: api, message: data.data.VehicleInfo })
       }
+      if (!this.apis[api].icon) {
+        this.$store.commit('setApiIcon', { api: api, value: this.vehicleIcon(data.data.VehicleInfo.typeString) })
+      }
     }
   }
 }

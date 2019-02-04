@@ -39,7 +39,7 @@ div
           v-list
             v-list-tile(avatar v-for="(data, key) in vehicleData" :key="key" @click='changeApi(key)')
               v-list-tile-avatar
-                v-img(v-if="data" :src="vehicleIcon(data.typeString)" contain=true)
+                v-img(v-if="apis[key]" :src="apis[key].icon" contain=true)
               v-list-tile-content
                 v-list-tile-title {{ apis[key].name }}
                 v-list-tile-sub-title

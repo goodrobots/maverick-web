@@ -54,6 +54,9 @@ export default new Vuex.Store({
     setApiState (state, data) {
       state.apis[data.api].state = data.value
     },
+    setApiIcon (state, data) {
+      state.apis[data.api].icon = data.value
+    },
     setApiAuth (state, data) {
       state.apis[data.api].auth = data.value
     },
