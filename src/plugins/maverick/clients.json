@@ -1,0 +1,29 @@
+{
+  "apsitl_dev": {
+    "httpEndpoint": "http://my.drone/graphql",
+    "wsEndpoint": "ws://my.drone/subscriptions",
+    "websocketsOnly": false,
+    "name": "Copter 1",
+    "colorLight": "rgba(11,11,11,0.3)",
+    "colorDark": "rgba(11,11,11,0.9)",
+    "authToken": null
+  },
+  "apsitl_plane1": {
+    "httpEndpoint": "http://another.plane:7060/graphql",
+    "wsEndpoint": "ws://another.plane:7060/subscriptions",
+    "websocketsOnly": false,
+    "name": "Plane 1",
+    "colorLight": "#336666",
+    "colorDark": "#336666",
+    "authToken": null
+  },
+  "apsitl_sub1": {
+    "httpEndpoint": "http://subforce.one/graphql",
+    "wsEndpoint": "ws://subforce.one/subscriptions",
+    "websocketsOnly": false,
+    "name": "Sub 1",
+    "colorLight": "#336666",
+    "colorDark": "#336666",
+    "authToken": null
+  }
+}
