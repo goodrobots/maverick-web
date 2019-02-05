@@ -7,14 +7,13 @@ div
       v-toolbar-items
         // StatusText Messages
         transition(name="fade-transition" mode="out-in")
-          v-menu(offset-y v-if="statusTexts.length > 0" :max-height="height - 100")
+          v-menu(offset-y v-if="activeApi && statusTextData[activeApi] && statusTextData[activeApi].length > 0" :max-height="height - 100")
             v-btn(flat slot="activator")
               v-icon warning
             v-list(two-line subheader dense)
               v-subheader Messages
-                v-btn(flat @click="statusTexts = []")
-                  v-icon(small) delete
-              v-list-tile(v-for="(message, index) in statusTexts" :key="index")
+                v-btn(outline small @click="statusTextData[activeApi] = []") Clear
+              v-list-tile(v-for="(message, index) in statusTextData[activeApi]" :key="index")
                 v-list-tile-content(v-if="message")
                   v-list-tile-title(v-text="message.message")
                   v-list-tile-sub-title(v-text="(fcTime - message.secs > 60) ? Math.round((fcTime - message.secs) / 60) + ' minutes ago' : fcTime - message.secs + ' seconds ago'")
@@ -60,12 +59,15 @@ div
 <script>
 import { vehicleStateQuery, vehicleStateSubscription } from '../../plugins/graphql/gql/VehicleState.gql'
 import { vfrHudQuery, vfrHudSubscription } from '../../plugins/graphql/gql/VfrHud.gql'
+import { statusTextQuery, statusTextSubscription } from '../../plugins/graphql/gql/StatusText.gql'
+
 export default {
   name: 'TopNav',
   data () {
     return {
       vehicleStateData: {},
       vfrHudData: [],
+      statusTextData: [],
       flightModes: ['Guided', 'Stabilize'],
       tickers: {
         state: false,
@@ -73,7 +75,6 @@ export default {
       },
       snackbar: false,
       statusText: '',
-      statusTexts: [],
       fcTime: null
     }
   },
@@ -119,6 +120,8 @@ export default {
           this.createSubscription('VehicleState', vehicleStateSubscription, api, 'vehicleStateData')
           this.createQuery('VfrHud', vfrHudQuery, api, 'vfrHudData')
           this.createSubscription('VfrHud', vfrHudSubscription, api, 'vfrHudData')
+          this.createQuery('StatusText', statusTextQuery, api, null, this.processStatusText)
+          this.createSubscription('StatusText', statusTextSubscription, api, null, this.processStatusText)
         }
       }
     }
@@ -134,6 +137,13 @@ export default {
     setTickers () {
       this.tickers.vehicleState = true
       this.tickers.vfrHud = true
+    },
+    processStatusText (data, key) {
+      const api = key.split('___')[0]
+      if (!this.statusTextData[api]) {
+        this.statusTextData[api] = []
+      }
+      this.statusTextData[api].push(data.data.StatusText)
     }
   }
 }
