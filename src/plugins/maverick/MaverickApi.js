@@ -129,7 +129,7 @@ const plugin = {
         },
 
         vehicleIcon (vehicleType) {
-          const iconPath = '/img/icons/vehicleIcons/'
+          const iconPath = 'img/icons/vehicleIcons/'
           if (vehicleType === 'Copter') {
             return iconPath + 'quadcopter.svg'
           } else if (vehicleType === 'Plane') {
