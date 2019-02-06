@@ -1,19 +1,5 @@
-/*
-    Note: All the commented lines in this file are to do with Cesium support,
-    which is temporarily disabled.
-*/
-
-/*
-const path = require('path')
-const webpack = require('webpack')
-const CopywebpackPlugin = require('copy-webpack-plugin')
-const cesiumSource = 'node_modules/cesium/Source'
-const cesiumWorkers = '../Build/Cesium/Workers'
-*/
-
 module.exports = {
   // Project deployment base
-  // baseUrl: process.env.NODE_ENV == 'production' ? '/' : '/dev/maverick/',
 
   // where to output built files
   outputDir: 'dist',
@@ -22,6 +8,10 @@ module.exports = {
   // valid values: true | false | 'error'
   // when set to 'error', lint errors will cause compilation to fail.
   lintOnSave: process.env.NODE_ENV !== 'production',
+
+  publicPath: process.env.NODE_ENV === 'production'
+    ? '/web/maverick/'
+    : '/',
 
   runtimeCompiler: true,
 
@@ -52,116 +42,16 @@ module.exports = {
       .use('gql-loader')
       .loader('graphql-tag/loader')
       .end()
-    /*
-    config.module
-      .rule('vue')
-      .use('vue-loader')
-      .tap(options =>
-        merge(options, {
-          transformAssetUrls: {
-            video: ['src', 'poster'],
-            source: 'src',
-            img: 'src',
-            image: 'xlink:href',
-            'vl-style-icon': 'src',
-          },
-        })
-      )
-    */
   },
 
   configureWebpack: {
-    /*
-    output: {
-      filename: '[name].js',
-      path: path.resolve(__dirname, 'dist'),
-      sourcePrefix: '' // Cesium - Needed to compile multiline strings in Cesium
-    },
-    amd: {
-      toUrlUndefined: true // Enable webpack-friendly use of require in Cesium
-    },
-    node: {
-      fs: 'empty' // Resolve node module use of fs
-    },
-    resolve: {
-      extensions: ['.js', '.vue', '.json'],
-      alias: {
-        // vue$: 'vue/dist/vue.esm.js',
-        // '@': path.resolve(__dirname, 'src'),
-        cesium: path.resolve(__dirname, cesiumSource)
-      }
-    },
-    */
     module: {
-      /*
-      unknownContextCritical: false,
-      unknownContextRegExp: /^.\/.*$/,
-      */
       rules: [
-        /*
-        {
-          test : /\.css$/,
-          use: [
-              "style-loader",
-              "css-loader"
-          ]
-        },
-        {
-          test : /\.(png|gif|jpg|jpeg)$/,
-          use : ["file-loader"]
-        },
-        {
-          test: /\.glsl$/,
-          use: ['file-loader' ]
-        },
-        {
-        // Strip cesium pragmas
-        test: /\.js$/,
-          enforce: 'pre',
-          include: path.resolve(__dirname, cesiumSource),
-          use: [{
-            loader: 'strip-pragma-loader',
-            options: {
-              pragmas: {
-                debug: false
-              }
-            }
-          }]
-        }
-        */
       ]
     },
     optimization: {
-      /*
-      splitChunks: {
-          cacheGroups: {
-              commons: {
-                  test: /[\\/]node_modules[\\/]cesium/,
-                  name: 'Cesium',
-                  chunks: 'all'
-              }
-          }
-      }
-      */
     },
     plugins: [
-      /*
-      // Copy Cesium Assets, Widgets, and Workers to a static directory
-      new CopywebpackPlugin([
-          // copy Cesium's non-JS assets
-          {from: path.join(cesiumSource, '../Build/Cesium/Assets'), to: 'Assets'},
-          // copy Cesium's non-JS widget-bits (CSS, SVG, etc.)
-          {from: path.join(cesiumSource, '../Build/Cesium/Widgets'), to: 'Widgets'},
-          // copy Cesium's Almond-bundled-and-minified Web Worker scripts
-          {from: path.join(cesiumSource, '../Build/Cesium/Workers'), to: 'Workers'},
-          // copy Cesium's minified third-party scripts
-          {from: path.join(cesiumSource, '../Build/Cesium/ThirdParty/Workers'), to: 'ThirdParty/Workers'},
-      ]),
-      new webpack.DefinePlugin({
-        CESIUM_BASE_URL: JSON.stringify('../') // Define relative base path in cesium for loading assets
-      }),
-      new webpack.IgnorePlugin(/draco/)
-      */
     ]
   },
 
