@@ -1,6 +1,8 @@
 const plugin = {
   install (Vue, options) {
-    console.log('Installing MaverickLog plugin')
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Installing MaverickLog plugin')
+    }
 
     Vue.mixin({
       methods: {
@@ -11,25 +13,27 @@ const plugin = {
           )
         },
         logError (message) {
-          console.log(
+          console.error(
             '%cError',
             'background: red; color: white; display: block; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
             message
           )
         },
         logInfo (message) {
-          console.log(
+          console.info(
             '%cInfo',
             'background: blue; color: white; display: block; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
             message
           )
         },
         logDebug (message) {
-          console.log(
-            '%cDebug',
-            'background: purple; color: white; display: block; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
-            message
-          )
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(
+              '%cDebug',
+              'background: purple; color: white; display: block; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
+              message
+            )
+          }
         }
       }
     })

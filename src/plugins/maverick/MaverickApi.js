@@ -3,7 +3,9 @@ import clients from './clients.json'
 
 const plugin = {
   install (Vue, options) {
-    console.log('Installing MaverickApi plugin')
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Installing MaverickApi plugin')
+    }
 
     Vue.mixin({
       data () {
