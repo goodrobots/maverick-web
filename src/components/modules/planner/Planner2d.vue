@@ -54,7 +54,7 @@ div.planner-map
         vl-feature(:id="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api")
           vl-geom-point(v-if="data && 'longitude' in data" :coordinates="[data.longitude, data.latitude]")
           vl-style-box
-            vl-style-icon(v-if="apis[api] && vfrHudData[api]" :src="apis[api].icon" :anchor="[0.5, 1]" :scale="api == activeApi ? 1 : 0.75" :opacity="api == activeApi ? 1 : 0.75" :rotation="vfrHudData[api].heading * (Math.PI/180)")
+            vl-style-icon(v-if="apis[api] && vfrHudData[api]" :src="publicPath + apis[api].icon" :anchor="[0.5, 1]" :scale="api == activeApi ? 1 : 0.75" :opacity="api == activeApi ? 1 : 0.75" :rotation="vfrHudData[api].heading * (Math.PI/180)")
             vl-style-circle(:radius="api == activeApi ? 6 : 4")
               vl-style-fill(:color="apis[api]['colorDark']")
               vl-style-stroke(color="#666666" :width="api == activeApi ? 2 : 1")
@@ -225,6 +225,8 @@ import { findPointOnSurface } from 'vuelayers/lib/ol-ext'
 export default {
   data () {
     return {
+      publicPath: process.env.BASE_URL,
+
       fav: true,
       menu: false,
       message: false,

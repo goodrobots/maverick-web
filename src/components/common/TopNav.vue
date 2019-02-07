@@ -38,7 +38,7 @@ div
           v-list
             v-list-tile(avatar v-for="(data, key) in vehicleData" :key="key" @click='changeApi(key)')
               v-list-tile-avatar
-                v-img(v-if="apis[key]" :src="apis[key].icon" contain=true)
+                v-img(v-if="apis[key]" :src="publicPath + apis[key].icon" contain=true)
               v-list-tile-content
                 v-list-tile-title {{ apis[key].name }}
                 v-list-tile-sub-title
@@ -65,6 +65,7 @@ export default {
   name: 'TopNav',
   data () {
     return {
+      publicPath: process.env.BASE_URL,
       vehicleStateData: {},
       vfrHudData: [],
       statusTextData: [],
