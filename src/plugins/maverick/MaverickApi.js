@@ -130,6 +130,44 @@ const plugin = {
           }
         },
 
+        mutateQuery (api, query, variables) {
+          let mutateFields = {
+            client: api,
+            mutation: query,
+            variables: variables
+          }
+          this.$apollo.mutate(
+            mutateFields
+          ).then((data) => {
+            this.logDebug(data)
+          }).catch((error) => {
+            this.logError(error)
+          })
+          /*
+          update: (store, { data: { updateMission } }) => {
+            // Read the data from our cache for this query.
+            const data = store.readQuery({ query: TAGS_QUERY })
+            // Add our tag from the mutation to the end
+            data.tags.push(addTag)
+            // Write our data back to the cache.
+            store.writeQuery({ query: TAGS_QUERY, data })
+          }
+          */
+          /*
+          // Optimistic UI
+          // Will be treated as a 'fake' result as soon as the request is made
+          // so that the UI can react quickly and the user be happy
+          optimisticResponse: {
+            __typename: 'Mutation',
+            addTag: {
+              __typename: 'Tag',
+              id: -1,
+              label: newTag,
+            },
+          },
+          */
+        },
+
         vehicleIcon (vehicleType) {
           const iconPath = 'img/icons/vehicleIcons/'
           if (vehicleType === 'Copter') {

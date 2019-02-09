@@ -18,11 +18,14 @@ div
                   v-list-tile-title(v-text="message.message")
                   v-list-tile-sub-title(v-text="(fcTime - message.secs > 60) ? Math.round((fcTime - message.secs) / 60) + ' minutes ago' : fcTime - message.secs + ' seconds ago'")
         // Armed/Disarmed button
-        v-btn(v-if="vehicleStateData[activeApi] && 'armed' in vehicleStateData[activeApi]" color="yellow" flat) ARMED
+        v-btn(v-if="vehicleStateData[activeApi] && vehicleStateData[activeApi].armed" color="yellow" flat) ARMED
         v-btn.transparent(v-else-if="vehicleStateData[activeApi]" flat ripple=false) DISARMED
         // Mode button
-        v-btn.transparent(v-if="vehicleStateData[activeApi]" v-html="vehicleStateData[activeApi].mode" depressed)
-        // v-select(:items="flightModes" overflow :label="vehicleStateData[activeApi].mode")
+        v-menu(v-if="vehicleStateData[activeApi]" offset-y transition="scale-transition" :max-height="height - 100")
+          v-btn(flat slot="activator" v-text="vehicleStateData[activeApi].mode")
+          v-list
+            v-list-tile(v-for="(mode, ix) in mavlinkGroup(vehicleModeGroup)" :key="ix" @click="changeMode(ix)")
+              v-list-tile-title {{ mode.name }}
         // Altitude button
         v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].altitude" v-html="'Alt<br>' + vfrHudData[activeApi].altitude.toFixed(2) + 'm'" flat ripple=false)
         // Heading button
@@ -57,7 +60,7 @@ div
 </template>
 
 <script>
-import { vehicleStateQuery, vehicleStateSubscription } from '../../plugins/graphql/gql/VehicleState.gql'
+import { vehicleStateQuery, vehicleStateSubscription, vehicleStateMutate } from '../../plugins/graphql/gql/VehicleState.gql'
 import { vfrHudQuery, vfrHudSubscription } from '../../plugins/graphql/gql/VfrHud.gql'
 import { statusTextQuery, statusTextSubscription } from '../../plugins/graphql/gql/StatusText.gql'
 
@@ -69,7 +72,6 @@ export default {
       vehicleStateData: {},
       vfrHudData: [],
       statusTextData: [],
-      flightModes: ['Guided', 'Stabilize'],
       tickers: {
         state: false,
         vfrHud: false
@@ -89,8 +91,8 @@ export default {
     activeApi () {
       return this.$store.state.activeApi
     },
-    routePath () {
-      return this.$store.state.route.path
+    height () {
+      return window.innerHeight
     },
     navIcon () {
       return this.$store.state.navIcon
@@ -101,14 +103,25 @@ export default {
     navDrawer () {
       return this.$store.state.navDrawer
     },
-    height () {
-      return window.innerHeight
+    routePath () {
+      return this.$store.state.route.path
     },
     statusData () {
       return this.$store.state.statusData
     },
     vehicleData () {
       return this.$store.state.vehicleData
+    },
+    vehicleModeGroup () {
+      if (this.vehicleData[this.activeApi].typeString == 'Copter' || this.vehicleData[this.activeApi].typeString == 'Heli') {
+        return 'COPTER_MODE'
+      } else if (this.vehicleData[this.activeApi].typeString == 'Plane') {
+        return 'PLANE_MODE'
+      } else if (this.vehicleData[this.activeApi].typeString == 'Rover' || this.vehicleData[this.activeApi].typeString == 'Boat') {
+        return 'ROVER_MODE'
+      } else if (this.vehicleData[this.activeApi].typeString == 'ArduSub') {
+        return 'SUB_MODE'
+      }
     }
   },
 
@@ -132,12 +145,9 @@ export default {
     changeApi (api) {
       this.$store.commit('setActiveApi', api)
     },
-    toggleDrawer () {
-      this.$store.commit('setNavDrawer', !this.$store.state.navDrawer)
-    },
-    setTickers () {
-      this.tickers.vehicleState = true
-      this.tickers.vfrHud = true
+    changeMode (mode) {
+      this.logDebug(`vehicleMode: setting value: ${mode}`)
+      this.mutateQuery(this.activeApi, vehicleStateMutate, { mode: mode })
     },
     processStatusText (data, key) {
       const api = key.split('___')[0]
@@ -145,6 +155,13 @@ export default {
         this.statusTextData[api] = []
       }
       this.statusTextData[api].push(data.data.StatusText)
+    },
+    setTickers () {
+      this.tickers.vehicleState = true
+      this.tickers.vfrHud = true
+    },
+    toggleDrawer () {
+      this.$store.commit('setNavDrawer', !this.$store.state.navDrawer)
     }
   }
 }
