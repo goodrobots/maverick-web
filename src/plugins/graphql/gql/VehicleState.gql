@@ -12,8 +12,8 @@ subscription vehicleStateSubscription {
   }
 }
 
-mutation vehicleStateMutate {
-  VehicleState {
+mutation vehicleStateMutate($mode: String!) {
+  VehicleState(mode: $mode) {
     ...VehicleState
   }
 }
