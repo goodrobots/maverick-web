@@ -22,6 +22,13 @@ const plugin = {
           } else {
             return enumKey
           }
+        },
+        mavlinkGroup (enumGroup) {
+          if (enumGroup in mavlinkEnums) {
+            return mavlinkEnums[enumGroup]
+          } else {
+            return null
+          }
         }
       }
     })
