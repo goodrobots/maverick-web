@@ -127,18 +127,15 @@ export default {
 
   watch: {
     // Watch apis state for any change and process
-    apis: {
+    activeApi: {
       handler: function (newValue) {
-        for (const api in this.apis) {
-          this.createQuery('VehicleState', vehicleStateQuery, api, 'vehicleStateData')
-          this.createSubscription('VehicleState', vehicleStateSubscription, api, 'vehicleStateData')
-          this.createQuery('VfrHud', vfrHudQuery, api, 'vfrHudData')
-          this.createSubscription('VfrHud', vfrHudSubscription, api, 'vfrHudData')
-          this.createQuery('StatusText', statusTextQuery, api, null, this.processStatusText)
-          this.createSubscription('StatusText', statusTextSubscription, api, null, this.processStatusText)
-        }
+        this.createQueries()
       }
     }
+  },
+
+  mounted () {
+    this.createQueries()
   },
 
   methods: {
@@ -148,6 +145,16 @@ export default {
     changeMode (mode) {
       this.logDebug(`vehicleMode: setting value: ${mode}`)
       this.mutateQuery(this.activeApi, vehicleStateMutate, { mode: mode })
+    },
+    createQueries () {
+      if (this.activeApi) {
+        this.createQuery('VehicleState', vehicleStateQuery, this.activeApi, 'vehicleStateData')
+        this.createSubscription('VehicleState', vehicleStateSubscription, this.activeApi, 'vehicleStateData')
+        this.createQuery('VfrHud', vfrHudQuery, this.activeApi, 'vfrHudData')
+        this.createSubscription('VfrHud', vfrHudSubscription, this.activeApi, 'vfrHudData')
+        this.createQuery('StatusText', statusTextQuery, this.activeApi, null, this.processStatusText)
+        this.createSubscription('StatusText', statusTextSubscription, this.activeApi, null, this.processStatusText)
+      }
     },
     processStatusText (data, key) {
       const api = key.split('___')[0]
@@ -164,6 +171,7 @@ export default {
       this.$store.commit('setNavDrawer', !this.$store.state.navDrawer)
     }
   }
+
 }
 </script>
 
