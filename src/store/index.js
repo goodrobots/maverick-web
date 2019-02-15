@@ -28,6 +28,7 @@ export default new Vuex.Store({
     statusData: {},
     vehicleData: {},
     activeApi: null,
+    appVisible: true,
     bingMapsKey:
       'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6'
   },
@@ -62,6 +63,9 @@ export default new Vuex.Store({
     },
     setApiSeen (state, data) {
       state.apiTimestamps[data.api] = data.value
+    },
+    setAppVisible (state, data) {
+      state.appVisible = data
     },
     setStatusData (state, data) {
       if (data.api in state.statusData) {

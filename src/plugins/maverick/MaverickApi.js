@@ -22,6 +22,18 @@ const plugin = {
         }
       },
 
+      watch: {
+        appVisible (newValue) {
+          if (newValue) {
+            this.logInfo('App Visibility changed to Visible, turning on all GraphQL queries')
+            this.$apollo.skipAll = false
+          } else {
+            this.logInfo('App Visibility changed to Invisible, turning off all GraphQL queries')
+            this.$apollo.skipAll = true
+          }
+        }
+      },
+
       mounted () {
         // Only execute this if root component, otherwise skip it.
         // Theoretically, this should execute once after the main Vue component is loaded,

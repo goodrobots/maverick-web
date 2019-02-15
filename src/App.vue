@@ -100,7 +100,7 @@ export default {
     }
   },
 
-  created () {
+  mounted () {
     this.logBanner('** Welcome to Maverick Web GCS **')
   },
 

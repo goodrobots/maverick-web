@@ -61,11 +61,7 @@ v-container.fluid.grid-list-xl
 
 <script>
 // import Vue from 'vue'
-import {
-  paramsQuery,
-  paramsSubscription
-  // updateParam
-} from '../../../plugins/graphql/gql/Parameters.gql'
+import { paramsQuery, paramsSubscription } from '../../../plugins/graphql/gql/Parameters.gql'
 
 export default {
   name: 'ConfigParamSummary',
@@ -75,37 +71,27 @@ export default {
       paramData: []
     }
   },
-  computed: {
-    activeApi () {
-      return this.$store.state.activeApi
-    }
-  },
 
   watch: {
     // Watch apis state for any change and process
     activeApi: {
       handler: function (newValue) {
         this.logDebug('activeApi changed: ' + newValue)
-        this.createQuery('params', paramsQuery, newValue, 'paramData', this.processParamQuery)
-        this.createSubscription('params', paramsSubscription, newValue, 'paramData')
+        this.createQlQueries()
       }
     }
   },
 
+  mounted () {
+    this.createQlQueries()
+  },
+
   methods: {
-    valueFormat (param) {
-      if (param && param.meta && param.meta.units) {
-        return `${param.value} <span class="caption"><strong>${
-          param.meta.units
-        }</strong></span>`
+    createQlQueries () {
+      if (this.activeApi) {
+        this.createQuery('Params', paramsQuery, this.activeApi, 'paramsData', !this.apis[this.activeApi].state)
+        this.createSubscription('Params', paramsSubscription, this.activeApi, 'paramsData', !this.apis[this.activeApi].state)
       }
-      if (param && param.meta && param.meta.values) {
-        const values = JSON.parse(param.meta.values)
-        if (values[param.value]) {
-          return values[param.value]
-        }
-      }
-      return param ? param.value : null
     },
     findParam (id) {
       return this.params.find(x => x.id === id)
@@ -121,6 +107,20 @@ export default {
           this.$store.commit('setStatusData', { api: api, message: data.data.Status })
         }
       }
+    },
+    valueFormat (param) {
+      if (param && param.meta && param.meta.units) {
+        return `${param.value} <span class="caption"><strong>${
+          param.meta.units
+        }</strong></span>`
+      }
+      if (param && param.meta && param.meta.values) {
+        const values = JSON.parse(param.meta.values)
+        if (values[param.value]) {
+          return values[param.value]
+        }
+      }
+      return param ? param.value : null
     }
   }
 

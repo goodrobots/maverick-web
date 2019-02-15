@@ -9796,6 +9796,11 @@ vue-timers@^1.10.0:
   resolved "https://registry.yarnpkg.com/vue-timers/-/vue-timers-1.10.0.tgz#96031623d8388eb6b70e97bfed067a34b9cafe3f"
   integrity sha512-hxGDUSsKFPFxNtg6sp3ELO7ZqQ10kddvrld5vepXZIeQrg7ScIAYlx7Dk9UJNU1Dny1OlIl9URJocz/nhx2j9w==
 
+vue-visibility-change@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/vue-visibility-change/-/vue-visibility-change-1.2.0.tgz#956ff6f25fab3ad1d8d7b6f05cdde0e446233c0e"
+  integrity sha512-6VE7HU0Lur0Ug9DIOTu/S2nV55J6IdG2NWAy4bEGBcVfOAcqQpa8RQIUEEcQh7l2MuqQ3sIHMlZuc4/D55v5Zg==
+
 vue@^2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.2.tgz#1cc9c9c8f7ba8df45e9b97c284947de78b76301c"
