@@ -108,7 +108,7 @@ export default {
     checkApis () {
       // If an api hasn't been seen for more than 10 seconds, mark it as dead
       for (const api in this.apis) {
-        if (performance.now() - this.$store.state.apiTimestamps[api] > 10000) {
+        if (this.appVisible && performance.now() - this.$store.state.apiTimestamps[api] > 10000) {
           console.log(`deadapi? api: ${api}, timestamp: ${this.$store.state.apiTimestamps[api]}`)
           this.$store.commit('setApiState', { api: api, value: false })
         }
