@@ -390,8 +390,8 @@ export default {
 
         // If we have a new waypoint, construct feature object and add
         if (oldValue.length > 0 && newValue.length > oldValue.length) {
-          this.logDebug(`New waypoint added, was ${oldValue.length}, now ${newValue.length}, saving mission`)
-          if (!changed[0].id.startsWith('w_')) {
+          if (!changed[0].id.startsWith('w_') && !changed[0].id.startsWith('v_')) {
+            this.logDebug(`New waypoint added, was ${oldValue.length}, now ${newValue.length}, saving mission`)
             // Add a waypoint object into missionActive
             this.missionActive[this.activeApi].mission.push({
               seq: newValue.length,
