@@ -14,11 +14,11 @@ v-card.transparent.navfab
         v-icon settings
       span Configuration
     v-tooltip(v-if="(moduleName !== 'planner')" left)
-      v-btn(fab dark :small="(moduleName !== 'planner')" color="mavorange" to="/planner" slot="activator")
+      v-btn(fab dark :small="(moduleName !== 'planner')" color="mavblue" to="/planner" slot="activator")
         v-icon explore
       span Planner
     v-tooltip(v-if="(moduleName !== 'cockpit')" left)
-      v-btn(fab dark :small="(moduleName !== 'cockpit')" color="mavblue" to="/cockpit" slot="activator")
+      v-btn(fab dark :small="(moduleName !== 'cockpit')" color="mavorange" to="/cockpit" slot="activator")
         v-icon flight_takeoff
       span Cockpit
     v-tooltip(left)

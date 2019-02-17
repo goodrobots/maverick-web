@@ -1,7 +1,7 @@
 <template lang='pug'>
 div
   transition(name="slide-y-transition" mode="out-in")
-    v-toolbar(app fixed dense flat clipped-left :color="navColor + ' darken-4'" :height=48)
+    v-toolbar(app fixed dense flat clipped-left color="mavgrey darken-4" :height=48)
       v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" flat left small to="/"): img(:src="publicPath + 'img/logos/maverick-logo-white.svg'" height='35px')
       v-spacer
       v-toolbar-items
@@ -53,6 +53,9 @@ div
                     div
                       v-icon(color='error' small) block
                       span &nbsp; No Link
+
+      v-btn(:color="navColor" small) {{ moduleName | capitalize }}
+
       v-fade-transition(mode="out-in")
         v-toolbar-side-icon(v-if="navIcon" @click.stop="toggleDrawer")
   v-snackbar(v-if="statusText" :timeout="6000" color="red" :top="true" v-model="snackbar") {{ statusText.message }}
@@ -66,6 +69,15 @@ import { statusTextQuery, statusTextSubscription } from '../../plugins/graphql/g
 
 export default {
   name: 'TopNav',
+
+  filters: {
+    capitalize: function (value) {
+      if (!value) return ''
+      value = value.toString()
+      return value.charAt(0).toUpperCase() + value.slice(1)
+    }
+  },
+
   data () {
     return {
       publicPath: process.env.BASE_URL,
@@ -93,6 +105,9 @@ export default {
     },
     height () {
       return window.innerHeight
+    },
+    moduleName () {
+      return this.$store.state.moduleName
     },
     navIcon () {
       return this.$store.state.navIcon

@@ -29,8 +29,21 @@ export default new Vuex.Store({
     vehicleData: {},
     activeApi: null,
     appVisible: true,
-    bingMapsKey:
-      'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6'
+    bingMapsKey: 'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6',
+    moduleData: {
+      'cockpit': {
+        'color': 'mavorange'
+      },
+      'planner': {
+        'color': 'mavblue'
+      },
+      'config': {
+        'color': 'mavpurple'
+      },
+      'analysis': {
+        'color': 'mavgreen'
+      }
+    }
   },
 
   mutations: {

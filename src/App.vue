@@ -22,7 +22,6 @@ export default {
   components: { BottomNav, TopNav, ActionButton },
   data () {
     return {
-      epoch: performance.now()
     }
   },
 
@@ -38,47 +37,29 @@ export default {
       switch (true) {
         case /^\/cockpit/.test(this.$store.state.route.path):
           this.$store.commit('setModuleName', 'cockpit')
+          this.$store.commit('setNavIcon', false)
           break
         case /^\/planner/.test(this.$store.state.route.path):
           this.$store.commit('setModuleName', 'planner')
+          this.$store.commit('setNavIcon', false)
           break
         case /^\/config/.test(this.$store.state.route.path):
           this.$store.commit('setModuleName', 'config')
+          this.$store.commit('setNavIcon', true)
           break
         case /^\/analysis/.test(this.$store.state.route.path):
           this.$store.commit('setModuleName', 'analysis')
+          this.$store.commit('setNavIcon', false)
           break
         case /^\/test/.test(this.$store.state.route.path):
           this.$store.commit('setModuleName', 'test')
+          this.$store.commit('setNavIcon', false)
           break
         default:
+          this.$store.commit('setNavIcon', false)
           this.$store.commit('setModuleName', 'home')
       }
-      switch (this.$store.state.moduleName) {
-        case 'cockpit':
-          this.$store.commit('setNavColor', 'mavblue')
-          this.$store.commit('setNavIcon', false)
-          break
-        case 'planner':
-          this.$store.commit('setNavColor', 'mavorange')
-          this.$store.commit('setNavIcon', false)
-          break
-        case 'config':
-          this.$store.commit('setNavColor', 'mavpurple')
-          this.$store.commit('setNavIcon', true)
-          break
-        case 'analysis':
-          this.$store.commit('setNavColor', 'mavgreen')
-          this.$store.commit('setNavIcon', false)
-          break
-        case 'test':
-          this.$store.commit('setNavColor', 'mavpurple')
-          this.$store.commit('setNavIcon', false)
-          break
-        default:
-          this.$store.commit('setNavColor', null)
-          this.$store.commit('setNavIcon', false)
-      }
+      this.$store.commit('setNavColor', this.$store.state.moduleData[this.$store.state.moduleName].color)
       return this.$store.state.moduleName
     },
     navState () {
