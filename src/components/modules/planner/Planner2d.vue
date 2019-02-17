@@ -24,7 +24,7 @@ div.planner-map
       vl-source-xyz(key="googleterrain" url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}")
 
     // Interactions
-    // vl-interaction-select(:features.sync="selectedFeatures" v-if="waypointMode == 'select'")
+    vl-interaction-select(:features.sync="selectedFeatures" v-if="waypointMode == 'select'")
       // template(slot-scope="select")
         // selected feature popup
         vl-overlay.feature-popup(v-for="feature in select.features" :key="feature.id" :id="feature.id" :position="pointOnSurface(feature.geometry)" :auto-pan="false" :auto-pan-animation="{ duration: 300 }")
@@ -91,10 +91,6 @@ div.planner-map
     template(v-if="activeApi && selectedMission")
       vl-layer-vector
         vl-source-vector(ref="waypointLayer" ident="waypoint-draw-target" :features.sync="waypointFeatures")
-          // vl-style-box
-            vl-style-circle(:radius=11)
-              vl-style-fill(:color="apis[activeApi]['colorLight']")
-              vl-style-stroke(:color="apis[activeApi]['colorDark']" :width=2)
       // vl-layer-vector
         vl-source-vector(ref="waypointLayer" ident="waypoint-draw-target" :features.sync="waypointFeatures")
           vl-feature(v-if="missionActive[activeApi]" v-for="(waypoint, index) in missionActive[activeApi].mission" :id="'w_' + index" :key="'w_' + index")
@@ -183,7 +179,7 @@ div.planner-map
           v-card-text
             v-layout(row wrap)
               v-flex(xs12)
-                v-btn(color="red" small outline @click="deleteWaypoint(waypoint.seq)") Delete
+                v-btn(@click.stop="deleteDialog = true" color="red" small outline) Delete
                 div {{ mavlinkEnum('MAV_CMD', waypoint.command).description }}
                 // Waypoint Type: NAV_WAYPOINT
                 template(v-if="waypoint.command == '16'")
@@ -212,6 +208,18 @@ div.planner-map
                     v-radio(label="Select" value="select")
                     v-radio(label="Modify" value="modify")
                     v-radio(label="Add" value="draw")
+
+  v-dialog(v-if="activeWaypoint" v-model="deleteDialog" max-width="290" hide-overlay=true)
+    v-card
+      v-card-title
+        span.headline.red--text Delete Waypoint: <strong>{{ activeWaypoint.seq }}</strong>?
+        h3 ({{ mavlinkEnum('MAV_CMD', activeWaypoint.command).description }})
+      v-card-text
+        div Are you sure you want to delete this mission waypoint?  This action is irreversible!
+      v-card-actions
+        v-spacer
+        v-btn(flat @click="deleteDialog = false") Cancel
+        v-btn(flat color="red darken-1" @click="deleteWaypoint(activeWaypoint.seq); deleteDialog = false") Delete
 </template>
 
 <script>
@@ -240,12 +248,14 @@ export default {
       selectedMission: 'loaded',
       viewExtents: null,
       selectedFeatures: [],
+      deleteDialog: false,
 
       waypointMode: 'select',
       waypointDrawMode: 'point',
       waypointFeatures: [],
       waypointActive: [],
       selectedWaypoint: null,
+      activeWaypoint: null,
 
       missionmenu: false,
       mapmenu: false,
@@ -356,13 +366,15 @@ export default {
       // If a waypoint is selected, ...
       } else if (newValue.length === 1 && newValue[0].id && newValue[0].id.startsWith('w_')) {
         this.selectedWaypoint = newValue[0].id.replace('w_', '')
-        this.logDebug(`Waypoint selected: ${this.selectedWaypoint}`)
         this.waypointActive[this.selectedWaypoint] = true
+        this.activeWaypoint = this.missionActive[this.activeApi].mission[this.selectedWaypoint]
 
       // Otherwise..
       } else {
-        this.logDebug('something selected')
-        // TODO: unselect all waypoints (and vehicles?)
+        // Unselect all waypoints
+        for (let wp in this.waypointActive) {
+          this.waypointActive[wp] = false
+        }
       }
     },
     selectedMission: {
@@ -371,73 +383,38 @@ export default {
         this.fitMapview()
       }
     },
-    /*
-    vehicleLocation: {
-      handler: function (newValue, oldValue) {
-        // this.logDebug(`heading: ${this.vfrHudData[this.activeApi].heading}`)
-        // If mapcenter option set, or vehicleLocation empty, and single api has been chosen, set vehicleLocation from current position
-        if (
-          (this.mapCenter || (!this.xycenter || this.xycenter.length === 0)) &&
-          this.activeApi &&
-          !oldValue.every(e => newValue.includes(e)) // is oldValue array different to newValue array?
-        ) {
-          if (newValue.length !== 0 && this.$refs.mapView.$view) {
-            this.xycenter = newValue
-            this.fitMapview()
-          }
-        }
-      }
-    },
-    */
-    /*
-    vfrHudData: {
-      handler: function (newValue) {
-        // this.logDebug(`heading: ${this.vfrHudData[this.activeApi].heading}`)
-        if (this.activeApi) {
-          // this.logDebug(newValue[this.activeApi].heading)
-        }
-      },
-      deep: true
-    },
-    */
     waypointFeatures: {
       handler: function (newValue, oldValue) {
         // If there is a changed waypoint, try to mutate the coordinates back to the api
         const changed = this._.differenceWith(newValue, oldValue, this._.isEqual).filter(feature => feature.id !== 'wayLines')
 
         // If we have a new waypoint, construct feature object and add
-        /*
         if (oldValue.length > 0 && newValue.length > oldValue.length) {
           this.logDebug(`New waypoint added, was ${oldValue.length}, now ${newValue.length}, saving mission`)
-          // Add a waypoint object into missionActive
-          this.missionActive[this.activeApi].mission.push({
-            seq: newValue.length,
-            isCurrent: false,
-            autocontinue: true,
-            frame: 3,
-            command: 16,
-            param1: 0,
-            param2: 0,
-            param3: 0,
-            param4: 0,
-            latitude: changed[0].geometry.coordinates[1],
-            longitude: changed[0].geometry.coordinates[0],
-            altitude: 50
-          })
-          // Remove __typename from all waypoints
-          for (const _mwaypoint of this.missionActive[this.activeApi].mission) {
-            delete _mwaypoint.__typename
+          if (!changed[0].id.startsWith('w_')) {
+            // Add a waypoint object into missionActive
+            this.missionActive[this.activeApi].mission.push({
+              seq: newValue.length,
+              isCurrent: false,
+              autocontinue: true,
+              frame: 3,
+              command: 16,
+              param1: 0,
+              param2: 0,
+              param3: 0,
+              param4: 0,
+              latitude: changed[0].geometry.coordinates[1],
+              longitude: changed[0].geometry.coordinates[0],
+              altitude: 50
+            })
+            this.saveMission(this.missionActive[this.activeApi].mission)
           }
-          // Save the new waypoint mission
-          this.saveMission(this.missionActive[this.activeApi].mission)
-          this.logDebug(this.missionActive[this.activeApi].mission)
-        */
+
         // Else if we have a changed waypoint, commit it
-        if (changed) {
+        } else if (changed) {
           if (changed.length === 1 && changed[0].id.startsWith('w_')) {
             const waypoint = this._.toInteger(changed[0].id.replace('w_', ''))
             this.logDebug(`Waypoint ${waypoint} changed, saving mission`)
-            this.logDebug(changed)
             // Update the waypoint coordinates into missionActive
             for (const _mwaypoint of this.missionActive[this.activeApi].mission) {
               if (_mwaypoint.seq === waypoint) {
@@ -455,7 +432,7 @@ export default {
 
   mounted () {
     this.createQlQueries()
-    setTimeout(() => { this.fitMapview() }, 2000) // On first mount, give the map time to setup before fitting extents
+    setTimeout(() => { this.fitMapview() }, 1500) // On first mount, give the map time to setup before fitting extents
   },
 
   methods: {
@@ -489,7 +466,6 @@ export default {
     deleteWaypoint (seq) {
       this.logDebug(`deleteWaypoint: ${seq}`)
       this.missionActive[this.activeApi].mission = this._.orderBy(this.missionActive[this.activeApi].mission)
-      this.logDebug(this.missionActive[this.activeApi].mission)
       let waypointFound = false
       for (const waypoint in this.missionActive[this.activeApi].mission) {
         // If we've already deleted the waypoint, decrement all future seq numbers
@@ -548,7 +524,6 @@ export default {
       for (let waypoint of data) {
         delete waypoint.__typename
       }
-
       // Mutate mission
       this.mutateQuery(this.activeApi, missionListMutate, {
         id: this.selectedMission,
