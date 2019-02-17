@@ -24,10 +24,10 @@ const plugin = {
 
       watch: {
         appVisible (newValue) {
-          if (newValue) {
+          if (newValue && this.$apollo) {
             this.logInfo('App Visibility changed to Visible, turning on all GraphQL queries')
             this.$apollo.skipAll = false
-          } else {
+          } else if (this.$apollo) {
             this.logInfo('App Visibility changed to Invisible, turning off all GraphQL queries')
             this.$apollo.skipAll = true
           }
