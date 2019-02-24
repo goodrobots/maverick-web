@@ -194,6 +194,8 @@ const plugin = {
             return iconPath + '078-car-3.svg'
           } else if (vehicleType === 'Boat') {
             return iconPath + '096-boat.svg'
+          } else {
+            return null
           }
         }
       }

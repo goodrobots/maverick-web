@@ -59,7 +59,9 @@ export default {
           this.$store.commit('setNavIcon', false)
           this.$store.commit('setModuleName', 'home')
       }
-      this.$store.commit('setNavColor', this.$store.state.moduleData[this.$store.state.moduleName].color)
+      if (this.$store.state.moduleName in this.$store.state.moduleData) {
+        this.$store.commit('setNavColor', this.$store.state.moduleData[this.$store.state.moduleName].color)
+      }
       return this.$store.state.moduleName
     },
     navState () {
@@ -90,7 +92,7 @@ export default {
       // If an api hasn't been seen for more than 10 seconds, mark it as dead
       for (const api in this.apis) {
         if (this.appVisible && performance.now() - this.$store.state.apiTimestamps[api] > 10000) {
-          console.log(`deadapi? api: ${api}, timestamp: ${this.$store.state.apiTimestamps[api]}`)
+          this.logInfo(`deadapi? api: ${api}, timestamp: ${this.$store.state.apiTimestamps[api]}`)
           this.$store.commit('setApiState', { api: api, value: false })
         }
       }
@@ -109,14 +111,19 @@ export default {
     processStatusSubscription (data, key) {
       const api = key.split('___')[0]
       // Store the message data and set the api state to active, for subsequent subscription callbacks
-      if (this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
+      if (data.data && this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
       this.$store.commit('setApiSeen', { api: api, value: performance.now() })
-      if (this.$store.state.statusData[api] !== data.data.Status) {
+      if (data.data && this.$store.state.statusData[api] !== data.data.Status) {
         this.$store.commit('setStatusData', { api: api, message: data.data.Status })
       }
     },
     processVehicleInfoQuery (data, key) {
       const api = key.split('___')[0]
+      if (!data.data) {
+        this.logInfo(`Invalid GraphQL 'VehicleInfo' data returned from api: ${api}`)
+        this.$store.commit('setVehicleData', { api: api, message: null })
+        return false
+      }
       if (this.$store.state.vehicleData[api] !== data.data.VehicleInfo) {
         this.$store.commit('setVehicleData', { api: api, message: data.data.VehicleInfo })
       }
