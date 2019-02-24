@@ -10,10 +10,10 @@ v-container(fluid)
         v-container
           v-layout(row wrap justify-center)
             v-flex(xs12 sm6 md6 lg3 text-xs-center)
-              v-btn(color='mavblue' to='/cockpit') Cockpit
+              v-btn(color='mavorange' to='/cockpit') Cockpit
                 v-icon(right) flight_takeoff
             v-flex(xs12 sm6 md6 lg3 text-xs-center)
-              v-btn(color='mavorange' to='/planner') Planner
+              v-btn(color='mavblue' to='/planner') Planner
                 v-icon(right) explore
             v-flex(xs12 sm6 md6 lg3 text-xs-center)
               v-btn(color='mavpurple' to='/config') Config
