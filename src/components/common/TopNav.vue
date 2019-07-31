@@ -32,7 +32,15 @@ div
         v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].heading && !$vuetify.breakpoint.smAndDown" v-html="'Hdg<br>' + vfrHudData[activeApi].heading" flat ripple=false)
         // Speed button
         v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].groundspeed && !$vuetify.breakpoint.smAndDown" v-html="'Spd<br>' + vfrHudData[activeApi].groundspeed.toFixed(2)" flat ripple=false)
+
       v-spacer
+
+      v-menu(offset-y transition="scale-transition" left=true nudge-bottom="10")
+        v-btn(:color="navColor" small slot="activator") {{ moduleName | capitalize }}
+        v-list
+          v-list-tile(avatar v-for="(data, key) in $store.state.moduleData" :key="key" @click='changeModule(key)' :color="data.color")
+            v-btn(:color="data.color" :to="'/' + key" block) {{ key | capitalize }}
+                  v-icon(right) {{ data.icon }}
 
       v-toolbar-items
         v-menu(offset-y transition="scale-transition" left=true)
@@ -54,10 +62,9 @@ div
                       v-icon(color='error' small) block
                       span &nbsp; No Link
 
-      v-btn(:color="navColor" small) {{ moduleName | capitalize }}
-
       v-fade-transition(mode="out-in")
         v-toolbar-side-icon(v-if="navIcon" @click.stop="toggleDrawer")
+
   v-snackbar(v-if="statusText" :timeout="6000" color="red" :top="true" v-model="snackbar") {{ statusText.message }}
     v-btn(flat @click.native="snackbar = false") CLOSE
 </template>
@@ -160,6 +167,9 @@ export default {
     changeMode (mode) {
       this.logDebug(`vehicleMode: setting value: ${mode}`)
       this.mutateQuery(this.activeApi, vehicleStateMutate, { mode: mode })
+    },
+    changeModule (module) {
+      // this.$store.
     },
     createQueries () {
       if (this.activeApi) {

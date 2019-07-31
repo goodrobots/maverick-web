@@ -76,7 +76,6 @@ export default {
         for (const api in this.apis) {
           this.createQuery('Status', statusQuery, api, null, this.processStatusQuery)
           this.createSubscription('Status', statusSubscription, api, null, this.processStatusSubscription)
-          this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, this.processVehicleInfoQuery, null, null, { uuid: '' })
         }
       },
       deep: true
@@ -102,6 +101,11 @@ export default {
       if (data.data && 'Status' in data.data) {
         // Store the message data and set the api state to active, only for the first callback
         if (this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
+        // If the uuid for the api has not already been set, set it and create a VehicleInfo query (which needs the uuid to be created)
+        if (!this.$store.state.apis[api].uuid) {
+          this.$store.commit('setApiUuid', { api: api, value: data.data.Status.id })
+          this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, this.processVehicleInfoQuery, null, null, { uuid: this.$store.state.apis[api].uuid })          
+        }
         if (this.$store.state.apiTimestamps[api] === null) this.$store.commit('setApiSeen', { api: api, value: performance.now() })
         if (!(api in this.$store.state.statusData)) {
           this.$store.commit('setStatusData', { api: api, message: data.data.Status })

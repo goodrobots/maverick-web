@@ -32,16 +32,20 @@ export default new Vuex.Store({
     bingMapsKey: 'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6',
     moduleData: {
       'cockpit': {
-        'color': 'mavorange'
+        'color': 'mavorange',
+        'icon': 'flight_takeoff'
       },
       'planner': {
-        'color': 'mavblue'
+        'color': 'mavblue',
+        'icon': 'explore'
       },
       'config': {
-        'color': 'mavpurple'
+        'color': 'mavpurple',
+        'icon': 'settings'
       },
       'analysis': {
-        'color': 'mavgreen'
+        'color': 'mavgreen',
+        'icon': 'equalizer'
       }
     }
   },
@@ -67,6 +71,9 @@ export default new Vuex.Store({
     },
     setApiState (state, data) {
       state.apis[data.api].state = data.value
+    },
+    setApiUuid (state, data) {
+      state.apis[data.api].uuid = data.value
     },
     setApiIcon (state, data) {
       state.apis[data.api].icon = data.value

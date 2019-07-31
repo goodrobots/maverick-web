@@ -58,7 +58,7 @@ const plugin = {
           // Add a vuex apis entry
           this.$store.commit('addApi', {
             title: api,
-            value: { ...clientdata, ...{ state: false, auth: false, icon: null } }
+            value: { ...clientdata, ...{ state: false, auth: false, icon: null, uuid: null } }
           })
           // Set the client auth token
           if (clientdata.authToken) {

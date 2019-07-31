@@ -51,7 +51,7 @@ div.planner-map
     // Add marker for vehicles
     vl-layer-vector
       vl-source-vector(ref="vehicleLayer")
-        vl-feature(:id="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api")
+        vl-feature(:id="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api" v-if="data")
           vl-geom-point(v-if="data && 'longitude' in data" :coordinates="[data.longitude, data.latitude]")
           vl-style-box
             vl-style-icon(v-if="apis[api] && vfrHudData[api]" :src="publicPath + apis[api].icon" :anchor="[0.5, 1]" :scale="api == activeApi ? 1 : 0.75" :opacity="api == activeApi ? 1 : 0.75" :rotation="vfrHudData[api].heading * (Math.PI/180)")
@@ -93,7 +93,7 @@ div.planner-map
         vl-source-vector(ref="waypointLayer" ident="waypoint-draw-target" :features.sync="waypointFeatures")
       // vl-layer-vector
         vl-source-vector(ref="waypointLayer" ident="waypoint-draw-target" :features.sync="waypointFeatures")
-          vl-feature(v-if="missionActive[activeApi]" v-for="(waypoint, index) in missionActive[activeApi].mission" :id="'w_' + index" :key="'w_' + index")
+          vl-feature(v-if="missionActive[activeApi] && waypoint" v-for="(waypoint, index) in missionActive[activeApi].mission" :id="'w_' + index" :key="'w_' + index")
             vl-geom-point(v-if="waypoint.longitude && waypoint.latitude" :coordinates="[waypoint.longitude, waypoint.latitude]")
             vl-style-box
               vl-style-circle(:radius=11)
@@ -387,7 +387,6 @@ export default {
       handler: function (newValue, oldValue) {
         // If there is a changed waypoint, try to mutate the coordinates back to the api
         const changed = this._.differenceWith(newValue, oldValue, this._.isEqual).filter(feature => feature.id !== 'wayLines')
-
         // If we have a new waypoint, construct feature object and add
         if (oldValue.length > 0 && newValue.length > oldValue.length) {
           if (!changed[0].id.startsWith('w_') && !changed[0].id.startsWith('v_')) {
