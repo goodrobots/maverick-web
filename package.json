@@ -1,6 +1,6 @@
 {
   "name": "maverick-web",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -11,49 +11,67 @@
     "apollo-cache-inmemory": "^1.6.2",
     "apollo-client": "^2.6.3",
     "apollo-link": "^1.2.12",
-    "apollo-link-context": "^1.0.18",
-    "apollo-link-error": "^1.1.11",
     "apollo-link-http": "^1.5.15",
-    "apollo-link-ws": "^1.0.18",
-    "apollo-upload-client": "^11.0.0",
+    "core-js": "^2.6.5",
     "graphql": "^14.4.2",
     "graphql-tag": "^2.10.1",
-    "lodash": "^4.17.15",
     "pixi.js": "^5.1.0",
     "register-service-worker": "^1.6.2",
-    "subscriptions-transport-ws": "^0.9.16",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-rc.2",
     "vue-cesium": "^0.0.22",
+    "vue-cli-plugin-apollo": "^0.21.0",
     "vue-fullscreen": "^2.1.5",
     "vue-lodash": "^2.0.2",
     "vue-router": "^3.0.7",
     "vue-timers": "^2.0.2",
     "vue-visibility-change": "^1.2.1",
     "vuelayers": "^0.11.4",
-    "vuetify": "^2.0.3",
+    "vuetify": "^2.0.0",
     "vuex": "^3.1.1",
     "vuex-router-sync": "^5.0.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.9.2",
-    "@vue/cli-plugin-eslint": "^3.9.2",
-    "@vue/cli-plugin-pwa": "^3.9.0",
-    "@vue/cli-service": "^3.9.3",
+    "@vue/cli-plugin-babel": "^3.9.0",
+    "@vue/cli-plugin-eslint": "^3.9.0",
+    "@vue/cli-service": "^3.9.0",
     "@vue/cli-shared-utils": "^3.9.0",
-    "cesium": "^1.59.0",
-    "css-loader": "^3.1.0",
-    "node-sass": "^4.12.0",
-    "postcss-import": "^12.0.1",
+    "babel-eslint": "^10.0.1",
+    "deepmerge": "^4.0.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "fibers": "^4.0.1",
     "pug": "^2.0.4",
     "pug-plain-loader": "^1.0.0",
+    "sass": "^1.22.9",
     "sass-loader": "^7.1.0",
-    "style-loader": "^0.23.1",
-    "stylus": "^0.54.5",
-    "stylus-loader": "^3.0.2",
-    "vue-cli-plugin-apollo": "^0.21.0",
+    "typescript": "^3.5.3",
+    "vue-cli-plugin-vuetify": "^0.6.1",
     "vue-template-compiler": "^2.6.10",
-    "webpack": "^4.38.0",
-    "yarn-upgrade-all": "^0.5.0"
-  }
+    "vuetify-loader": "^1.2.2",
+    "webpack": "^4.38.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
 }

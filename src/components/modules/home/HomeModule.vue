@@ -11,16 +11,16 @@ v-container(fluid)
           v-layout(row wrap justify-center)
             v-flex(xs12 sm6 md6 lg3 text-xs-center)
               v-btn(color='mavorange' to='/cockpit') Cockpit
-                v-icon(right) flight_takeoff
+                v-icon(right) mdi-airplane-takeoff
             v-flex(xs12 sm6 md6 lg3 text-xs-center)
               v-btn(color='mavblue' to='/planner') Planner
-                v-icon(right) explore
+                v-icon(right) mdi-map-marker-circle
             v-flex(xs12 sm6 md6 lg3 text-xs-center)
               v-btn(color='mavpurple' to='/config') Config
-                v-icon(right) settings
+                v-icon(right) mdi-settings
             v-flex(xs12 sm6 md6 lg3 text-xs-center)
               v-btn(color='mavgreen' to='/analysis') Analysis
-                v-icon(right) equalizer
+                v-icon(right) mdi-equalizer
     v-flex(xs12)
       v-spacer
   v-footer.transparent(absolute height="auto")

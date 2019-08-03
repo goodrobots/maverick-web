@@ -19,7 +19,7 @@ div
                   v-list-tile-sub-title(v-text="(fcTime - message.secs > 60) ? Math.round((fcTime - message.secs) / 60) + ' minutes ago' : fcTime - message.secs + ' seconds ago'")
         // Armed/Disarmed button
         v-btn(v-if="vehicleStateData[activeApi] && vehicleStateData[activeApi].armed" color="yellow" flat) ARMED
-        v-btn.transparent(v-else-if="vehicleStateData[activeApi]" flat ripple=false) DISARMED
+        v-btn.transparent(v-else-if="vehicleStateData[activeApi]" flat) DISARMED
         // Mode button
         v-menu(v-if="vehicleStateData[activeApi]" offset-y transition="scale-transition" :max-height="height - 100")
           v-btn(flat slot="activator" v-text="vehicleStateData[activeApi].mode")
@@ -27,11 +27,11 @@ div
             v-list-tile(v-for="(mode, ix) in mavlinkGroup(vehicleModeGroup)" :key="ix" @click="changeMode(ix)")
               v-list-tile-title {{ mode.name }}
         // Altitude button
-        v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].altitude" v-html="'Alt<br>' + vfrHudData[activeApi].altitude.toFixed(2) + 'm'" flat ripple=false)
+        v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].altitude" v-html="'Alt<br>' + vfrHudData[activeApi].altitude.toFixed(2) + 'm'" flat)
         // Heading button
-        v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].heading && !$vuetify.breakpoint.smAndDown" v-html="'Hdg<br>' + vfrHudData[activeApi].heading" flat ripple=false)
+        v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].heading && !$vuetify.breakpoint.smAndDown" v-html="'Hdg<br>' + vfrHudData[activeApi].heading" flat)
         // Speed button
-        v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].groundspeed && !$vuetify.breakpoint.smAndDown" v-html="'Spd<br>' + vfrHudData[activeApi].groundspeed.toFixed(2)" flat ripple=false)
+        v-btn.transparent(v-if="vfrHudData[activeApi] && vfrHudData[activeApi].groundspeed && !$vuetify.breakpoint.smAndDown" v-html="'Spd<br>' + vfrHudData[activeApi].groundspeed.toFixed(2)" flat)
 
       v-spacer
 

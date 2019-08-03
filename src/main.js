@@ -8,7 +8,7 @@ import router from './router'
 import store from './store'
 
 // Load extra plugins
-import './plugins/vuetify'
+import vuetify from '@/plugins/vuetify'
 import './plugins/vuelayers'
 import './plugins/vuecesium'
 import './plugins/vuetimers'
@@ -30,5 +30,6 @@ window.app = new Vue({
   router,
   store,
   apolloProvider: createProvider(),
+  vuetify,
   render: h => h(App)
 }).$mount('#app')
