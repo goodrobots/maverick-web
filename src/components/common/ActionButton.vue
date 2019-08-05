@@ -90,6 +90,8 @@ export default {
           return 'settings'
         case 'analysis':
           return 'equalizer'
+        default:
+          return null
       }
     },
     // Config states

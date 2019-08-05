@@ -143,6 +143,8 @@ export default {
         return 'ROVER_MODE'
       } else if (this.vehicleData[this.activeApi].typeString == 'ArduSub') {
         return 'SUB_MODE'
+      } else {
+        return null
       }
     }
   },

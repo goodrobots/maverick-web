@@ -9,6 +9,8 @@ const plugin = {
         appVisible () {
           if (this.$store) {
             return this.$store.state.appVisible
+          } else {
+            return false
           }
         }
       }
