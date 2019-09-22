@@ -7,7 +7,7 @@ v-container(fluid grid-list-xl)
         v-card-title
           v-spacer
           v-text-field(append-icon="search" label="Search" single-line hide-details v-model="search")
-        v-data-table.transparent.px-2.pt-0.pb-4(expand :search="search" :headers="headers" :items="mavlogs" :pagination.sync="pagination" item-key="id" :custom-filter="customFilter" :rows-per-page-items="[10,25,50]")
+        v-data-table.transparent.px-2.pt-0.pb-4(:search="search" :headers="headers" :items="mavlogs" :pagination.sync="pagination" item-key="id" :custom-filter="customFilter" :rows-per-page-items="[10,25,50]")
           template(slot="items" slot-scope="props")
             tr
               td.justify-center.px-0.text-xs-right

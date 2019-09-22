@@ -1,62 +1,63 @@
 <template lang='pug'>
 v-container.px-2.py-2(fluid grid-list-xl)
-  v-layout(row wrap)
+  v-layout.layout-attach(row wrap)
     v-flex(xs12)
       //- Popup to edit parameter
-      v-dialog(v-model="dialog" max-width="500px")
+      v-dialog(v-model="editDialog" max-width="500px" attach='.layout-attach')
         v-card
           v-card-title.pb-0
             span.headline Edit Parameter
             v-spacer
             v-card-actions
-              v-btn(color="primary darken-1" flat @click.native="close") Cancel
-              v-btn(color="primary darken-1" @click.native="save") Save
+              v-btn(outlined color="grey lighten-1" @click.native="close") Cancel
+              v-btn(:color="navColor" @click.native="save") Save
           v-card-text.pt-0
             v-container(grid-list-md)
               v-layout(wrap)
                 v-flex(xs12)
                   div(v-html="editedItem.id")
+                  div.body-2.font-weight-bold(v-html="editedItem.meta && editedItem.meta.humanName")
               v-layout(wrap)
                 // Edit boolean value through switch
                 template(v-if="editedItem.meta && editedItem.type === 'boolean'")
                   v-flex(xs12)
-                    v-switch(:label="`${(editedItem.value) ? 'Enabled' : 'Disabled'}`" v-model="editedItem.value" color="primary" persistent-hint :hint="editedItem.meta && editedItem.meta.humanName" :suffix="editedItem.meta && editedItem.meta.units")
+                    v-switch(:label="`${(editedItem.value) ? 'Enabled' : 'Disabled'}`" v-model="editedItem.value" :color="navColor" persistent-hint :suffix="editedItem.meta && editedItem.meta.units")
                 // Edit range (min..max) data through slider
                 template(v-else-if="editedItem.meta && editedItem.type === 'slider'")
                   v-flex(xs9)
-                    v-slider(v-model="editedItem.value" :min="editedItem.meta.min" :max="editedItem.meta.max" :step="editedItem.increment" thumb-label persistent-hint :hint="editedItem.meta && editedItem.meta.humanName" :suffix="editedItem.meta && editedItem.meta.units")
+                    v-slider.pt-8(v-model="editedItem.value" :min="editedItem.meta.min" :max="editedItem.meta.max" :step="editedItem.increment" :color="navColor +' lighten-2'" thumb-label persistent-hint :suffix="editedItem.meta && editedItem.meta.units")
                   v-flex(xs3)
                     v-text-field(type='number' v-model='editedItem.value' hint="Override" persistent-hint)
                 // Edit value through bitmasks
                 template(v-else-if="editedItem.meta && editedItem.type === 'bitmask'")
                   v-flex(xs9)
-                    v-checkbox(v-for="(value,vx) in JSON.parse(editedItem.meta.bitmask)" hide-details v-model="editedItem.bitmasks" :label="value" color="primary" :key="vx")
+                    v-checkbox(v-for="(value,vx) in JSON.parse(editedItem.meta.bitmask)" hide-details v-model="editedItem.bitmasks" :label="value" :color="navColor" :key="vx")
                   v-flex(xs3)
                     v-text-field(type='number' v-model='editedItem.value' hint="Override" persistent-hint)
                 // Edit value through radios
                 template(v-else-if="editedItem.meta && editedItem.type == 'radio'")
                   v-flex(xs9)
                     v-radio-group(v-model="editedItem.value" :mandatory="false" hide-details)
-                      v-radio(v-for="(value,vx) in JSON.parse(editedItem.meta.values)" hide-details :label="value" :value="vx" color="primary" :key="vx")
+                      v-radio(v-for="(value,vx) in JSON.parse(editedItem.meta.values)" hide-details :label="vx + '(' + value.toString() + ')'" :value="value.toString()" :color="navColor" :key="value")
                   v-flex(xs3)
                     v-text-field(type='number' v-model='editedItem.value' hint="Override" persistent-hint)
                 // Edit value through select
                 template(v-else-if="editedItem.meta && editedItem.type === 'select'")
                   v-flex(xs9)
-                    v-select.input-group--focused(:items="editedItem.selectValues" v-model="editedItem.value" label="Parameter Value" dense single-line bottom autofocus persistent-hint :hint="editedItem.meta && editedItem.meta.humanName" :suffix="editedItem.meta && editedItem.meta.units")
+                    v-select.input-group--focused(:items="editedItem.selectValues" v-model="editedItem.value" label="Parameter Value" :color="navColor" dense single-line bottom autofocus persistent-hint :suffix="editedItem.meta && editedItem.meta.units")
                   v-flex(xs3)
                     v-text-field(type='number' v-model='editedItem.value' hint="Override" persistent-hint)
                 // Fallback - Edit value through input text
                 template(v-else)
                   v-flex(xs12)
-                    v-text-field(label="Value" v-model="editedItem.value" autofocus persistent-hint :hint="editedItem.meta && editedItem.meta.humanName" :suffix="editedItem.meta && editedItem.meta.units")
+                    v-text-field(label="Value" v-model="editedItem.value" autofocus persistent-hint :suffix="editedItem.meta && editedItem.meta.units")
               // Display documentation and reboot notice if required
               v-divider.mt-3
               v-layout(wrap)
                 v-flex(xs-12)
                   template(v-if="editedItem.meta && editedItem.meta.documentation")
                     .pt-1.caption.grey--text Documentation
-                    div(v-html="editedItem.meta.documentation")
+                    div.font-weight-medium(v-html="editedItem.meta.documentation")
                 template(v-if="editedItem.meta && editedItem.meta.rebootRequired")
                   v-alert.my-1.py-1.mx-1.my-1(outline color="warning" icon="priority_high" :value="true") Reboot required to activate changes to this parameter
               // Display other meta data
@@ -64,30 +65,35 @@ v-container.px-2.py-2(fluid grid-list-xl)
                 v-flex(xs-12)
                   template(v-if="editedItem.meta && editedItem.meta.humanGroup")
                     .pt-2.caption.grey--text Group
-                    div(v-html="editedItem.meta.humanGroup")
+                    div.font-weight-bold(v-html="editedItem.meta.humanGroup")
                   template(v-else-if="editedItem.meta && editedItem.meta.group")
                     .pt-2.caption.grey--text Group
-                    div(v-html="editedItem.meta.group")
+                    div.font-weight-bold(v-html="editedItem.meta.group")
                   template(v-if="editedItem.meta && editedItem.meta.values")
                     .pt-2.caption.grey--text Values
-                    div(v-for="(value,vx) in JSON.parse(editedItem.meta.values)")
-                      span.primary--text(v-if="vx==editedItem.value") {{ vx }}: <strong>{{ value }}</strong> (Current Value)
-                      span(v-else) {{ vx }}: <strong>{{ value }}</strong>
+                    table(width="90%")
+                      tr(v-for="(value,vx) in JSON.parse(editedItem.meta.values)")
+                        template(v-if="value==editedItem.value")
+                          td.font-weight-bold(width='25%') {{ vx }}
+                          td <strong>{{ value }}</strong> (Current Value)
+                        template(v-else)
+                          td(width='25%') {{ vx }}
+                          td <strong>{{ value }}</strong>
                   template(v-if="editedItem.meta && (editedItem.meta.min || editedItem.meta.max || editedItem.meta.increment)")
                     .pt-2.caption.grey--text Range
-                    table(width='80%')
+                    table(width='90%')
                       thead
                         tr
-                          th.grey--text.text-xs-left Min
-                          th.grey--text.text-xs-left Max
-                          th.grey--text.text-xs-left Increment
+                          th.grey--text.text-left Min
+                          th.grey--text.text-left Max
+                          th.grey--text.text-left Increment
                       tbody
                         tr
-                          td(v-if="editedItem.meta.min" v-html="editedItem.meta.min")
+                          td.font-weight-bold(v-if="editedItem.meta.min" v-html="editedItem.meta.min")
                           td.grey--text(v-else) --
-                          td(v-if="editedItem.meta.max" v-html="editedItem.meta.max")
+                          td.font-weight-bold(v-if="editedItem.meta.max" v-html="editedItem.meta.max")
                           td.grey--text(v-else) --
-                          td(v-if="editedItem.meta.increment" v-html="editedItem.meta.increment")
+                          td.font-weight-bold(v-if="editedItem.meta.increment" v-html="editedItem.meta.increment")
                           td.grey--text(v-else) --
                   template(v-if="editedItem.meta && editedItem.meta.units")
                     .pt-1.caption.grey--text Units
@@ -95,10 +101,10 @@ v-container.px-2.py-2(fluid grid-list-xl)
       //- Display dynamic table with parameters
       v-card.px-0.py-0.transparent.elevation-0
         v-card-title
-          v-spacer
-          v-text-field(append-icon="search" label="Search" single-line hide-details v-model="search")
-        v-data-table.transparent.px-2.pt-0.pb-4(expand :search="search" :headers="headers" :items="params" :pagination.sync="pagination" item-key="id" :custom-filter="customFilter" :rows-per-page-items="[10,25,50]")
-          template(slot="items" slot-scope="props")
+          div.flex-grow-1
+          v-text-field(v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details :color="navColor")
+        v-data-table.transparent.px-2.pt-0.pb-4(dense :sort-by="['id']" :search="search" :headers="headers" :items="params" item-key="id" :custom-filter="customFilter" :footer-props="{itemsPerPageOptions: [10,25,50]}" single-expand=true :expanded.sync="expanded" show-expand)
+          // template(v-slot:body="{ items }")
             tr(@click="props.expanded = !props.expanded")
               td.justify-center.px-0.text-xs-right
                 v-btn.mx-0(icon @click.stop="editItem(props.item)")
@@ -110,49 +116,67 @@ v-container.px-2.py-2(fluid grid-list-xl)
               td(v-html="valueFormat(props.item)")
               td(v-if="props.item.meta && props.item.meta.humanName" v-html="highlight(props.item.meta.humanName, search)")
               td(v-else) --
+          template(v-slot:item.action="{ item }")
+            v-icon(small class="mr-2" @click.stop="editItem(item)") mdi-pencil
           //- Expand row with meta data about parameter
-          template(slot="expand" slot-scope="props")
-            v-card(flat)
-              v-card-text
-                table.px-0.py-0(width='100%')
-                  tr.transparent(v-if="props.item.meta && props.item.meta.documentation")
-                    td: strong Documentation
-                    td: span(v-html="highlight(props.item.meta.documentation, search)")
-                  template(v-if="props.item.meta && props.item.meta.fields")
-                    tr.transparent
-                      td: strong Fields
-                      td
-                        div(v-for="(field,fx) in JSON.parse(props.item.meta.fields)")
-                          strong {{ fx }}: {{ field }}
-                  template(v-if="props.item.meta && props.item.meta.values")
-                    tr.transparent
-                      td: strong Values
-                      td
-                        div(v-for="(value,vx) in JSON.parse(props.item.meta.values)")
-                          span.primary--text(v-if="vx==props.item.value") {{ vx }}: <strong>{{ value }}</strong> (Active)
-                          span(v-else) {{ vx }}: <strong>{{ value }}</strong>
-                  // template
-                    tr
-                      td(v-html="props.item" colspan='5')
-          v-alert(slot="no-results" :value="true" color="error" icon="warning") Your search for "{{ search }}" found no results.
+          template(v-slot:expanded-item="{ item }")
+            td(colspan=20)
+              v-card()
+                v-card-text
+                  table.px-0.py-0.expanded-table(width='100%')
+                    tr(v-if="item && 'meta' in item && item.meta.documentation")
+                      td: strong Documentation
+                      td: span(v-html="highlight(item.meta.documentation, search)")
+                    template(v-if="item && 'meta' in item && item.meta.fields")
+                      tr
+                        td: strong Fields
+                        td.pt-1
+                          div(v-for="(field,fx) in JSON.parse(item.meta.fields)")
+                            strong {{ fx }}: {{ field }}
+                    template(v-if="item && 'meta' in item && item.meta.values")
+                      tr
+                        td: strong Values
+                        td.pt-1
+                          div(v-for="(value,vx) in JSON.parse(item.meta.values)")
+                            span.primary--text(v-if="vx==item.value") {{ vx }}: <strong>{{ value }}</strong> (Active)
+                            span(v-else) {{ vx }}: <strong>{{ value }}</strong>
+          template(v-slot:body.append)
+            tr
+              td
+              td
+              td
+                v-select(v-model="groupSelect" :items="groups" dense :color="navColor")
+          v-alert(v-slot:no-results :value="true" color="error" icon="warning") Your search for "{{ search }}" found no results.
 </template>
 
 <script>
 import Vue from 'vue'
 import {
   paramsQuery,
-  paramsSubscription,
+  paramSubscription,
   updateParam
 } from '../../../plugins/graphql/gql/Parameters.gql'
 
 export default {
-  name: 'ConfigParamFilter',
+  name: 'ConfigParamList',
   data () {
     return {
       params: [],
+      expanded: [],
+      groups: [],
+      groupSelect: null,
       headers: [
         { text: '', value: '', sortable: false },
-        { text: 'Group', value: 'meta.group', align: 'left' },
+        {
+          text: 'Group',
+          value: 'meta.group',
+          align: 'left',
+          width: 100,
+          filter: value => {
+            if (!this.groupSelect) return true
+            return value.includes(this.groupSelect)
+          },
+        },
         { text: 'Name', value: 'id', align: 'left' },
         {
           text: 'Value',
@@ -165,13 +189,15 @@ export default {
           value: 'meta.humanName',
           align: 'left',
           sortable: false
+        },
+        {
+          text: 'Actions',
+          value: 'action',
+          sortable: false
         }
       ],
-      pagination: {
-        sortBy: 'id'
-      },
       search: '',
-      dialog: false,
+      editDialog: false,
       editedIndex: -1,
       editedItem: {
         id: null,
@@ -181,12 +207,22 @@ export default {
       bitmasks: []
     }
   },
-  computed: {
-    activeApi () {
-      return this.$store.state.activeApi
+
+  watch: {
+    // Watch apis state for any change and process
+    activeApi: {
+      handler: function (newValue) {
+        this.logDebug('activeApi changed: ' + newValue)
+        this.createQlQueries()
+      }
     }
   },
+
   mounted () {
+    // Create GQL queries
+    if (this.activeApi) {
+      this.createQlQueries()
+    }
     // Hack datatables to be transparent
     const tables = document.querySelectorAll(
       '.datatable.table, .datatable__actions'
@@ -195,53 +231,37 @@ export default {
       tables[key].className += ' transparent'
     })
   },
+
   destroyed () {
     // this.$apollo.destroy()
   },
+
   methods: {
-    customFilter (items, search, filter) {
-      search = search.toString().toLowerCase()
-      return items.filter(
-        row =>
-          filter(row.id, search) ||
-          filter(row.value, search) ||
-          (row.meta &&
-            (filter(row.meta.humanName, search) ||
-              filter(row.meta.documentation, search)))
-      )
+    close () {
+      this.editDialog = false
     },
-    highlight (text, search) {
-      if (!search) {
-        return text
-      }
-      return text.replace(
-        new RegExp(search, 'gi'),
-        match => `<span class="primary--text">${match}</span>`
-      )
+    createQlQueries () {
+      this.logDebug('doing createQlQueries')
+      this.createQuery('ParameterList', paramsQuery, this.activeApi, null, !this.apis[this.activeApi].state, this.processParameterList)
+      this.createSubscription('Parameter', paramSubscription, this.activeApi, null, !this.apis[this.activeApi].state, this.processParameter)
     },
-    valueFormat (param) {
-      if (param.meta && param.meta.units) {
-        return `${param.value} <span class="caption"><strong>${
-          param.meta.units
-        }</strong></span>`
-      }
-      if (param && param.meta && param.meta.values) {
-        const values = JSON.parse(param.meta.values)
-        if (values[param.value]) {
-          return values[param.value]
-        }
-      }
-      return param ? param.value : null
-    },
-    findParam (id) {
-      return this.params.find(x => x.id === id)
-    },
-    findParamIndex (id) {
-      return this.params.findIndex(x => x.id === id)
+    customFilter (value, search, item) {
+      search = search.toString().toLocaleUpperCase()
+      return value != null &&
+        search != null &&
+        item !== null &&
+        typeof item.id === 'string' &&
+        (
+        item.id && item.id.toString().toLocaleUpperCase().includes(search) ||
+        item.value && item.value.toString().toLocaleUpperCase().includes(search) ||
+        (item.meta &&
+          (item.meta.humanName && item.meta.humanName.toString().toLocaleUpperCase().includes(search)) ||
+          (item.meta.documentation && item.meta.documentation.toString().toLocaleUpperCase().includes(search)))
+        )
     },
     editItem (item) {
       // Set the param index and create a copy for the edit dialog
-      this.editedIndex = this.params.indexOf(item)
+      this.editedIndex = this.params.map(function(e) { return e.id; }).indexOf(item.id)
       this.editedItem = Object.assign({}, item)
       const values = JSON.parse(this.editedItem.meta.values)
       if (
@@ -320,81 +340,67 @@ export default {
       } else {
         this.editedItem.type = 'input'
       }
-      this.dialog = true
+      this.editDialog = true
     },
-    close () {
-      this.dialog = false
+    findParam (id) {
+      return this.params.find(x => x.id === id)
     },
+    findParamIndex (id) {
+      return this.params.findIndex(x => x.id === id)
+    },
+    highlight (text, search) {
+      if (!search) {
+        return text
+      }
+      return text.replace(
+        new RegExp(search, 'gi'),
+        match => `<span class="primary--text">${match}</span>`
+      )
+    },
+    processParameter (data, key) {
+      // const api = key.split('___')[0]
+      const paramIx = this.findParamIndex(data.data.Parameter.id)
+      Vue.set(this.params, paramIx, data.data.Parameter)
+    },
+    processParameterList (data, key) {
+      const api = key.split('___')[0]
+      if (!data.loading && !this.params.length) {
+        Object.keys(data.data.ParameterList.parameters).forEach(pkey => {
+          Vue.set(this.params, pkey, data.data.ParameterList.parameters[pkey])
+        })
+      }
+      this.groups = [...new Set(this.params.map(param => param.meta.group.replace(/\d+$/, "")))]
+      this.logDebug(`Received ${this.params.length} Parameters for api '${api}'`)
+    },  
     save () {
       if (this.editedItem.bitmasks) {
         console.log('bitmasks!')
         console.log(this.editedItem.bitmasks)
       }
-      this.$apollo.mutate({
-        mutation: updateParam,
-        variables: {
-          id: this.editedItem.id,
-          value: this.editedItem.value
-        }
-      })
+      this.mutateQuery(this.activeApi, updateParam, { id: this.editedItem.id, value: this.editedItem.value })
       // console.log('Saved param: ' + this.editedItem.id + ' with value: ' + this.editedItem.value)
       this.close()
-    }
-  },
-
-  apollo: {
-    $client () {
-      return this.activeApi
     },
-    params: {
-      query: paramsQuery,
-      manual: true,
-      result ({ data, loading }) {
-        if (!loading && !this.params.length) {
-          Object.keys(data.params).forEach(key => {
-            Vue.set(this.params, key, data.params[key])
-          })
-        }
-        // console.log('received params: ' + this.params.length)
-      },
-      /*
-      subscribeToMore: {
-        document: paramsSubscription,
-        // If we receive updated param, iterate through the existing params (previousResult) and carefully update just the updated parameter
-        updateQuery: (previousResult, { subscriptionData }) => {
-          const update = subscriptionData.data.params
-          if (!/^STAT_/.test(update.id)) {
-            console.log('Updating parameter: ' + update.id)
-            const paramData = {
-              params: previousResult.params.map(param => {
-                // We can't update immutable apollo data, so instead create a deep copy and return that into the array map
-                if (param.id === update.id) {
-                  let paramcopy = JSON.parse(JSON.stringify(param))
-                  paramcopy.value = update.value
-                  return paramcopy
-                // Otherwise return the array object by reference
-                } else {
-                  return param
-                }
-              })
-            }
-            return paramData
-          }
-        }
-      },
-      */
-      mutation: updateParam
-    },
-    $subscribe: {
-      params: {
-        query: paramsSubscription,
-        result (data) {
-          const paramIx = this.findParamIndex(data.data.params.id)
-          Vue.set(this.params, paramIx, data.data.params)
-          // console.log('subscribe result: ' + this.params[paramIx])
+    valueFormat (param) {
+      if (param.meta && param.meta.units) {
+        return `${param.value} <span class="caption"><strong>${
+          param.meta.units
+        }</strong></span>`
+      }
+      if (param && param.meta && param.meta.values) {
+        const values = JSON.parse(param.meta.values)
+        if (values[param.value]) {
+          return values[param.value]
         }
       }
+      return param ? param.value : null
     }
   }
 }
 </script>
+
+<style scoped>
+.expanded-table tr:last-child td {
+  border-bottom: 0 !important;
+}
+</style>

@@ -2,55 +2,66 @@
 v-card.transparent.navfab
 
   v-speed-dial.navfab(v-model="navfab" direction="top" bottom=true right=true open-on-hover=false transition="slide-y-reverse-transition")
-    v-btn(slot="activator" :color="navColor" dark fab hover v-model="navfab")
-      v-icon(v-html="navIcon")
-      v-icon close
+    template(v-slot:activator="{ on }")
+      v-btn(v-on="on" :color="navColor" dark fab hover v-model="navfab")
+        v-icon(v-html="navIcon")
+        v-icon close
     v-tooltip(v-if="(moduleName !== 'analysis')" left)
-      v-btn( fab dark :small="(moduleName !== 'analysis')" color="mavgreen" to="/analysis" slot="activator")
-        v-icon equalizer
+      template(v-slot:activator="{ on }")
+        v-btn( fab dark :small="(moduleName !== 'analysis')" color="mavgreen" to="/analysis" v-on="on")
+          v-icon equalizer
       span Analysis
     v-tooltip(v-if="(moduleName !== 'config')" left)
-      v-btn(fab dark :small="(moduleName !== 'config')" color="mavpurple" to="/config" slot="activator")
-        v-icon settings
+      template(v-slot:activator="{ on }")
+        v-btn(fab dark :small="(moduleName !== 'config')" color="mavpurple" to="/config" v-on="on")
+          v-icon settings
       span Configuration
     v-tooltip(v-if="(moduleName !== 'planner')" left)
-      v-btn(fab dark :small="(moduleName !== 'planner')" color="mavblue" to="/planner" slot="activator")
-        v-icon explore
+      template(v-slot:activator="{ on }")
+        v-btn(fab dark :small="(moduleName !== 'planner')" color="mavblue" to="/planner" v-on="on")
+          v-icon explore
       span Planner
     v-tooltip(v-if="(moduleName !== 'cockpit')" left)
-      v-btn(fab dark :small="(moduleName !== 'cockpit')" color="mavorange" to="/cockpit" slot="activator")
-        v-icon flight_takeoff
+      template(v-slot:activator="{ on }")
+        v-btn(fab dark :small="(moduleName !== 'cockpit')" color="mavorange" to="/cockpit" v-on="on")
+          v-icon flight_takeoff
       span Cockpit
     v-tooltip(left)
-      v-btn(fab dark small :color="(navState) ? navColor : 'grey'" @click="toggleNavState" slot="activator")
-        v-icon(v-if="navState") swap_vert
-        v-icon(v-else) swap_horiz
+      template(v-slot:activator="{ on }")
+        v-btn(fab dark small :color="(navState) ? navColor : 'grey'" @click="toggleNavState" v-on="on")
+          v-icon(v-if="navState") swap_vert
+          v-icon(v-else) swap_horiz
       span Top Nav
     v-tooltip(left)
-      v-btn(fab dark small :color="(fullScreen) ? navColor : 'grey'" @click="toggleFullScreen" slot="activator")
-        v-icon(v-if="fullScreen") fullscreen
-        v-icon(v-else) fullscreen_exit
+      template(v-slot:activator="{ on }")
+        v-btn(fab dark small :color="(fullScreen) ? navColor : 'grey'" @click="toggleFullScreen" v-on="on")
+          v-icon(v-if="fullScreen") fullscreen
+          v-icon(v-else) fullscreen_exit
       span Fullscreen
 
   v-speed-dial.navfab(v-model="navfab" direction="left" bottom=true right=true open-on-hover=false transition="slide-x-reverse-transition")
-    v-btn(slot="activator" :color="navColor" dark fab hover v-model="navfab")
-      v-icon(v-html="navIcon")
-      v-icon close
+    template(v-slot:activator="{ on }")
+      v-btn(v-on="on" :color="navColor" dark fab hover v-model="navfab")
+        v-icon(v-html="navIcon")
+        v-icon close
     // Cockpit specific actions
     template(v-if="(moduleName === 'cockpit')")
       v-tooltip(bottom)
-        v-btn(fab dark small :color="(cockpitMapState) ? navColor : 'grey'" @click="toggleMap" slot="activator")
-          v-icon my_location
+        template(v-slot:activator="{ on }")
+          v-btn(fab dark small :color="(cockpitMapState) ? navColor : 'grey'" @click="toggleMap" v-on="on")
+            v-icon my_location
         span Map
       v-tooltip(bottom)
-        v-btn(fab dark small :color="(cockpitHudState) ? navColor : 'grey'" @click="toggleHud" slot="activator")
-          v-icon surround_sound
+        template(v-slot:activator="{ on }")
+          v-btn(fab dark small :color="(cockpitHudState) ? navColor : 'grey'" @click="toggleHud" v-on="on")
+            v-icon surround_sound
         span HUD
     // Planner specific actions
     template(v-if="(moduleName === 'planner')")
       v-tooltip(bottom)
-        v-btn(fab dark small :color="(plannerViewState) ? navColor : 'grey'" @click="toggleView" slot="activator")
-          v-icon 3d_rotation
+        template(v-slot:activator="{ on }")
+          v-btn(fab dark small :color="(plannerViewState) ? navColor : 'grey'" @click="toggleView" v-on="on")
+            v-icon 3d_rotation
         span 2D/3D View
 </template>
 
@@ -90,6 +101,8 @@ export default {
           return 'settings'
         case 'analysis':
           return 'equalizer'
+        default:
+          return null
       }
     },
     // Config states

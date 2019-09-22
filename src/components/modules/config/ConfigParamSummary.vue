@@ -61,7 +61,8 @@ v-container.fluid.grid-list-xl
 
 <script>
 // import Vue from 'vue'
-import { paramsQuery, paramsSubscription } from '../../../plugins/graphql/gql/Parameters.gql'
+// import { paramsQuery, paramsSubscription } from '../../../plugins/graphql/gql/Parameters.gql'
+import { paramsQuery } from '../../../plugins/graphql/gql/Parameters.gql'
 
 export default {
   name: 'ConfigParamSummary',
@@ -90,7 +91,7 @@ export default {
     createQlQueries () {
       if (this.activeApi) {
         this.createQuery('Params', paramsQuery, this.activeApi, 'paramsData', !this.apis[this.activeApi].state)
-        this.createSubscription('Params', paramsSubscription, this.activeApi, 'paramsData', !this.apis[this.activeApi].state)
+        // this.createSubscription('Param', paramSubscription, this.activeApi, 'paramsData', !this.apis[this.activeApi].state)
       }
     },
     findParam (id) {

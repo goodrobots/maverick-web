@@ -33,19 +33,19 @@ export default new Vuex.Store({
     moduleData: {
       'cockpit': {
         'color': 'mavorange',
-        'icon': 'flight_takeoff'
+        'icon': 'mdi-airplane-takeoff'
       },
       'planner': {
         'color': 'mavblue',
-        'icon': 'explore'
+        'icon': 'mdi-map-marker-circle'
       },
       'config': {
         'color': 'mavpurple',
-        'icon': 'settings'
+        'icon': 'mdi-settings'
       },
       'analysis': {
         'color': 'mavgreen',
-        'icon': 'equalizer'
+        'icon': 'mdi-equalizer'
       }
     }
   },

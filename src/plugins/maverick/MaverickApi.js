@@ -19,7 +19,13 @@ const plugin = {
         },
         activeApi () {
           return this.$store.state.activeApi
-        }
+        },
+        vehicleData () {
+          return this.$store.state.vehicleData
+        },
+        navColor () {
+          return this.$store.state.navColor
+        },
       },
 
       watch: {
@@ -38,7 +44,8 @@ const plugin = {
         // Only execute this if root component, otherwise skip it.
         // Theoretically, this should execute once after the main Vue component is loaded,
         //  and the apollo plugin and provider has loaded.
-        if (!this.$parent) {
+        if (!this.$parent && this.$apollo.provider) {
+          this.logInfo('Root component mounted, iteratively creating GQL clients')
           // Process each defined Maverick-API instance and create a client and base heartbeat subscription for each api
           for (const client in clients) {
             this.createClient(client, clients[client])
@@ -58,7 +65,7 @@ const plugin = {
           // Add a vuex apis entry
           this.$store.commit('addApi', {
             title: api,
-            value: { ...clientdata, ...{ state: false, auth: false, icon: null, uuid: null } }
+            value: { ...{ state: false, auth: false, icon: null, uuid: null }, ...clientdata }
           })
           // Set the client auth token
           if (clientdata.authToken) {
@@ -67,7 +74,7 @@ const plugin = {
           }
         },
 
-        createQuery (message, gql, api, container, callback = null, errorCallback = null, skip = false, variables = null) {
+        createQuery (message, gql, api, container, skip = false, callback = null, errorCallback = null, variables = null) {
           // Generate query key
           const varvalues = variables && Object.values(variables) ? Object.values(variables).join('~') : ''
           const queryKey = [api, message, varvalues].join('___')
@@ -104,7 +111,7 @@ const plugin = {
           }
         },
 
-        createSubscription (message, gql, api, container, callback = null, errorCallback = null, skip = false, variables = null) {
+        createSubscription (message, gql, api, container, skip = false, callback = null, errorCallback = null, variables = null) {
           // Generate subscription key
           const varvalues = variables && Object.values(variables) ? Object.values(variables).join('~') : ''
           const subKey = [api, message, varvalues].join('___')
@@ -182,7 +189,7 @@ const plugin = {
 
         vehicleIcon (vehicleType) {
           const iconPath = 'img/icons/vehicleIcons/'
-          if (vehicleType === 'Copter') {
+          if (vehicleType === 'Copter' || vehicleType === 'Quadrotor') {
             return iconPath + 'quadcopter.svg'
           } else if (vehicleType === 'Plane') {
             return iconPath + '035-airplane-1.svg'

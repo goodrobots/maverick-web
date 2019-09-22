@@ -25,67 +25,34 @@ div.planner-map
 
     // Interactions
     vl-interaction-select(:features.sync="selectedFeatures" v-if="waypointMode == 'select'")
-      // template(slot-scope="select")
-        // selected feature popup
-        vl-overlay.feature-popup(v-for="feature in select.features" :key="feature.id" :id="feature.id" :position="pointOnSurface(feature.geometry)" :auto-pan="false" :auto-pan-animation="{ duration: 300 }")
-          template(slot-scope="popup")
-            div Hello
-            div {{ feature }}
-            // v-popover(trigger="manual" open=true offset="16")
-              // button.tooltip-target.b3 Click me
-              div.tooltip-target.b1 Hello
-              template(slot="popover")
-                div Hello this is a test
-                a(v-close-popover) Close
-            // section.card
-              header.card-header
-                p.card-header-title Feature ID {{ feature.id }}
-                a.card-header-icon(title="Close" @click="selectedFeatures = selectedFeatures.filter(f => f.id !== feature.id)")
-                  span icon-close
-              div.card-content
-                div.content
-                  p Overlay popup content for Feature with ID <strong>{{ feature.id }}</strong>
-                  p Popup {{ JSON.stringify(popup) }}
-                  p Feature {{ JSON.stringify({ id: feature.id, properties: feature.properties }) }}
-
-    // Add marker for vehicles
-    vl-layer-vector
-      vl-source-vector(ref="vehicleLayer")
-        vl-feature(:id="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api" v-if="data")
-          vl-geom-point(v-if="data && 'longitude' in data" :coordinates="[data.longitude, data.latitude]")
-          vl-style-box
-            vl-style-icon(v-if="apis[api] && vfrHudData[api]" :src="publicPath + apis[api].icon" :anchor="[0.5, 1]" :scale="api == activeApi ? 1 : 0.75" :opacity="api == activeApi ? 1 : 0.75" :rotation="vfrHudData[api].heading * (Math.PI/180)")
-            vl-style-circle(:radius="api == activeApi ? 6 : 4")
-              vl-style-fill(:color="apis[api]['colorDark']")
-              vl-style-stroke(color="#666666" :width="api == activeApi ? 2 : 1")
 
     // Add overlay for vehicle data
-    // vl-overlay(v-if="mapVehicleInfo && activeApi in navSatFixData && navSatFixData[activeApi] && 'longitude' in navSatFixData[activeApi]" :position="[navSatFixData[activeApi].longitude + 0.0001, navSatFixData[activeApi].latitude]")
+    vl-overlay(v-if="mapVehicleInfo && activeApi in navSatFixData && navSatFixData[activeApi] && 'longitude' in navSatFixData[activeApi]" :position="[navSatFixData[activeApi].longitude + 0.0001, navSatFixData[activeApi].latitude]")
       template
-        table.vehicle
-          thead
-            tr
-              th(colspan=2) {{ apis[activeApi]['name'] }}
-          tbody
-            tr
-              td Firmware
-              td.value {{ vehicleInfoData[activeApi].autopilotString }}
-            tr
-              td Vehicle
-              td.value {{ vehicleInfoData[activeApi].typeString }}
-            tr
-              td Longitude
-              td.value {{ navSatFixData[activeApi].longitude.toFixed(6) }}
-            tr
-              td Latitude
-              td.value {{ navSatFixData[activeApi].latitude.toFixed(6) }}
-            tr
-              td Altitude
-              td.value {{ navSatFixData[activeApi].altitude.toFixed(2) }}
-            tr
-              td Mission Waypoints
-              td.value(v-if="activeApi in missionActive") {{ missionActive[activeApi].total }}
-              td.value(v-else) None
+        v-card
+          v-system-bar(:color="('colorDark' in apis[activeApi]) ? apis[activeApi].colorDark :  navColor")
+            span <strong>{{ apis[activeApi]['name'] }}</strong>
+          v-simple-table.vehicleinfo(dense)
+            tbody
+              tr(v-if="vehicleData[activeApi]")
+                td Firmware
+                td {{ vehicleData[activeApi].autopilotString }}
+              tr(v-if="vehicleData[activeApi]")
+                td Vehicle
+                td {{ vehicleData[activeApi].typeString }}
+              tr(v-if="'longitude' in navSatFixData[activeApi] && navSatFixData[activeApi].longitude")
+                td Longitude
+                td {{ navSatFixData[activeApi].longitude.toFixed(6) }}
+              tr(v-if="'latitude' in navSatFixData[activeApi] && navSatFixData[activeApi].latitude")
+                td Latitude
+                td {{ navSatFixData[activeApi].latitude.toFixed(6) }}
+              tr(v-if="'altitude' in navSatFixData[activeApi] && navSatFixData[activeApi].altitude")
+                td Altitude
+                td {{ navSatFixData[activeApi].altitude.toFixed(2) }}
+              tr
+                td Mission Waypoints
+                td(v-if="activeApi in missionActive") {{ missionActive[activeApi].total }}
+                td(v-else) None
 
     // Display mission waypoints
     template(v-if="activeApi && selectedMission")
@@ -113,101 +80,96 @@ div.planner-map
       vl-interaction-modify(v-if="waypointMode == 'modify'" source="waypoint-draw-target")
       vl-interaction-snap(source="waypoint-draw-target" :priority="10")
 
+    // Add marker for vehicles
+    vl-layer-vector
+      vl-source-vector(ref="vehicleLayer")
+        vl-feature(:id="'v_' + api" v-for="(data, api) in navSatFixData" :key="'v_' + api" v-if="data && 'longitude' in data && data.longitude")
+          vl-geom-point(:coordinates="[data.longitude, data.latitude]")
+          vl-style-box
+            vl-style-icon(v-if="apis[api] && vfrHudData[api]" :src="publicPath + apis[api].icon" :anchor="[0.5, 1]" :scale="api == activeApi ? 1 : 0.75" :opacity="api == activeApi ? 1 : 0.75" :rotation="vfrHudData[api].heading * (Math.PI/180)")
+            vl-style-circle(:radius="api == activeApi ? 6 : 4")
+              vl-style-fill(:color="apis[api]['colorDark']")
+              vl-style-stroke(color="#666666" :width="api == activeApi ? 2 : 1")
+
   // Display mapview menu
   div.mapmenu
     v-menu(offset-x :close-on-content-click="false" :nudge-width="200" :nudge-right="5" v-model="mapmenu")
-      v-btn(:color="navColor" slot="activator") Map Options
+      template(v-slot:activator="{ on }")
+        v-btn(:color="navColor" v-on="on") Map Options
       v-card
+        v-system-bar(:color="navColor" window)
+          span <strong>Map Options</strong>
         v-list
-          v-list-tile
-            v-list-tile-title Menu Options
-        v-divider
-        v-list
-          v-list-tile
-            v-list-tile-title Vehicle Info
-            v-list-tile-action
+          v-list-item
+            v-list-item-title Vehicle Info
+            v-list-item-action
               v-switch(v-model="mapVehicleInfo" color="primary")
-          v-list-tile
-            v-list-tile-title Auto Center
-            v-list-tile-action
+          v-list-item
+            v-list-item-title Auto Center
+            v-list-item-action
               v-switch(v-model="mapCenter" color="primary")
-          v-list-tile
-            v-list-tile-title Map Zoom
-            v-list-tile-action
-              v-slider(v-model="mapZoom" :min="1" :max="21" :step="1" thumb-label)
-          v-list-tile
-            v-list-tile-title Map Source
-            v-list-tile-action
+          v-list-item
+            v-list-item-content Map Zoom
+            v-slider.mb-n7(v-model="mapZoom" :min="1" :max="21" :step="1" thumb-label)
+          v-list-item
+            v-list-item-title Map Source
+            v-list-item-action
               v-select(:items="maplayers" v-model="mapLayer")
         v-card-actions
-          v-btn(color="primary" outline small @click="centerVehicle()") Center Vehicle
-          v-btn(v-if="activeApi" color="primary" outline small @click="centerWaypoints()") Fit Waypoints
+          v-btn(color="primary" outlined small @click="centerVehicle()") Center Vehicle
+          v-btn(v-if="activeApi" color="primary" outlined small @click="centerWaypoints()") Fit Waypoints
 
   // If api chosen, display a mission database menu
   div.missionmenu(v-if="activeApi")
     v-menu(offset-y v-model="missionmenu")
-      v-btn(:color="navColor" slot="activator") Mission Database
+      template(v-slot:activator="{ on }")
+        v-btn(:color="navColor" v-on="on") Mission Database
       v-list(two-line)
-        v-list-tile(@click="selectedMission='loaded'")
-          v-list-tile-content
-            v-list-tile-title Loaded Mission
-            v-list-tile-sub-title Waypoints: <strong>{{ (missionLoaded[activeApi]) ? missionLoaded[activeApi].total : '---' }}</strong>
+        v-list-item(@click="selectedMission='loaded'")
+          v-list-item-content
+            v-list-item-title Loaded Mission
+            v-list-item-subtitle Waypoints: <strong>{{ (missionLoaded[activeApi]) ? missionLoaded[activeApi].total : '---' }}</strong>
       v-divider(inset)
       v-list(v-if="missionDatabaseData[activeApi]" two-line subheader)
         v-subheader Database Missions
-        v-list-tile(v-if="'missions' in missionDatabaseData[activeApi]" v-for="(mission, ix) in missionDatabaseData[activeApi].missions" :key="`mdb_${ix}`" @click="selectedMission=mission.id")
-          v-list-tile-content
-            v-list-tile-title {{ (mission.name) ? mission.name : mission.id }}
-            v-list-tile-sub-title Waypoints: {{ mission.total }}
+        v-list-item(v-if="'missions' in missionDatabaseData[activeApi]" v-for="(mission, ix) in missionDatabaseData[activeApi].missions" :key="`mdb_${ix}`" @click="selectedMission=mission.id")
+          v-list-item-content
+            v-list-item-title {{ (mission.name) ? mission.name : mission.id }}
+            v-list-item-subtitle Waypoints: {{ mission.total }}
 
   // If api chosen, display a mission list
-  div.missionlist.scroll-y(v-if="activeApi && missionActive[activeApi]")
-    v-list(subheader two-line dense)
-      v-subheader Mission Summary
-      v-list-tile
-        v-list-tile-content
-          v-list-tile-title {{ (missionActive[activeApi].name) ? missionActive[activeApi].name : missionActive[activeApi].id }}
-          v-list-tile-sub-title Waypoints: <strong>{{ missionActive[activeApi].total }}</strong>
-    v-divider
+  v-card.missionlist.overflow-y-auto(v-if="activeApi && missionActive[activeApi]" max-height='85vh')
+    v-system-bar(:color="navColor" window)
+      span Mission: <strong>{{ (missionActive[activeApi].name) ? missionActive[activeApi].name : missionActive[activeApi].id }}</strong>
+      div.flex-grow-1
+      span Waypoints: <strong>{{ missionActive[activeApi].total }}</strong>
     v-list(subheader dense)
-      v-subheader Mission Waypoints
       v-list-group(v-if="missionActive[activeApi]" v-for="(waypoint, ix) in missionActive[activeApi].mission" v-model="waypointActive[waypoint.seq]" :key="`waypoint_${ix}`")
-        v-list-tile(slot="activator")
-          v-list-tile-content
-            v-list-tile-title {{ waypoint.seq }}: <strong>{{ mavlinkEnum('MAV_CMD', waypoint.command).name.replace("NAV_", "") }}</strong>
+        template(v-slot:activator)
+          v-list-item-content
+            v-list-item-title {{ waypoint.seq }}: <strong>{{ mavlinkEnum('MAV_CMD', waypoint.command).name.replace("NAV_", "") }}</strong>
         v-card(color='rgba(99, 99, 99, 0.1)')
           v-card-text
-            v-layout(row wrap)
-              v-flex(xs12)
-                v-btn(@click.stop="deleteDialog = true" color="red" small outline) Delete
-                div {{ mavlinkEnum('MAV_CMD', waypoint.command).description }}
-                // Waypoint Type: NAV_WAYPOINT
-                template(v-if="waypoint.command == '16'")
-                  div Hold Time: <strong>{{ waypoint.param1 }}</strong>
-                  div Hit Radius: <strong>{{ waypoint.param2 }}</strong>
-                  div Param3?: <strong>{{ waypoint.param3 }}</strong>
-                  div Yaw Angle: <strong>{{ waypoint.param4 }}</strong>
-                  div Latitude: <strong>{{ _.round(waypoint.latitude, 2) }}</strong>
-                  div Longitude: <strong>{{ _.round(waypoint.longitude, 2) }}</strong>
-                  div Altitude: <strong>{{ _.round(waypoint.altitude, 2) }}</strong>
-                template(v-else-if="waypoint.command == '12'")
-                  div
-                template(v-else)
-                  div {{ waypoint.command }}
-
+            v-btn(@click.stop="deleteDialog = true" color="red" small outlined) Delete
+            div {{ mavlinkEnum('MAV_CMD', waypoint.command).description }}
+            // Waypoint Type: NAV_WAYPOINT
+            template(v-if="waypoint.command == '16'")
+              div Hold Time: <strong>{{ waypoint.param1 }}</strong>
+              div Hit Radius: <strong>{{ waypoint.param2 }}</strong>
+              div Param3?: <strong>{{ waypoint.param3 }}</strong>
+              div Yaw Angle: <strong>{{ waypoint.param4 }}</strong>
+              div Latitude: <strong>{{ _.round(waypoint.latitude, 2) }}</strong>
+              div Longitude: <strong>{{ _.round(waypoint.longitude, 2) }}</strong>
+              div Altitude: <strong>{{ _.round(waypoint.altitude, 2) }}</strong>
+            template(v-else-if="waypoint.command == '12'")
+              div
+            template(v-else)
+              div {{ waypoint.command }}
     v-divider
-    v-list(subheader dense)
-      v-subheader Waypoints Mode
-      v-list-tile
-        v-list-tile-content
-          v-card
-            v-card-text
-              v-layout(row wrap)
-                v-flex(xs12)
-                  v-radio-group(v-model="waypointMode" row)
-                    v-radio(label="Select" value="select")
-                    v-radio(label="Modify" value="modify")
-                    v-radio(label="Add" value="draw")
+    v-radio-group.pl-4(v-model="waypointMode" row)
+      v-radio(label="Select" value="select")
+      v-radio(label="Modify" value="modify")
+      v-radio(label="Add" value="draw")
 
   v-dialog(v-if="activeWaypoint" v-model="deleteDialog" max-width="290" hide-overlay=true)
     v-card
@@ -218,8 +180,8 @@ div.planner-map
         div Are you sure you want to delete this mission waypoint?  This action is irreversible!
       v-card-actions
         v-spacer
-        v-btn(flat @click="deleteDialog = false") Cancel
-        v-btn(flat color="red darken-1" @click="deleteWaypoint(activeWaypoint.seq); deleteDialog = false") Delete
+        v-btn(text @click="deleteDialog = false") Cancel
+        v-btn(text color="red darken-1" @click="deleteWaypoint(activeWaypoint.seq); deleteDialog = false") Delete
 </template>
 
 <script>
@@ -337,13 +299,15 @@ export default {
   },
 
   watch: {
-    activeApi (newValue, oldValue) {
-      // If the selected api changes, reset selected mission to default 'loaded'
-      const oldMission = this.selectedMission
-      this.selectedMission = 'loaded'
-      this.resetActiveMission(oldMission)
-      this.resetLoadedMission()
-      this.fitMapview()
+    activeApi: {
+      handler: function (newValue, oldValue) {
+        // If the selected api changes, reset selected mission to default 'loaded'
+        const oldMission = this.selectedMission
+        this.selectedMission = 'loaded'
+        this.resetActiveMission(oldMission)
+        this.resetLoadedMission()
+        this.fitMapview()
+      }
     },
     apis: {
       // Watch apis state for any change and process
@@ -608,9 +572,8 @@ export default {
 }
 .missionlist {
   position: absolute;
-  top: 75px;
-  left: 25px;
-  max-height: 75vh;
+  top: 60px;
+  left: 10px;
 }
 .markernumber {
   position: relative;
@@ -618,19 +581,10 @@ export default {
   top: -10px;
   color: #fff;
 }
-table.vehicle {
-  background-color: rgba(33, 33, 33, 0.5);
-  border: none;
-  color: #fff
-}
-table.vehicle thead tr {
-  background-color: rgba(33, 33, 33, 0.8)
-}
-table.vehicle td.value {
-  font-weight: bold;
-}
-
 .v-list__group--active {
   background-color: rgba(99, 99, 99, 0.25)
+}
+.vehicleinfo td {
+  font-size: 12px;
 }
 </style>

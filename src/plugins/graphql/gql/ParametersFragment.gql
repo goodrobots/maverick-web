@@ -12,7 +12,6 @@ fragment Parameter on Parameter {
     max
     min
     rebootRequired
-    type
     unitText
     units
     values

@@ -1,23 +1,25 @@
 #import "./ParametersFragment.gql"
 
+query paramQuery {
+  ...Parameter
+}
+
 query paramsQuery {
-  Params {
-    ...Parameter
-  }
-}
-
-subscription paramsSubscription {
-  Params {
-    ...Parameter
-  }
-}
-
-mutation updateParam ($id: ID, $value: ParamValueType) {
-  updateParam(id: $id, value: $value) {
-    ok
-    Param {
-      id
-      value
+  ParameterList(query: "*") {
+    parameters {
+      ...Parameter
     }
+  }
+}
+
+subscription paramSubscription {
+  Parameter {
+    ...Parameter
+  }
+}
+
+mutation updateParam ($id: String!, $value: ParamValue!) {
+  Parameter(id: $id, value: $value) {
+    ...Parameter
   }
 }

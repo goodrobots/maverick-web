@@ -10,7 +10,7 @@ import PlannerModule from '../components/modules/planner/PlannerModule'
 import ConfigModule from '../components/modules/config/ConfigModule'
 import ConfigParamSummary from '../components/modules/config/ConfigParamSummary'
 import ConfigParamGroups from '../components/modules/config/ConfigParamGroups'
-import ConfigParamFilter from '../components/modules/config/ConfigParamFilter'
+import ConfigParamList from '../components/modules/config/ConfigParamList'
 
 import AnalysisModule from '../components/modules/analysis/AnalysisModule'
 import AnalysisIndex from '../components/modules/analysis/AnalysisIndex'
@@ -62,7 +62,7 @@ export default new Router({
         },
         {
           path: 'parameter-list',
-          component: ConfigParamFilter
+          component: ConfigParamList
         }
       ]
     },
