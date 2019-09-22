@@ -1,0 +1,29 @@
+{
+  "dev": {
+    "httpEndpoint": "http://dev.maverick.one:7000/graphql",
+    "wsEndpoint": "ws://dev.maverick.one:7000/subscriptions",
+    "websocketsOnly": false,
+    "name": "SITL Copter 1",
+    "colorLight": "rgba(166,11,11,0.3)",
+    "colorDark": "rgba(166,11,11,0.9)",
+    "authToken": null
+  },
+  "plane1": {
+    "httpEndpoint": "http://dev.maverick.one:7060/graphql",
+    "wsEndpoint": "ws://dev.maverick.one:7060/subscriptions",
+    "websocketsOnly": false,
+    "name": "SITL Plane 1",
+    "colorLight": "#339999",
+    "colorDark": "#339999",
+    "authToken": null
+  },
+  "sub1": {
+    "httpEndpoint": "http://dev.maverick.one:7090/graphql",
+    "wsEndpoint": "ws://dev.maverick.one:7090/subscriptions",
+    "websocketsOnly": false,
+    "name": "SITL Sub 1",
+    "colorLight": "#996633",
+    "colorDark": "#996633",
+    "authToken": null
+  }
+}

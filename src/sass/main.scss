@@ -1,7 +1,12 @@
+@import '_maverick_colors.scss';
+@import '~vuetify/src/styles/settings/_colors.scss';
+
+$colors: map-merge($mavColors, $colors);
+
 @import '~vuetify/src/styles/styles.sass';
 
 // The variables you want to modify
-// $font-size-root: 14px;
+$font-size-root: 14px;
 
 // For updating SASS lists
 // $material-light: map-merge($material-light, ( cards: blue ));

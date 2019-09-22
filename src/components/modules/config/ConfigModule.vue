@@ -6,7 +6,7 @@ div
 </template>
 
 <script>
-import colors from 'vuetify/es5/util/colors'
+import colors from 'vuetify/lib/util/colors'
 import ConfigDrawer from './ConfigDrawer'
 
 export default {

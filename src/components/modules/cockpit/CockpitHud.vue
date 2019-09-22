@@ -1,6 +1,6 @@
 <script>
-import colors from 'vuetify/es5/util/colors'
-import { colorToInt } from 'vuetify/es5/util/colorUtils'
+import colors from 'vuetify/lib/util/colors'
+import { colorToInt } from 'vuetify/lib/util/colorUtils'
 import { imuQuery, imuSubscription } from '../../../plugins/graphql/gql/Imu.gql'
 
 export default {

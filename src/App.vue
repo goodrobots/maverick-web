@@ -74,8 +74,8 @@ export default {
     apis: {
       handler: function (newValue) {
         for (const api in this.apis) {
-          this.createQuery('Status', statusQuery, api, null, this.processStatusQuery)
-          this.createSubscription('Status', statusSubscription, api, null, this.processStatusSubscription)
+          this.createQuery('Status', statusQuery, api, null, null, this.processStatusQuery)
+          this.createSubscription('Status', statusSubscription, api, null, null, this.processStatusSubscription)
         }
       },
       deep: true
@@ -104,7 +104,7 @@ export default {
         // If the uuid for the api has not already been set, set it and create a VehicleInfo query (which needs the uuid to be created)
         if (!this.$store.state.apis[api].uuid) {
           this.$store.commit('setApiUuid', { api: api, value: data.data.Status.id })
-          this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, this.processVehicleInfoQuery, null, null, { uuid: this.$store.state.apis[api].uuid })          
+          this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, null, this.processVehicleInfoQuery, null, { uuid: this.$store.state.apis[api].uuid })          
         }
         if (this.$store.state.apiTimestamps[api] === null) this.$store.commit('setApiSeen', { api: api, value: performance.now() })
         if (!(api in this.$store.state.statusData)) {
@@ -115,7 +115,7 @@ export default {
     processStatusSubscription (data, key) {
       const api = key.split('___')[0]
       // Store the message data and set the api state to active, for subsequent subscription callbacks
-      if (data.data && this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
+      // if (data.data && this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
       this.$store.commit('setApiSeen', { api: api, value: performance.now() })
       if (data.data && this.$store.state.statusData[api] !== data.data.Status) {
         this.$store.commit('setStatusData', { api: api, message: data.data.Status })
@@ -125,6 +125,7 @@ export default {
       const api = key.split('___')[0]
       if (!data.data) {
         this.logInfo(`Invalid GraphQL 'VehicleInfo' data returned from api: ${api}`)
+        this.$store.commit('setApiState', { api: api, value: false })
         this.$store.commit('setVehicleData', { api: api, message: null })
         return false
       }
