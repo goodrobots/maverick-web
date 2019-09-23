@@ -2,66 +2,67 @@
 v-card.transparent.navfab
 
   v-speed-dial.navfab(v-model="navfab" direction="top" bottom=true right=true open-on-hover=false transition="slide-y-reverse-transition")
-    template(v-slot:activator="{ on }")
-      v-btn(v-on="on" :color="navColor" dark fab hover v-model="navfab")
-        v-icon(v-html="navIcon")
-        v-icon close
+    template(v-slot:activator)
+      // v-btn(:color="navColor" dark fab hover v-model="navfab")
+      v-btn(color="blue" dark fab hover v-model="navfab")
+        v-icon(v-if="navfab") mdi-close
+        v-icon(v-else v-html="navIcon")
     v-tooltip(v-if="(moduleName !== 'analysis')" left)
       template(v-slot:activator="{ on }")
-        v-btn( fab dark :small="(moduleName !== 'analysis')" color="mavgreen" to="/analysis" v-on="on")
-          v-icon equalizer
+        v-btn(fab dark :small="(moduleName !== 'analysis')" color="green" to="/analysis" v-on="on")
+          v-icon mdi-equalizer
       span Analysis
     v-tooltip(v-if="(moduleName !== 'config')" left)
       template(v-slot:activator="{ on }")
         v-btn(fab dark :small="(moduleName !== 'config')" color="mavpurple" to="/config" v-on="on")
-          v-icon settings
+          v-icon mdi-settings
       span Configuration
     v-tooltip(v-if="(moduleName !== 'planner')" left)
       template(v-slot:activator="{ on }")
         v-btn(fab dark :small="(moduleName !== 'planner')" color="mavblue" to="/planner" v-on="on")
-          v-icon explore
+          v-icon mdi-map-marker-circle
       span Planner
     v-tooltip(v-if="(moduleName !== 'cockpit')" left)
       template(v-slot:activator="{ on }")
         v-btn(fab dark :small="(moduleName !== 'cockpit')" color="mavorange" to="/cockpit" v-on="on")
-          v-icon flight_takeoff
+          v-icon mdi-airplane-takeoff
       span Cockpit
     v-tooltip(left)
       template(v-slot:activator="{ on }")
         v-btn(fab dark small :color="(navState) ? navColor : 'grey'" @click="toggleNavState" v-on="on")
-          v-icon(v-if="navState") swap_vert
-          v-icon(v-else) swap_horiz
+          v-icon(v-if="navState") mdi-swap-vertical-bold
+          v-icon(v-else) mdi-swap-vertical
       span Top Nav
     v-tooltip(left)
       template(v-slot:activator="{ on }")
         v-btn(fab dark small :color="(fullScreen) ? navColor : 'grey'" @click="toggleFullScreen" v-on="on")
-          v-icon(v-if="fullScreen") fullscreen
-          v-icon(v-else) fullscreen_exit
+          v-icon(v-if="fullScreen") mdi-fullscreen
+          v-icon(v-else) mdi-fullscreen-exit
       span Fullscreen
 
-  v-speed-dial.navfab(v-model="navfab" direction="left" bottom=true right=true open-on-hover=false transition="slide-x-reverse-transition")
-    template(v-slot:activator="{ on }")
-      v-btn(v-on="on" :color="navColor" dark fab hover v-model="navfab")
+  // v-speed-dial.navfab(v-model="navfab" direction="left" bottom=true right=true open-on-hover=false transition="slide-x-reverse-transition")
+    template(v-slot:activator)
+      v-btn(:color="navColor" dark fab hover v-model="navfab")
         v-icon(v-html="navIcon")
-        v-icon close
+        v-icon mdi-close
     // Cockpit specific actions
     template(v-if="(moduleName === 'cockpit')")
       v-tooltip(bottom)
         template(v-slot:activator="{ on }")
           v-btn(fab dark small :color="(cockpitMapState) ? navColor : 'grey'" @click="toggleMap" v-on="on")
-            v-icon my_location
+            v-icon mdi-map-marker
         span Map
       v-tooltip(bottom)
         template(v-slot:activator="{ on }")
           v-btn(fab dark small :color="(cockpitHudState) ? navColor : 'grey'" @click="toggleHud" v-on="on")
-            v-icon surround_sound
+            v-icon mdi-surround-sound
         span HUD
     // Planner specific actions
     template(v-if="(moduleName === 'planner')")
       v-tooltip(bottom)
         template(v-slot:activator="{ on }")
           v-btn(fab dark small :color="(plannerViewState) ? navColor : 'grey'" @click="toggleView" v-on="on")
-            v-icon 3d_rotation
+            v-icon mdi-rotate-3d
         span 2D/3D View
 </template>
 
@@ -94,13 +95,13 @@ export default {
     navIcon () {
       switch (this.moduleName) {
         case 'cockpit':
-          return 'flight_takeoff'
+          return 'mdi-airplane-takeoff'
         case 'planner':
-          return 'explore'
+          return 'mdi-map-marker-circle'
         case 'config':
-          return 'settings'
+          return 'mdi-settings'
         case 'analysis':
-          return 'equalizer'
+          return 'mdi-equalizer'
         default:
           return null
       }
