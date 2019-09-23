@@ -201,7 +201,9 @@ export default {
       if (!this.statusTextData[api]) {
         this.statusTextData[api] = []
       }
-      this.statusTextData[api].push(data.data.StatusText)
+      if (!data.data.StatusText.message.includes("HP: requesting home position")) {
+        this.statusTextData[api].push(data.data.StatusText)
+      }
     },
     setTickers () {
       this.tickers.vehicleState = true
