@@ -55,6 +55,10 @@ export default {
           this.$store.commit('setModuleName', 'test')
           this.$store.commit('setNavIcon', false)
           break
+        case /^\/maverick/.test(this.$store.state.route.path):
+          this.$store.commit('setModuleName', 'maverick')
+          this.$store.commit('setNavIcon', false)
+          break
         default:
           this.$store.commit('setNavIcon', false)
           this.$store.commit('setModuleName', 'home')
