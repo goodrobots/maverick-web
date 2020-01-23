@@ -7,8 +7,6 @@ div
 <script>
 export default {
   name: "MaverickModule",
-  components: {
-  },
   data () {
     return {}
   },
