@@ -24,7 +24,6 @@
     "vue-cli-plugin-apollo": "^0.21.0",
     "vue-fullscreen": "^2.1.5",
     "vue-lodash": "^2.0.2",
-    "vue-monaco": "^1.1.0",
     "vue-router": "^3.0.7",
     "vue-timers": "^2.0.2",
     "vue-visibility-change": "^1.2.1",

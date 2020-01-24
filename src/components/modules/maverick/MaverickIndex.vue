@@ -47,8 +47,7 @@ export default {
       { index: 1, name: "configuration", componentName: "ConfigurationCard" },
       { index: 2, name: "networking", componentName: "NetworkingCard" },
       { index: 3, name: "commands", componentName: "CommandsCard" }
-    ],
-    component:""
+    ]
   }),
 
   computed: {
