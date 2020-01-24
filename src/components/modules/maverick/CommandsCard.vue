@@ -16,6 +16,11 @@ export default {
   name: 'CommandsCard',
   data () {
     return {
+      commands: [
+        {name: "configure", description: "Apply current configuration", status: false},
+        {name: "reboot", description: "Restart the companion computer", status: false},
+        {name: "shutdown", description: "shutdown the companion computer", status: false}
+      ]
     }
   },
   computed: {
