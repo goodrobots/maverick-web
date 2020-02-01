@@ -9,31 +9,191 @@ export const schema = {
                 "type": "string",
                 "enum": [
                     "base",
+                    "base::console",
+                    "base::defaults",
+                    "base::desktop",
+                    "base::functions",
+                    "base::hostip",
+                    "base::locale",
+                    "base::maverick",
+                    "base::minimal",
+                    "base::packages",
+                    "base::puppet",
+                    "base::python",
+                    "base::services",
+                    "base::stages",
+                    "base::sysctl",
+                    "base::users",
                     "maverick_analysis",
+                    "maverick_analysis::collect",
+                    "maverick_analysis::grafana",
+                    "maverick_analysis::influx",
+                    "maverick_analysis::mavlogd",
                     "maverick_dev",
+                    "maverick_dev::apsitl_dev",
+                    "maverick_dev::ardupilot",
+                    "maverick_dev::px4",
                     "maverick_fc",
                     "maverick_hardware",
+                    "maverick_hardware::beagle",
+                    "maverick_hardware::intel",
+                    "maverick_hardware::joule",
+                    "maverick_hardware::odroid",
+                    "maverick_hardware::peripheral::caspa",
+                    "maverick_hardware::peripheral::flirone",
+                    "maverick_hardware::peripheral::ocam",
+                    "maverick_hardware::peripheral::picam",
+                    "maverick_hardware::peripheral::realsense",
+                    "maverick_hardware::raspberry",
+                    "maverick_hardware::tegra",
+                    "maverick_hardware::up",
                     "maverick_intelligence",
+                    "maverick_intelligence::pytorch",
+                    "maverick_intelligence::tensorflow",
                     "maverick_mavlink",
+                    "maverick_mavlink::dronekit",
+                    "maverick_mavlink::mavsdk",
                     "maverick_network",
+                    "maverick_network::avahi",
+                    "maverick_network::dnsclient",
+                    "maverick_network::dnsmasq",
+                    "maverick_network::timesync",
+                    "maverick_network::wifibroadcast",
+                    "maverick_network::zerotier",
                     "maverick_ros",
+                    "maverick_ros::ros1",
+                    "maverick_ros::ros2",
                     "maverick_security",
+                    "maverick_security::disable_services",
+                    "maverick_security::fail2ban",
+                    "maverick_security::firewall",
+                    "maverick_security::firewall_common",
+                    "maverick_security::firewall_post",
+                    "maverick_security::firewall_pre",
+                    "maverick_security::ldap_client",
+                    "maverick_security::ldap_server",
+                    "maverick_security::scanners",
+                    "maverick_security::ssh",
+                    "maverick_security::ssl",
                     "maverick_vision",
-                    "maverick_web"
+                    "maverick_vision::aruco",
+                    "maverick_vision::camera_manager",
+                    "maverick_vision::collision_avoidance",
+                    "maverick_vision::gstreamer",
+                    "maverick_vision::mjpg_streamer",
+                    "maverick_vision::opencv",
+                    "maverick_vision::orb_slam2",
+                    "maverick_vision::rtabmap",
+                    "maverick_vision::vision_landing",
+                    "maverick_vision::vision_seek",
+                    "maverick_vision::visiond",
+                    "maverick_vision::visionlibs",
+                    "maverick_web",
+                    "maverick_web::apache",
+                    "maverick_web::cloud9",
+                    "maverick_web::codeserver",
+                    "maverick_web::fcs",
+                    "maverick_web::maverick_api",
+                    "maverick_web::maverick_docs",
+                    "maverick_web::maverick_web",
+                    "maverick_web::nginx",
+                    "maverick_web::nodejs",
+                    "maverick_web::ssl",
+                    "maverick_web::theia"
                 ],
                 "enumDescriptions": [
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    ""
+                    "Base class\nThe Base class sets up the fundamental Maverick environment. It declares the puppet stages and defines the entire bootstrap stage,\nand calls the other base classes in all stages.",
+                    "Base::Console class\nThis class manages the system console.",
+                    "Base::Defaults class\nThis class sets some defaults that Puppet uses when constructing the node graph.",
+                    "Base::Desktop class\nThis class installs/manages the desktop environment.",
+                    "Base::Python class\nThis class declares some common functions that can be used in any other manifests.",
+                    "Base::Python class\nThis class manages /etc/hosts.",
+                    "Base::Locale class\nThis class manages the System Locale.  It uses the en_GB (English GB dialect) locale by default, and sets Europe/London as the default timezone.",
+                    "Base::Maverick class\nThis class sets up the basic Maverick environment - mav user, /srv/maverick directory structure, git branch, base containers for status,\nvarious scripts and symlinks, and in bootstrap it clones the Maverick software itself (/srv/maverick/software/maverick)",
+                    "Base::Minimal class\nThis class can be used instead of the usual Base class, but makes absolutely minimal changes to the system.\nIt can be used to apply just a very specific small subset of Maverick to an existing system with the most monimal changes.",
+                    "Base::Packages class\nThis class installs/manages basic system software.\nIt strips out a bunch of software that is unlikely to ever be used on a UAV, and installs basic packages that are commonly used.",
+                    "Base::Puppet class\nThis class installs/manages the puppet client.",
+                    "Base::Python class\nThis class installs/manages Python software.\nIt manages the system python to some degree, but it focuses on providing a custom optimised python build installed into /srv/maverick/software/python.\nThis currently installs the latest point release of Python 3.7.",
+                    "Base::Services class\nThis class primarily disables any services that typically don't need to be running on a UAV.",
+                    "Base::Stages class\nThis class declares puppet stages.",
+                    "Base::Sysctl class\nThis class manages system sysctl settings.",
+                    "Base::Users class\nThis class manages the Maverick 'mav' user.",
+                    "Maverick_analysis class\nThis class controls all other classes in maverick_analysis module.",
+                    "Maverick_analysis::Collect class\nThis class installs/manages collectd software (collectd.org), which is used to log system metrics.",
+                    "Maverick_analysis::Grafana class\nThis class installs/manages Grafana software (grafana.com), which is used to display system and flight metrics.\nAs Grafana deliberately does not support real customistaion or embedding, it is likely this will be deprecated in the future in favour of custom solution that is more flexible.",
+                    "Maverick_analysis::Influx class\nThis class installs/manages InfluxDB software (www.influxdata.com), which is used to store time series metrics, including system and flight controller data.",
+                    "Maverick_analysis::Mavlogd class\nThis class installs/manages Mavlogd, which is a bespoke script from Maverick that is used to import flight data into influxd.",
+                    "Maverick_dev class\nThis class manages the development environment.",
+                    "Maverick_dev::apsitl_dev class\nThis class declares the default Ardupilot SITL instance.  It then calls maverick_dev::apsitl that creates the actual SITL instance",
+                    "Maverick_dev::ardupilot class\nThis class installs/manages the Ardupilot software/firmware environment.",
+                    "Maverick_dev::px4 class\nThis class installs/manages the PX4 software/firmware environment.",
+                    "Maverick_fc class\nThis class manages the flight controller environment, in particular mavlink proxy and services that connect to the flight controller.",
+                    "Maverick_hardware class\nThis class controls all other classes in maverick_hardware module.",
+                    "Maverick_hardware::Beagle class\nThis class installs/manages the Beaglebone hardware environment",
+                    "Maverick_hardware::Intel class\nThis class installs/manages the common Intel hardware environment",
+                    "Maverick_hardware::Joule class\nThis class installs/manages the Intel Joule hardware environment",
+                    "Maverick_hardware::Odroid class\nThis class installs/manages the Odroid XU4 hardware environment",
+                    "Maverick_hardware::Peripheral::Caspa class\nThis class installs/manages the Intel Caspa camera support.",
+                    "Maverick_hardware::Peripheral::Flirone class\nThis class installs/manages the FLIR One thermal imager support.",
+                    "Maverick_hardware::Peripheral::Ocam class\nThis class installs/manages the Odroid Ocam camera support.",
+                    "Maverick_hardware::Peripheral::Picam class\nThis class installs/manages the Raspberry Pi camera support.",
+                    "Maverick_hardware::Peripheral::Realsense class\nThis class installs/manages the Intel Realsense camera support.",
+                    "Maverick_hardware::Raspberry class\nThis class installs/manages the Raspberry Pi hardware environment",
+                    "Maverick_hardware::Tegra class\nThis class installs/manages the Nvidia Tegra hardware environment, including support for TX1/TX2 and Jetson Nano.",
+                    "Maverick_hardware::Up class\nThis class installs/manages the Aaeon Up hardware environment",
+                    "Maverick_intelligence class\nThis class controls all other classes in maverick_intelligence module.\nThe maverick_intelligence class covers Machine Learning/Artificial Intelligence software.",
+                    "Maverick_intelligence:pytorch class\nThis class installs/manages the pytorch Machine Learning software (pytorch.org).",
+                    "Maverick_intelligence:tensorflow class\nThis class installs/manages the tensorflow Machine Learning software (tensorflow.org).",
+                    "Maverick_mavlink class\nThis class controls all other classes in maverick_mavlink module.",
+                    "Maverick_mavlink::Dronekit class\nThis class installs Dronekit and associated software.",
+                    "Maverick_mavlink::Mavsdk class\nThis class installs MavSDK software.",
+                    "Maverick_network class\nThis class controls all other classes in maverick_network module.",
+                    "Maverick_network::Avahi class\nThis class installs/manages Avahi zeroconf software/service.",
+                    "Maverick_network::Dnsclient class\nThis class installs/manages /etc/resolv.conf network dns client config.",
+                    "Maverick_network::Dnsmasq class\nThis class installs/manages the dnsmasq software and configuration.",
+                    "Maverick_network::Timesync class\nThis class installs/manages system time synchronization software/configuration.",
+                    "Maverick_network::Wifibroadcast class\nThis class installs/manages wifibroadcast software/configuration.",
+                    "Maverick_network::Zerotier class\nThis class installs/manages Zerotier network software/configuration.",
+                    "Maverick_ros class\nThis class controls all other classes in maverick_ros module.",
+                    "Maverick_ros::Ros1 class\nThis class installs/manages ROS (ros.org).",
+                    "Maverick_ros::Ros2 class\nThis class installs/manages ROS2 (ros.org).",
+                    "Maverick_security class\nThis class controls all other classes in maverick_security module.",
+                    "Maverick_security::disable_services class\nThis class disables various system services that are typically not needed or a good idea for security.",
+                    "Maverick_security::fail2ban class\nThis class installs and manages the fail2ban service.  This provides protection against brute force attacks.",
+                    "Maverick_security::firewall class\nThis class installs and manages the network firewall.",
+                    "Maverick_security::firewall_common class\nThis class declares standard common firewall rules",
+                    "Maverick_security::firewall_post class\nThis class declares post-firewall rules",
+                    "Maverick_security::firewall_pre class\nThis class declares pre-firewall rules",
+                    "Maverick_security::ldap_client class\nThis class configures an ldap client",
+                    "Maverick_security::ldap_server class\nThis class installs and manages an LDAP server.",
+                    "Maverick_security::scanners class\nThis class installs and manages security scanners.",
+                    "Maverick_security::ssh class\nThis class installs and manages SSH service and login banners.",
+                    "Maverick_security::Ssl class\nThis class installs and manages the Maverick SSL environment.",
+                    "Maverick_vision class\nThis class controls all other classes in maverick_vision module.",
+                    "Maverick_vision::Aruco class\nThis class installs and manages the Aruco software.",
+                    "Maverick_vision::Camera_manager class\nThis class installs and manages the Intel CameraManager software.",
+                    "Maverick_vision::Collision_avoidance class\nThis class installs and manages the Intel Collision Avoidance library.",
+                    "Maverick_vision::Gstreamer class\nThis class installs and manages the Gstreamer library.",
+                    "Maverick_vision::mjpg_streamer class\nThis class installs and manages the mjpg_streamer library.",
+                    "Maverick_vision::Opencv class\nThis class installs and manages the OpenCV software.",
+                    "Maverick_vision::Orb_slam2 class\nThis class installs and manages the Orb_slam2 software.",
+                    "Maverick_vision::Rtabmap class\nThis class installs and manages the Rtabmap software.",
+                    "Maverick_vision::Vision_landing class\nThis class installs and manages the GoodRobots Vision_Landing software.",
+                    "Maverick_vision::Vision_seek class\nThis class installs and manages software to support the Seek Thermal imagers.",
+                    "Maverick_vision::Visiond class\nThis class installs and manages the Maverick visiond software.",
+                    "Maverick_vision::Visionlibs class\nThis class installs and manages support libraries for other vision components.",
+                    "Maverick_web class\nThis class controls all other classes in maverick_web module.",
+                    "Maverick_web::Apache class\nThis class installs and manages the Apache webserver.",
+                    "Maverick_web::Cloud9 class\nThis class installs and manages the Cloud9 IDE.",
+                    "Maverick_web::Codeserver class\nThis class installs and manages the Codeserver IDE.",
+                    "Maverick_web::Fcs class\nThis class installs/manages the legacy 'FCS' environment, which will disappear as soon as maverick-web is ready.",
+                    "Maverick_web::Maverick_api class\nThis class installs and manages the Maverick-api software.",
+                    "Maverick_web::Maverick_docs class\nThis class installs and manages the Maverick documentation.",
+                    "Maverick_web::Maverick_web class\nThis class installs and manages the Maverick-web software.",
+                    "Maverick_web::Nginx class\nThis class installs and manages the Nginx webserver.",
+                    "Maverick_web::Nodejs class\nThis class installs and manages the NodeJS software.",
+                    "Maverick_web::Ssl class\nThis class installs and manages the web SSL configuration.",
+                    "Maverick_web::Theia class\nThis class installs and manages the Theia IDE."
                 ]
             }
         },
@@ -105,6 +265,26 @@ export const schema = {
         },
         "base::users::manage_root_password": {
             "description": "If root password should be set by $root-password\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_analysis::influxdb": {
+            "description": "Whether to include the maverick_analysis::influxdb class.  Note this doesn't activate influxdb itself, just includes the class.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_analysis::collectd": {
+            "description": "Whether to include the maverick_analysis::mavlogd class.  Note this doesn't activate mavlogd itself, just includes the class.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_analysis::grafana": {
+            "description": "\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_analysis::mavlogd": {
+            "description": "\n\n",
             "type": "boolean",
             "default": false
         },
@@ -223,6 +403,32 @@ export const schema = {
             "description": "The admin password used to communicate with Grafana.  By default taken from maverick_analysis::grafana::admin_password and should not be set.\n\n",
             "type": "string",
             "default": "$maverick_analysis::grafana::admin_password"
+        },
+        "maverick_dev::ardupilot": {
+            "description": "If set to true, include the maverick_dev::ardupilot class which clones and compiles the Ardupilot firmware, both for local development and uploading to flight controllers.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl_dev": {
+            "description": "If set to true, set up the default Ardupilot SITL instance.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::px4": {
+            "description": "If set to true, include the maverick_dev::px4 class which clones and compiles the PX4Pro firmware.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::px4sitl_dev": {
+            "description": "If set to true, setup the PX4 SITL environment\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::file_watchers": {
+            "description": "The max number of OS inotify file watchers that are allowed.  This allows IDEs to track more files, at the expense of kernel/system memory.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 8192
         },
         "maverick_dev::apsitl_dev::sitl_active": {
             "description": "If true, the SITL service will be activated and enabled at boot time\n\n",
@@ -516,6 +722,178 @@ export const schema = {
             "type": "boolean",
             "default": false
         },
+        "maverick_fc::mavlink_proxy": {
+            "description": "Type of mavlink proxy to use, eg. mavlink-router, mavproxy or cmavnode\n\n",
+            "type": "string",
+            "default": "mavlink-router"
+        },
+        "maverick_fc::mavlink_active": {
+            "description": "If true, the mavlink proxy will be activated and enabled at boot time\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_fc::mavlink_logging": {
+            "description": "If true and supported by the mavlink proxy software, then mavlink data will be logged to file\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_fc::mavlink_input": {
+            "description": "Path to serial device that connects to the FC.  This is different for each board, and is usually set in the board sample manifests (~/software/maverick/conf/sample-nodes)\n\n",
+            "type": "string",
+            "default": "/dev/ttyAMA0"
+        },
+        "maverick_fc::mavlink_inbaud": {
+            "description": "Baud rate for serial FC connection\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 115200
+        },
+        "maverick_fc::mavlink_inflow": {
+            "description": "If set to true, turns on hardware flow control on the FC serial connection.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_fc::mavlink_startingtcp": {
+            "description": "Start TCP port - if more than one port then each one will be incremented from this starting value\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 5770
+        },
+        "maverick_fc::mavlink_tcpports": {
+            "description": "Number of TCP ports that the mavlink proxy will listen on\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_fc::mavlink_startingudp": {
+            "description": "Start UDP port - if more than one port then each one will be incremented from this starting value\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 14570
+        },
+        "maverick_fc::mavlink_udpports": {
+            "description": "Number of UDP ports to listen on\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_fc::mavlink_udpinports": {
+            "description": "Number of UDP In ports to listen on\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_fc::mavlink_outbaud": {
+            "description": "Baud rate of mavlink_serialout port\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 115200
+        },
+        "maverick_fc::mavlink_outflow": {
+            "description": "If mavlink_serialout port should use hardware flow control\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_fc::mavlink_replaceconfig": {
+            "description": "If set to true, this will overwrite the mavlink proxy config file.  If false, edits can be made directly to the config file without being managed/overwritten\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_fc::ros_instance": {
+            "description": "If true, create a separate ROS instance for this SITL instance\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_fc::rosmaster_active": {
+            "description": "If true, set this separate ROS instance active and enabled at boot time\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_fc::rosmaster_port": {
+            "description": "Define the port number that the ROS master will listen on.  This must be unique across all ROS instances.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 11311
+        },
+        "maverick_fc::mavros_active": {
+            "description": "If true, the separate MAVROS instance will be activated and enabled at boot time\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_fc::mavros_startup_delay": {
+            "description": "This delay causes Mavros to wait before starting, to give ROS and SITL time to boot fully first.  Should be increased on slower boards/environments.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 10
+        },
+        "maverick_fc::api_instance": {
+            "description": "If true, create a separate maverick-api instance\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_fc::api_active": {
+            "description": "If true, this maverick-api instance will be activated and enabled at boot time\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_fc::mavlink_flow": {
+            "description": "\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_hardware::raspberry_install": {
+            "description": "If true, include the maverick_hardware::raspberry support class\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_hardware::beagle_install": {
+            "description": "If true, include the maverick_hardware::beagle support class\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_hardware::odroid_install": {
+            "description": "If true, include the maverick_hardware::odroid support class\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_hardware::joule_install": {
+            "description": "If true, include the maverick_hardware::joule support class\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_hardware::up_install": {
+            "description": "If true, include the maverick_hardware::up support class\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_hardware::tegra_install": {
+            "description": "If true, include the maverick_hardware::tegra support class\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_hardware::camera_ocam_install": {
+            "description": "If true, include the maverick_hardware::camera_ocam support class\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_hardware::camera_picam_install": {
+            "description": "If true, include the maverick_hardware::camera_picam support class\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_hardware::realsense": {
+            "description": "install\nIf true, include the maverick_hardware::realsense support class\n\n"
+        },
+        "maverick_hardware::flirone_install": {
+            "description": "If true, include the maverick_hardware::flirone support class\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_hardware::realsense_install": {
+            "description": "\n\n",
+            "type": "boolean",
+            "default": false
+        },
         "maverick_hardware::beagle::included_cloud9": {
             "description": "If false (default), disable the provided cloud9 IDE.  Maverick provides it's own cloud9 environment.\n\n",
             "type": "boolean",
@@ -698,6 +1076,16 @@ export const schema = {
             "_type": "integer",
             "default": 1024
         },
+        "maverick_intelligence::tensorflow": {
+            "description": "If true, include the maverick_intelligence::tensorflow class.  Note this doesn't activate tensorflow itself, just includes the class.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_intelligence::pytorch": {
+            "description": "If true, include the maverick_intelligence::pytorch class.  Note this doesn't activate pytorch itself, just includes the class.\n\n",
+            "type": "boolean",
+            "default": false
+        },
         "maverick_intelligence::pytorch::source": {
             "description": "Github repo to use when compiling from source.\n\n",
             "default": "https://github.com/pytorch/pytorch.git"
@@ -725,6 +1113,144 @@ export const schema = {
             "description": "Major version to use - 1 or 2.  Now defaults to 2.\n\n",
             "type": "string",
             "default": "2"
+        },
+        "maverick_mavlink::cmavnode_install": {
+            "description": "If true, install cmavnode software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::cmavnode_source": {
+            "description": "Github repo to use to install cmavnode.\n\n",
+            "type": "string",
+            "default": "https://github.com/MonashUAS/cmavnode.git"
+        },
+        "maverick_mavlink::mavlink_router_install": {
+            "description": "If true, install mavlink-router software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::mavlink_router_source": {
+            "description": "Git repo to use to install mavlink-router.\n\n",
+            "type": "string",
+            "default": "https://github.com/intel/mavlink-router.git"
+        },
+        "maverick_mavlink::mavproxy_install": {
+            "description": "If true, install mavproxy software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::mavproxy_type": {
+            "description": "Whether to install mavproxy from source or through pip.\n\n",
+            "enum": [
+                "pip",
+                "source"
+            ],
+            "default": "pip"
+        },
+        "maverick_mavlink::mavcesium_install": {
+            "description": "If true, install mavcesium software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::mavcesium_apikey": {
+            "description": "API key for Bing maps to be used in mavcesium.\n\n",
+            "type": "string",
+            "default": "Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG"
+        },
+        "maverick_mavlink::mavcesium_port": {
+            "description": "TCP port to run mavcesium service.\n\n",
+            "type": "string",
+            "default": "6791"
+        },
+        "maverick_mavlink::mavcesium_mavlink_port": {
+            "description": "TCP port to connect mavcesium to for mavlink data.\n\n",
+            "type": "string",
+            "default": "5770"
+        },
+        "maverick_mavlink::mavcesium_source": {
+            "description": "Git repo to use to install mavcesium.\n\n",
+            "type": "string",
+            "default": "https://github.com/SamuelDudley/MAVCesium.git"
+        },
+        "maverick_mavlink::mavcesium_active": {
+            "description": "If true, activate the mavcesium service and enable at boot time.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::cuav_install": {
+            "description": "If true, install CUAV software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::gooey_version": {
+            "description": "Gooey is a CUAV dependency, can be version sensitive.\n\n",
+            "type": "string",
+            "default": "1.0.2"
+        },
+        "maverick_mavlink::mavsdk": {
+            "description": "If true, install MavSDK software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::dronekit": {
+            "description": "If true, install Dronekit software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::mavproxy_source": {
+            "description": "\n\n",
+            "type": "string",
+            "default": "https://github.com/ArduPilot/MAVProxy.git"
+        },
+        "maverick_network::netman": {
+            "description": "If false, disable network management software - ie. connman or NetworkManager.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_network::predictable": {
+            "description": "If true, use 'predictable' network naming.  Although technically more consistent, the naming convention is more difficult to work with in an automated fashion.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_network::dhcpcd": {
+            "description": "If false, turn off dhcpcd and rely on dhclient/wpa_supplicant\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_network::avahi": {
+            "description": "If true, include maverick_network::avahi class which manages avahi zeroconf networking.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_network::dnsmasq": {
+            "description": "If true, include maverick_network::dnsmasq class which manages the dnsmasq software/service.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_network::dnsclient": {
+            "description": "If true, include maverick_network::dnsclient class which manages the dnsclient configuration.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_network::wpasupplicant_template": {
+            "description": "If true, use templates to manage /etc/wpa_supplicant/wpa_supplicant.conf\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_network::zerotier": {
+            "description": "If true, include maverick_network::zerotier class which manages zerotier software and configuration.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_network::timesync": {
+            "description": "If true, include maverick_network::timesync class which manages the various timesync services.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_network::wifibroadcast": {
+            "description": "If true, include maverick_network::wifibc class which manages wifibroadcast software.\n\n",
+            "type": "boolean",
+            "default": false
         },
         "maverick_network::avahi::explicit_naming": {
             "description": "If false, turns on 'publish-addresses' avahi config setting.\n\n",
@@ -814,6 +1340,16 @@ export const schema = {
             "type": "string",
             "default": "8056c2e21c000001"
         },
+        "maverick_ros::ros1": {
+            "description": "If true, include the maverick_ros::ros1 class which manages ROS1.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_ros::ros2": {
+            "description": "If true, include the maverick_ros::ros2 class which manages ROS2.\n\n",
+            "type": "boolean",
+            "default": false
+        },
         "maverick_ros::ros1::installtype": {
             "description": "If 'auto' then the type of install needed will be detected based on the operating system version and architecture.  This can be overidden with 'native' or 'source'.\n\n",
             "enum": [
@@ -889,6 +1425,41 @@ export const schema = {
         },
         "maverick_ros::ros2::ros1_bridge": {
             "description": "If true, build and install the ROS1 bridge.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_security::firewall": {
+            "description": "If true, include the maverick_security::firewall class which manages network filtering.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_security::fail2ban": {
+            "description": "If true, include the maverick_security::fail2ban class which manages brute force proteciton software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_security::rkhunter": {
+            "description": "If true, activate the rkhunter rootkit finder sofwtare.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_security::clamav": {
+            "description": "If true, activate the clamav antivirus software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_security::ssl": {
+            "description": "If true, include the maverick_security::ssl class which sets up the SSL environment.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_security::ldap_server": {
+            "description": "If true, include the maverick_security::ldap_server class which sets up the ldap server software and configuration.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_security::disable_services": {
+            "description": "If true, include the maverick_security::disable_services class which stop typically unnecessary services in a UAV environment.\n\n",
             "type": "boolean",
             "default": false
         },
@@ -1005,6 +1576,66 @@ export const schema = {
             "description": "Canonical Name field used when creating CA.\n\n",
             "type": "string",
             "default": "MaverickCA ${::hostname}"
+        },
+        "maverick_vision::visiond": {
+            "description": "If true, include the maverick_vision::visiond class which manages the Maverick visiond service.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_vision::gstreamer": {
+            "description": "If true, include the maverick_vision::gstreamer class which installs/configures gstreamer software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_vision::opencv": {
+            "description": "If true, include the maverick_vision::opencv class which installs/configures OpenCV software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_vision::visionlibs": {
+            "description": "If true, include the maverick_vision::visionlibs class which installs/configures various supporting vision libraries.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_vision::mjpg_streamer": {
+            "description": "If true, include the maverick_vision::mjpg_streamer class which installs/configures mjpg_streamer software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_vision::aruco": {
+            "description": "If true, include the maverick_vision::aruco class which installs/configures aruco software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_vision::orb_slam2": {
+            "description": "If true, include the maverick_vision::orb_slam2 class which installs/configures the orb/slam2 software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_vision::vision_landing": {
+            "description": "If true, include the maverick_vision::vision_landing class which installs/configures the vision_landing software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_vision::vision_seek": {
+            "description": "If true, include the maverick_vision::vision_seek class which installs/configures software for the seek thermal camera.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_vision::camera_manager": {
+            "description": "If true, include the maverick_vision::collision_avoidance class which installs/configures the collission avoidance software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_vision::rtabmap": {
+            "description": "If true, include the maverick_vision::rtabmap class which installs/configures the rtabmap software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_vision::collision_avoidance": {
+            "description": "\n\n",
+            "type": "boolean",
+            "default": false
         },
         "maverick_vision::aruco::aruco_gitsource": {
             "description": "Git repo to use to compile/install Aruco\n\n",
@@ -1191,6 +1822,81 @@ export const schema = {
             "description": "Version of OpenBLAS to clone, compile and install.\n\n",
             "type": "string",
             "default": "v0.3.7"
+        },
+        "maverick_web::cloud9": {
+            "description": "If true, include the maverick_web::cloud9 class which installs and manages the Cloud9 IDE software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::codeserver": {
+            "description": "If true, include the maverick_web::codeserver class which installs and manages the Codeserver/VsCode IDE software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::theia": {
+            "description": "If true, include the maverick_web::theia class which installs and manages the Theia IDE software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::nodejs": {
+            "description": "If true, install NodeJS software.  Lots of other Maverick components depend on NodeJS, this should be true.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::webserver": {
+            "description": "If true, install, start and manage a Maverick webserver.  Lots of other Maverick components depend on NodeJS, this should be true.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::webserver_type": {
+            "description": "Apache or Nginx can be specified, but only Nginx is currently supported.\n\n",
+            "enum": [
+                "nginx",
+                "apache"
+            ],
+            "default": "nginx"
+        },
+        "maverick_web::webserver_port": {
+            "description": "Unencrypted webserver port to listen on.  Default for web browsers is port 80.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 80
+        },
+        "maverick_web::webserver_sslport": {
+            "description": "Encrypted webserver port to listen on.  Default for web browsers is port 443.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 443
+        },
+        "maverick_web::maverick_docs": {
+            "description": "If true, install Maverick documentation.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::ssl": {
+            "description": "If true, include maverick_web::ssl class which manages the SSL environment for web services.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::maverick_web": {
+            "description": "If true, include maverick_web::maverick_web class which installs and manages the Maverick-web software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::maverick_api": {
+            "description": "If true, include maverick_web::maverick_api class which installs and manages the Maverick-api software.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::fcs": {
+            "description": "If true, include maverick_web::fcs class which manages the legacy FCS content.  This will be replaced with -web and -api in the future.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::server_fqdn": {
+            "description": "This is set to the system fqdn by default, but can be specified here.  It is used by a lot of other maverick_web classes.\n\n",
+            "type": "string",
+            "default": "$::fqdn"
         },
         "maverick_web::apache::port": {
             "description": "Unencrypted webserver port to listen on.  Default for web browsers is port 80.\n\n",
@@ -1396,6 +2102,568 @@ export const schema = {
             "description": "Password to use for web connections.\n\n",
             "type": "string",
             "default": "wingman"
+        },
+        "base::sysctl::conf::value": {
+            "description": "\n\n"
+        },
+        "maverick_dev::apsitl::instance_name": {
+            "description": "Name of the SITL instance - this is a short name used to generate file/service names, eg. 'apsitl'\n\n",
+            "type": "string",
+            "default": "apsitl"
+        },
+        "maverick_dev::apsitl::instance_number": {
+            "description": "This must be a unique integer, used to identify the instance\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 0
+        },
+        "maverick_dev::apsitl::sitl_active": {
+            "description": "If true, the SITL service will be activated and enabled at boot time\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::sitl_port": {
+            "description": "Port number that SITL listens onlyif\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 5000
+        },
+        "maverick_dev::apsitl::rcin_port": {
+            "description": "Port number that SITL RC in listens on\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 5500
+        },
+        "maverick_dev::apsitl::vehicle_type": {
+            "description": "Type of Ardupilot vehicle to use, eg. copter, plane, sub etc\n\n",
+            "type": "string",
+            "default": "copter"
+        },
+        "maverick_dev::apsitl::mavlink_proxy": {
+            "description": "Type of mavlink proxy to use, eg. mavlink-router, mavproxy or cmavnode\n\n",
+            "type": "string",
+            "default": "mavlink-router"
+        },
+        "maverick_dev::apsitl::mavlink_active": {
+            "description": "If true, the mavlink proxy will be activated and enabled at boot time\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::mavlink_logging": {
+            "description": "If true and supported by the mavlink proxy software, then mavlink data will be logged to file\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::mavlink_startingtcp": {
+            "description": "Start TCP port - if more than one port then each one will be incremented from this starting value\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 6000
+        },
+        "maverick_dev::apsitl::mavlink_tcpports": {
+            "description": "Number of TCP ports that the mavlink proxy will listen on\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_dev::apsitl::mavlink_startingudp": {
+            "description": "Start UDP port - if more than one port then each one will be incremented from this starting value\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 14000
+        },
+        "maverick_dev::apsitl::mavlink_udpports": {
+            "description": "Number of UDP ports to listen on\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_dev::apsitl::mavlink_udpinports": {
+            "description": "Number of UDP In ports to listen on\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_dev::apsitl::mavlink_outbaud": {
+            "description": "Baud rate of mavlink_serialout port\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 115200
+        },
+        "maverick_dev::apsitl::mavlink_outflow": {
+            "description": "If mavlink_serialout port should use hardware flow control\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::mavlink_replaceconfig": {
+            "description": "If set to true, this will overwrite the mavlink proxy config file.  If false, edits can be made directly to the config file without being managed/overwritten\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::ros_instance": {
+            "description": "If true, create a separate ROS instance for this SITL instance\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::rosmaster_active": {
+            "description": "If true, set this separate ROS instance active and enabled at boot time\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::rosmaster_port": {
+            "description": "Define the port number that the ROS master will listen on.  This must be unique across all ROS instances.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 11000
+        },
+        "maverick_dev::apsitl::mavros_active": {
+            "description": "If true, the separate MAVROS instance will be activated and enabled at boot time\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::mavros_startup_delay": {
+            "description": "This delay causes Mavros to wait before starting, to give ROS and SITL time to boot fully first.  Should be increased on slower boards/environments.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 10
+        },
+        "maverick_dev::apsitl::api_instance": {
+            "description": "If true, create a separate maverick-api instance\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::api_active": {
+            "description": "If true, this maverick-api instance will be activated and enabled at boot time\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::api_port": {
+            "description": "Port number that the separate maverick-api instance will listen on.  Must be unique across all -api instances.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 7000
+        },
+        "maverick_dev::apsitl::api_debug": {
+            "description": "If true, turn on the -api debug mode\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::api_devmode": {
+            "description": "If true, turn on the -api dev mode\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::api_replaceconfig": {
+            "description": "If set to true, this will overwrite the -api config file.  If false, edits can be made directly to the config file without being managed/overwritten\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::apsitl::status_priority": {
+            "description": "This defines the priority of maverick status.d entry for this instance.  This determines the display order in `maverick status`\n\n",
+            "type": "string",
+            "default": "151"
+        },
+        "maverick_dev::apsitl::status_entries": {
+            "description": "\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_dev::fwbuildwaf::buildfile": {
+            "description": "Filename of the compiled firwmare.  This is used to test if the compiled firmware already exists.\n\n",
+            "type": "string"
+        },
+        "maverick_dev::fwbuildwaf::vehicle": {
+            "description": "The vehicle type to compile, eg. copter, plane, rover, sub, heli, antennatracker\n\n",
+            "type": "string"
+        },
+        "maverick_dev::fwbuildwaf::board": {
+            "description": "Hardware target - eg. sitl, px4-v4\n\n",
+            "type": "string"
+        },
+        "maverick_mavlink::cmavnode::inputtype": {
+            "description": "The type of mavlink input into cmavnode.  Serial by default, can also take a tcp or udp data stream.\n\n",
+            "enum": [
+                "serial",
+                "tcp",
+                "udp"
+            ],
+            "default": "serial"
+        },
+        "maverick_mavlink::cmavnode::inputbaud": {
+            "description": "If using serial input, baud rate to use.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 115200
+        },
+        "maverick_mavlink::cmavnode::inputflow": {
+            "description": "If using serial input, whether to use hardware flow control.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::cmavnode::startingudp": {
+            "description": "Starting udp port number to listen on.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 14570
+        },
+        "maverick_mavlink::cmavnode::udpports": {
+            "description": "Number of udp ports to define.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_mavlink::cmavnode::udpinports": {
+            "description": "Number of udp in ports to define.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_mavlink::cmavnode::startingtcp": {
+            "description": "Starting TCP port to listen on.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 5770
+        },
+        "maverick_mavlink::cmavnode::tcpports": {
+            "description": "Number of TCP ports to listen on.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_mavlink::cmavnode::outflow": {
+            "description": "If set, defines the serialout hardware flow control.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::cmavnode::replaceconfig": {
+            "description": "If true, fully manage the cmavnode instance configuration and overwrite each configure run.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::mavlink_router::inputtype": {
+            "description": "The type of mavlink input into cmavnode.  Serial by default, can also take a tcp or udp data stream.\n\n",
+            "enum": [
+                "serial",
+                "tcp",
+                "udp"
+            ],
+            "default": "serial"
+        },
+        "maverick_mavlink::mavlink_router::inputflow": {
+            "description": "If using serial input, whether to use hardware flow control.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::mavlink_router::startingudp": {
+            "description": "Starting udp port number to listen on.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 14570
+        },
+        "maverick_mavlink::mavlink_router::udpports": {
+            "description": "Number of udp ports to define.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_mavlink::mavlink_router::udpinports": {
+            "description": "Number of udp in ports to define.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_mavlink::mavlink_router::startingtcp": {
+            "description": "Starting TCP port to listen on.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 5770
+        },
+        "maverick_mavlink::mavlink_router::tcpports": {
+            "description": "Number of TCP ports to listen on.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_mavlink::mavlink_router::outflow": {
+            "description": "If set, defines the serialout hardware flow control.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::mavlink_router::logging": {
+            "description": "If true, log mavlink dataflash telemetry to datafiles.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::mavlink_router::replaceconfig": {
+            "description": "If true, fully manage the cmavnode instance configuration and overwrite each configure run.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::mavproxy::inputflow": {
+            "description": "If using serial input, whether to use hardware flow control.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::mavproxy::startingudp": {
+            "description": "Starting udp port number to listen on.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 14570
+        },
+        "maverick_mavlink::mavproxy::udpports": {
+            "description": "Number of udp ports to define.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_mavlink::mavproxy::udpinports": {
+            "description": "Number of udp in ports to define.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_mavlink::mavproxy::startingtcp": {
+            "description": "Starting TCP port to listen on.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 5770
+        },
+        "maverick_mavlink::mavproxy::tcpports": {
+            "description": "Number of TCP ports to listen on.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 3
+        },
+        "maverick_mavlink::mavproxy::outflow": {
+            "description": "If set, defines the serialout hardware flow control.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::mavproxy::replaceconfig": {
+            "description": "If true, fully manage the cmavnode instance configuration and overwrite each configure run.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_mavlink::mavproxy::instance": {
+            "description": "\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 0
+        },
+        "maverick_network::interface_ap::ssid": {
+            "description": "The SSID to use to create this AP.\n\n",
+            "type": "string",
+            "default": "Maverick"
+        },
+        "maverick_network::interface_ap::dhcp_range": {
+            "description": "If defining a wireless AP, use this range of IP addresses for associated clients\n\n",
+            "type": "string",
+            "default": "192.168.10.10,192.168.10.50"
+        },
+        "maverick_network::interface_ap::dhcp_leasetime": {
+            "description": "Length of lease time to use for dhcp server\n\n",
+            "type": "string",
+            "default": "24h"
+        },
+        "maverick_network::interface_ap::forward": {
+            "description": "If defining an AP interface, turn on network forwarding to bridge network flow between interfaces.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_network::interface_ap::psk": {
+            "description": "\n\n",
+            "type": "string",
+            "default": "8097a204e44b0a740d5daad37d0e34ac16e4df353bc827dcd57d49b36d49740d"
+        },
+        "maverick_network::interface_ap::driver": {
+            "description": "\n\n",
+            "type": "string",
+            "default": "nl80211"
+        },
+        "maverick_network::interface_ap::channel": {
+            "description": "\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 1
+        },
+        "maverick_network::interface_ap::hw_mode": {
+            "description": "\n\n",
+            "type": "string",
+            "default": "g"
+        },
+        "maverick_network::interface_ap::disable_broadcast_ssid": {
+            "description": "\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_network::interface_managed::type": {
+            "description": "\n\nDefines the interface type - ethernet or wireless.\nDefines the type of addressing for the internet - dhcp, static or master.",
+            "enum": [
+                "ethernet",
+                "wireless"
+            ],
+            "default": "ethernet"
+        },
+        "maverick_network::interface_managed::addressing": {
+            "description": "\n\nDefines the interface type - ethernet or wireless.\nDefines the type of addressing for the internet - dhcp, static or master.",
+            "enum": [
+                "dhcp",
+                "static",
+                "master"
+            ],
+            "default": "dhcp"
+        },
+        "maverick_network::process_interface::mode": {
+            "description": "Defines the interface mode.  Currently managed, monitor and ap are supported.\n\n",
+            "enum": [
+                "managed",
+                "monitor",
+                "ap"
+            ],
+            "default": "managed"
+        },
+        "maverick_network::process_interface::type": {
+            "description": "Defines the interface type - ethernet or wireless.\n\n",
+            "enum": [
+                "ethernet",
+                "wireless"
+            ],
+            "default": "ethernet"
+        },
+        "maverick_network::process_interface::addressing": {
+            "description": "Defines the type of addressing for the internet - dhcp, static or master.\n\n",
+            "enum": [
+                "dhcp",
+                "static",
+                "master"
+            ],
+            "default": "dhcp"
+        },
+        "maverick_network::process_interface::apaddress": {
+            "description": "If defining an AP interface, this sets the master address of the interface.\n\n",
+            "type": "string",
+            "default": "192.168.10.1"
+        },
+        "maverick_network::process_interface::driver": {
+            "description": "Set the kernel driver to be used.\n\n",
+            "type": "string",
+            "default": "nl80211"
+        },
+        "maverick_network::process_interface::hw_mode": {
+            "description": "Define the wireless mode.\n\n",
+            "type": "string",
+            "default": "g"
+        },
+        "maverick_network::process_interface::disable_broadcast_ssid": {
+            "description": "If true, do not broadcast the SSID if an AP.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_network::process_interface::dhcp_range": {
+            "description": "If defining a wireless AP, use this range of IP addresses for associated clients\n\n",
+            "type": "string",
+            "default": "192.168.10.10,192.168.10.50"
+        },
+        "maverick_network::process_interface::dhcp_leasetime": {
+            "description": "Length of lease time to use for dhcp server\n\n",
+            "type": "string",
+            "default": "24h"
+        },
+        "maverick_network::process_interface::forward": {
+            "description": "If defining an AP interface, turn on network forwarding to bridge network flow between interfaces.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_ros::mavros::active": {
+            "description": "If true, starts the maverick-mavros@[instance] service and enables at boot.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_ros::mavros::rosmaster_port": {
+            "description": "The rosmaster port that this instance of mavros connects to.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 11311
+        },
+        "maverick_ros::mavros::mavlink_port": {
+            "description": "The mavlink port that this instance of mavros connects to.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 5770
+        },
+        "maverick_ros::mavros::mavros_startup_delay": {
+            "description": "This is a delay fudge for slower boards to ensure rosmaster and mavlink proxies have had time to fully start.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 10
+        },
+        "maverick_ros::mavros::mavros_launcher": {
+            "description": "The ros/mavros launcher to use to start mavros.\n\n",
+            "type": "string",
+            "default": "apm.launch"
+        },
+        "maverick_ros::rosmaster::active": {
+            "description": "If true, starts the maverick-rosmaster@[instance] service and enables at boot.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_ros::rosmaster::port": {
+            "description": "The port that the rosmaster instance will be set to listen on.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 11311
+        },
+        "maverick_security::firewall::firerule::ports": {
+            "description": "\n\n"
+        },
+        "maverick_security::firewall::firerule::ips": {
+            "description": "\n\n"
+        },
+        "maverick_security::firewall::firerule::proto": {
+            "description": "\n\n",
+            "default": "tcp"
+        },
+        "maverick_web::api::active": {
+            "description": "If true, start the maverick-api@[xxx] service and enable at boot time.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::api::instance": {
+            "description": "Name of the -api instance.  This must be unique.\n\n",
+            "type": "string",
+            "default": "fc"
+        },
+        "maverick_web::api::apiport": {
+            "description": "TCP port for the api to listen on.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 6800
+        },
+        "maverick_web::api::rosport": {
+            "description": "ROS rosmaster port for -api instance to connect to.\n\n",
+            "type": "number",
+            "_type": "integer",
+            "default": 11311
+        },
+        "maverick_web::api::server_hostname": {
+            "description": "Webserver vhost to use for reverse proxy.\n\n",
+            "type": "string",
+            "default": "$maverick_web::server_fqdn"
+        },
+        "maverick_web::api::devmode": {
+            "description": "If true, activate -api development mode.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::api::debug": {
+            "description": "If true, activet -api debug mode.\n\n",
+            "type": "boolean",
+            "default": false
+        },
+        "maverick_web::api::replaceconfig": {
+            "description": "If true, fully manage the -api config and overwrite with values from parameters set here.\n\n",
+            "type": "boolean",
+            "default": false
         }
     },
     "additionalProperties": false
