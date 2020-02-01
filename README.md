@@ -2,8 +2,6 @@
 
 > Maverick Web Interface - Highly Experimental - DO NOT USE FOR REAL WORLD APPLICATIONS YET!
 
-[![Build Status](http://newdev.maverick.one/jenkins/buildStatus/icon?job=maverick-web/Jenkins-ci)](http://dev.maverick.one/jenkins/blue/organizations/jenkins/maverick-web/branches/)
-
 This is a very early experimental repo of a 'next generation' web interface for configuring and controlling UAVs.
 
 maverick-web is a pure web application using modern Javascript technologies, and connects to multiple [maverick-api](https://github.com/goodrobots/maverick-api) backends for realtime data from multiple UAVs.
