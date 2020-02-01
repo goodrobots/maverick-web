@@ -1,10 +1,13 @@
-const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 module.exports = {
     
   // tweak internal webpack configuration.
   // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
+
+  "transpileDependencies": [
+    "vuetify"
+  ],
   
   /*
   chainWebpack: config => {
@@ -55,7 +58,7 @@ module.exports = {
   css: {
     loaderOptions: {
       sass: {
-        data: `@import "~@/sass/main.scss"`,
+        prependData: `@import "~@/sass/main.scss"`,
       },
     },
   },
@@ -63,7 +66,7 @@ module.exports = {
   chainWebpack: config => {
     ["vue-modules", "vue", "normal-modules", "normal"].forEach((match) => {
       config.module.rule('scss').oneOf(match).use('sass-loader')
-        .tap(opt => Object.assign(opt, { data: `@import '~@/sass/main.scss';` }))
+        .tap(opt => Object.assign(opt, { prependData: `@import '~@/sass/main.scss';` }))
     })
   },
 
