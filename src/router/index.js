@@ -18,6 +18,9 @@ import AnalysisLogfile from '../components/modules/analysis/AnalysisLogfile'
 
 import TestModule from '../components/modules/test/TestModule'
 
+import MaverickModule from '../components/modules/maverick/MaverickModule'
+import MaverickIndex from '../components/modules/maverick/MaverickIndex'
+
 Vue.use(Router)
 
 export default new Router({
@@ -83,6 +86,20 @@ export default new Router({
           component: AnalysisLogfile
         }
       ]
-    }
+    },
+    {
+      path: '/maverick',
+      component: MaverickModule,
+      children: [
+        {
+          path: '',
+          redirect: 'maverick-index'
+        },
+        {
+          path: 'maverick-index',
+          component: MaverickIndex
+        }
+      ]
+    },
   ]
 })

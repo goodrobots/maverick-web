@@ -7,9 +7,14 @@ v-card.transparent.navfab
       v-btn(color="blue" dark fab hover v-model="navfab")
         v-icon(v-if="navfab") mdi-close
         v-icon(v-else v-html="navIcon")
+    v-tooltip(v-if="(moduleName !== 'maverick')" left)
+      template(v-slot:activator="{ on }")
+        v-btn(fab dark :small="(moduleName !== 'maverick')" color="mavgrey" to="/maverick" v-on="on")
+          v-icon mdi-console
+      span Maverick
     v-tooltip(v-if="(moduleName !== 'analysis')" left)
       template(v-slot:activator="{ on }")
-        v-btn(fab dark :small="(moduleName !== 'analysis')" color="green" to="/analysis" v-on="on")
+        v-btn(fab dark :small="(moduleName !== 'analysis')" color="mavgreen" to="/analysis" v-on="on")
           v-icon mdi-equalizer
       span Analysis
     v-tooltip(v-if="(moduleName !== 'config')" left)
@@ -102,6 +107,8 @@ export default {
           return 'mdi-settings'
         case 'analysis':
           return 'mdi-equalizer'
+        case 'maverick':
+          return 'mdi-console'
         default:
           return null
       }

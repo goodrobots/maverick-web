@@ -7479,6 +7479,18 @@ moment@2.24.0, moment@^2.22.1, moment@^2.24.0:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
 
+monaco-editor-webpack-plugin@^1.8.2:
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/monaco-editor-webpack-plugin/-/monaco-editor-webpack-plugin-1.8.2.tgz#3721b8d9a3e2e41b154cf2a2955a7d7246c03714"
+  integrity sha512-g9G7A/lxQtpPsYaZFBqm73dwVkOziGUXExIR6iW7ksZUaiMkpvdTiE9O8edgdJGo+XtCmjycmIKB1Lt8VKbSTQ==
+  dependencies:
+    loader-utils "^1.2.3"
+
+monaco-editor@0.19.3:
+  version "0.19.3"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.19.3.tgz#1c994b3186c00650dbcd034d5370d46bf56c0663"
+  integrity sha512-2n1vJBVQF2Hhi7+r1mMeYsmlf18hjVb6E0v5SoMZyb4aeOmYPKun+CE3gYpiNA1KEvtSdaDHFBqH9d7Wd9vREg==
+
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
@@ -11362,6 +11374,36 @@ xtend@^4.0.0, xtend@~4.0.1:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
   integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
+
+xterm-addon-fit@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/xterm-addon-fit/-/xterm-addon-fit-0.3.0.tgz#341710741027de9d648a9f84415a01ddfdbbe715"
+  integrity sha512-kvkiqHVrnMXgyCH9Xn0BOBJ7XaWC/4BgpSWQy3SueqximgW630t/QOankgqkvk11iTOCwWdAY9DTyQBXUMN3lw==
+
+xterm-addon-serialize@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/xterm-addon-serialize/-/xterm-addon-serialize-0.1.2.tgz#339a38520bf90cf51f447cb74f3ae0e530d5ee39"
+  integrity sha512-etSTiN+I3lqWefMixiiVo1V4lPjmfInFmwtjbYDYWyUwPU5tveEZZSu15b52Q26IPaJdl8RxBgNTYu6Q3YauLQ==
+
+xterm-addon-unicode11@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/xterm-addon-unicode11/-/xterm-addon-unicode11-0.1.1.tgz#b209ef137db38096f68636af4ef4d0c0acba85ad"
+  integrity sha512-z6vJTL+dpNljwAYzYoyDjJP8A2XjZuEosl0sRa+FGRf3jEyEVWquDM53MfUd1ztVdAPQ839qR6eYK1BXV04Bhw==
+
+xterm-addon-web-links@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/xterm-addon-web-links/-/xterm-addon-web-links-0.2.1.tgz#6d1f2ce613e09870badf17615e7a1170a31542b2"
+  integrity sha512-2KnHtiq0IG7hfwv3jw2/jQeH1RBk2d5CH4zvgwQe00rLofSJqSfgnJ7gwowxxpGHrpbPr6Lv4AmH/joaNw2+HQ==
+
+xterm-addon-webgl@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/xterm-addon-webgl/-/xterm-addon-webgl-0.5.0.tgz#c1031dc7599cce3509824643ab5f15361c928e3e"
+  integrity sha512-hQrvabKCnwXFaEZ+YtoJM9Pm0CIBXL5KSwoU+RiGStU3KYTAcqYP2GsH3dWdvKX6kTWhWLS81dtDsGkfbOciuA==
+
+xterm@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/xterm/-/xterm-4.4.0.tgz#5915d3c4c8800fadbcf555a0a603c672ab9df589"
+  integrity sha512-JGIpigWM3EBWvnS3rtBuefkiToIILSK1HYMXy4BCsUpO+O4UeeV+/U1AdAXgCB6qJrnPNb7yLgBsVCQUNMteig==
 
 "y18n@^3.2.1 || ^4.0.0", y18n@^4.0.0:
   version "4.0.0"

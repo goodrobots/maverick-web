@@ -4,6 +4,7 @@ import cockpit from './modules/cockpit'
 import planner from './modules/planner'
 import config from './modules/config'
 import analysis from './modules/analysis'
+import maverick from './modules/maverick'
 
 Vue.use(Vuex)
 
@@ -12,7 +13,8 @@ export default new Vuex.Store({
     cockpit,
     planner,
     config,
-    analysis
+    analysis,
+    maverick
   },
 
   state: {
@@ -46,6 +48,10 @@ export default new Vuex.Store({
       'analysis': {
         'color': 'mavgreen',
         'icon': 'mdi-equalizer'
+      },
+      'maverick': {
+        'color': 'mavgrey',
+        'icon': 'mdi-console'
       }
     }
   },

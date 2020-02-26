@@ -1,4 +1,4 @@
-const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 module.exports = {
     
@@ -50,7 +50,11 @@ module.exports = {
     ]
   },
   */
-
+  configureWebpack: {
+    plugins: [
+      new MonacoWebpackPlugin()
+    ]
+  },
   css: {
     loaderOptions: {
       sass: {
