@@ -1,0 +1,9 @@
+fragment MaverickShell on MaverickShell {
+  command
+  running
+  uptime
+  terminate
+  stdout
+  stderror
+  returncode
+}

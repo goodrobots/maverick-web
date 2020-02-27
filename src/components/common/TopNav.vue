@@ -166,13 +166,13 @@ export default {
     // Watch apis state for any change and process
     activeApi: {
       handler: function (newValue) {
-        this.createQueries()
+        // this.createQueries()
       }
     }
   },
 
   mounted () {
-    this.createQueries()
+    // this.createQueries()
   },
 
   methods: {

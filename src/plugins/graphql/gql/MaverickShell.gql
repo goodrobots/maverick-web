@@ -1,0 +1,19 @@
+#import "./MaverickShellFragment.gql"
+
+query maverickShellQuery {
+  MaverickShell {
+    ...MaverickShell
+  }
+}
+
+subscription maverickShellSubscription {
+  MaverickShell {
+    ...MaverickShell
+  }
+}
+
+mutation maverickShellMutate($command: String!) {
+  MaverickShell(command: $command) {
+    ...MaverickShell
+  }
+}

@@ -10,6 +10,7 @@
           max-width="800"
           height="600"
           dark
+          :loading="loadingBar"
         >
           <div
             ref="terminal"
@@ -29,10 +30,13 @@ import { WebLinksAddon } from "xterm-addon-web-links"
 import { Unicode11Addon } from 'xterm-addon-unicode11'
 import { SerializeAddon } from "xterm-addon-serialize"
 
+import { maverickShellQuery, maverickShellSubscription, maverickShellMutate } from '../../../plugins/graphql/gql/MaverickShell.gql'
+
 export default {
   name: "CommandsCard",
   data() {
     return {
+      processRunning: false,
       commands: [
         {
           name: "configure",
@@ -55,9 +59,17 @@ export default {
   computed: {
     activeApi() {
       return this.$store.state.activeApi;
+    },
+    loadingBar() {
+      if (this.processRunning) {
+        return "mavgrey"
+      } else {
+        return false
+      }
     }
   },
   mounted() {
+    this.createQuerys()
     const el = this.$refs.terminal;
     let term = new Terminal();
     this.term = term;
@@ -66,11 +78,11 @@ export default {
     const webglAddon = new WebglAddon();
     const webLinksAddon = new WebLinksAddon();
     const unicode11Addon = new Unicode11Addon();
-    const serializeAddon = new SerializeAddon();
+    this.serializeAddon = new SerializeAddon();
 
     this.term.loadAddon(unicode11Addon);
     this.term.loadAddon(webLinksAddon);
-    this.term.loadAddon(serializeAddon);
+    this.term.loadAddon(this.serializeAddon);
     this.term.loadAddon(this.fitAddon);
 
     this.term.open(el, true);
@@ -84,6 +96,7 @@ export default {
     this.term.focus()
     window.addEventListener('resize',this.resizeEventHandler)
     this.input = ""
+    this.processRunning = false
     term.prompt = () => {
       term.write("\r\n$ ");
     };
@@ -98,35 +111,76 @@ export default {
       const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
 
       if (ev.keyCode === 13) {
-        // console.log(JSON.stringify(serializeAddon.serialize())) // TODO: store this to allow resume
-        term.prompt();
-        console.log(this.input) // TODO: send this to the -api to run
+        if (this.input) {
+          this.sendToApi(this.input)
+        } else {
+          term.prompt()
+        }
         this.input = ""
       } else if (ev.keyCode === 8) {
         this.input = this.input.slice(0,-1)
         // Do not delete the prompt
         if (term._core.buffer.x > 2) {
-          term.write("\b \b");
+          term.write("\b \b")
         }
+      } else if (ev.keyCode === 9) { // handle tabs
+        this.sendToApi(this.input + e.key)
       } else if (printable) {
-        term.write(e.key);
+        term.write(e.key)
         this.input += e.key
       }
     });
 
     this.term.write("Hello from \x1B[1;3;31mxterm.js\x1B[0m $");
-    this.term.write("Foo");
   },
   beforeDestroy() {
-    this.term.selectAll();
-    this.$emit("update:buffer", this.term.getSelection().trim());
-    this.term.destroy();
+    // TODO: store this to allow resume
+    console.log(JSON.stringify(this.serializeAddon.serialize()))
     window.removeEventListener("resize", this.resizeEventHandler);
   },
   methods: {
+    createQuerys() {
+      this.createQuery('MaverickShell', maverickShellQuery, 'dev', null, null, this.processMaverickShellQuery)
+      this.createSubscription('MaverickShell', maverickShellSubscription, 'dev', null, null, this.processMaverickShellSubscription)
+    },
     resizeEventHandler(e) {
       this.fitAddon.fit()
-    }
+    },
+    writeToTerminal(output, running = false) {
+      let output_lines = output.split(/\r?\n/)
+      output_lines.forEach(element => {
+        if (element.trim().length > 0) {
+          if (running == false) {
+            this.term.write("\r\n")
+            running = true
+          }
+          this.term.writeln(element)
+        }
+      })
+    },
+    sendToApi(input) {
+      this.mutateQuery('dev', maverickShellMutate, {
+        command: input
+      })
+    },
+    processMaverickShellSubscription(data, key) {
+      if (data.data && 'MaverickShell' in data.data) {
+        this.writeToTerminal(data.data.MaverickShell.stdout, this.processRunning)
+        this.writeToTerminal(data.data.MaverickShell.stderror, this.processRunning)
+        this.processRunning = data.data.MaverickShell.running
+        if (!data.data.MaverickShell.running) {
+          this.processRunning = data.data.MaverickShell.running
+          this.term.write("\r$ ");
+        }
+      }
+      console.log(data.data.MaverickShell.stdout)
+      console.log(data.data.MaverickShell.stderror)
+    },
+    processMaverickShellQuery(data, key) {
+      if (data.data && 'MaverickShell' in data.data) {
+        this.processRunning = data.data.MaverickShell.running
+      }
+    },
   }
 };
 </script>
