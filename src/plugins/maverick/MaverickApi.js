@@ -100,7 +100,7 @@ const plugin = {
 
         fetchClientSchema (api, clientdata) {
           this.$store.dispatch("maverick/fetchSchema", {api:api, introspectionEndpoint:clientdata.introspectionEndpoint}).then(() => {
-            console.log("Schema fetch has been dispatched")
+            this.logDebug(`Schema fetch has been dispatched for api: ${api}`)
           })
         },
 
