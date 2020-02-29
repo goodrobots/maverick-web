@@ -31,6 +31,7 @@ import { Unicode11Addon } from 'xterm-addon-unicode11'
 import { SerializeAddon } from "xterm-addon-serialize"
 
 import { maverickShellQuery, maverickShellSubscription, maverickShellMutate } from '../../../plugins/graphql/gql/MaverickShell.gql'
+import { navSatFixMutate } from '../../../plugins/graphql/gql/NavSatFix.gql'
 
 export default {
   name: "CommandsCard",
@@ -140,6 +141,11 @@ export default {
   },
   methods: {
     createQuerys() {
+      console.log(this.verifyQuery(maverickShellQuery, 'dev'))
+      console.log(this.verifyQuery(navSatFixMutate, 'dev'))
+      this.clearAllVerifiedQueries()
+      console.log(this.verifyQuery(maverickShellQuery, 'dev'))
+
       this.createQuery('MaverickShell', maverickShellQuery, 'dev', null, null, this.processMaverickShellQuery)
       this.createSubscription('MaverickShell', maverickShellSubscription, 'dev', null, null, this.processMaverickShellSubscription)
     },
