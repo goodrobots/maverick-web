@@ -11,6 +11,7 @@
     "apollo-cache-inmemory": "^1.6.5",
     "apollo-link": "^1.2.13",
     "apollo-link-http": "^1.5.16",
+    "axios": "^0.19.2",
     "core-js": "^3.4.4",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.3",
