@@ -1,7 +1,8 @@
 {
   "dev": {
-    "httpEndpoint": "http://dev.maverick.one:7000/graphql",
-    "wsEndpoint": "ws://dev.maverick.one:7000/subscriptions",
+    "httpEndpoint": "http://127.0.0.1:7000/graphql",
+    "wsEndpoint": "ws://127.0.0.1:7000/subscriptions",
+    "introspectionEndpoint": "http://127.0.0.1:7000/schema",
     "websocketsOnly": false,
     "name": "SITL Copter 1",
     "colorLight": "rgba(166,11,11,0.3)",
