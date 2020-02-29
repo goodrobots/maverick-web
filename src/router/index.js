@@ -21,6 +21,8 @@ import TestModule from '../components/modules/test/TestModule'
 import MaverickModule from '../components/modules/maverick/MaverickModule'
 import MaverickIndex from '../components/modules/maverick/MaverickIndex'
 
+import VideoModule from '../components/modules/video/VideoModule'
+
 Vue.use(Router)
 
 export default new Router({
@@ -38,6 +40,10 @@ export default new Router({
     {
       path: '/test',
       component: TestModule
+    },
+    {
+      path: '/video',
+      component: VideoModule
     },
     {
       path: '/cockpit',

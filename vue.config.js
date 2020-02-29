@@ -2,58 +2,15 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 module.exports = {
     
-  // tweak internal webpack configuration.
-  // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
-
   "transpileDependencies": [
     "vuetify"
   ],
   
-  /*
-  chainWebpack: config => {
-    const rule = config.module
-      .rule('gql')
-      .test(/\.(gql|graphql)$/)
-      .include
-      .end()
-
-    rule
-      .use('gql-loader')
-      .loader('graphql-tag/loader')
-      .end()
-  },
-  */
-  
-  /*
-  configureWebpack: {
-    module: {
-      rules: [{
-        test: /\.s(c|a)ss$/,
-        use: [
-          'vue-style-loader',
-          'css-loader',
-          {
-            loader: 'sass-loader',
-            options: {
-              implementation: require('sass'),
-              fiber: require('fibers'),
-              indentedSyntax: true // optional
-            }
-          }
-        ]
-      }]
-    },
-    optimization: {
-    },
-    plugins: [
-      new VuetifyLoaderPlugin()
-    ]
-  },
-  */
   configureWebpack: {
     plugins: [
       new MonacoWebpackPlugin()
-    ]
+    ],
+    externals: { ws: "WebSocket"},
   },
   css: {
     loaderOptions: {
