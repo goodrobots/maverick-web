@@ -1,7 +1,6 @@
 import { validate } from 'graphql/validation'
 import { print } from 'graphql/language/printer'
 import { createClient, onLogin } from '../graphql/apollo-functions'
-import clients from './clients.json'
 
 const plugin = {
   install (Vue, options) {
@@ -47,12 +46,7 @@ const plugin = {
         // Theoretically, this should execute once after the main Vue component is loaded,
         //  and the apollo plugin and provider has loaded.
         if (!this.$parent && this.$apollo.provider) {
-          this.logInfo('Root component mounted, iteratively creating GQL clients')
-          // Process each defined Maverick-API instance and create a client and base heartbeat subscription for each api
-          for (const client in clients) {
-            this.fetchClientSchema(client, clients[client]) // async request
-            this.createClient(client, clients[client])
-          }
+          // this.logInfo('Root component mounted')
         }
       },
 
@@ -122,6 +116,9 @@ const plugin = {
             this.logDebug(`Setting auth token: ${clientdata.authToken}`)
             onLogin(client, clientdata.authToken, api, this.$store)
           }
+
+          // Fetch and parse the client schema
+          this.fetchClientSchema(client, clientdata) // async request
         },
 
         createQuery (message, gql, api, container, skip = false, callback = null, errorCallback = null, variables = null) {
