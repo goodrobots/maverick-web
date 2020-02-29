@@ -45,7 +45,6 @@ export default {
     var randomString = Math.random().toString(36).substring(7)
     var modelUri = monaco.Uri.parse(window.location.hostname + ":" + window.location.port + "/" + randomString + "/config.json"); // a made up unique URI for our model
     var model = monaco.editor.createModel(this.monacoCode, "json", modelUri);
-
     monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
       validate: true,
       schemas: [{
@@ -66,7 +65,7 @@ export default {
   },
   destroyed() {
     this.editor.dispose()
-  }
+  },
 }
 
 </script>

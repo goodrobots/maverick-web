@@ -2,6 +2,7 @@
   "dev": {
     "httpEndpoint": "http://dev.maverick.one:7000/graphql",
     "wsEndpoint": "ws://dev.maverick.one:7000/subscriptions",
+    "introspectionEndpoint": "http://dev.maverick.one:7000/schema",
     "websocketsOnly": false,
     "name": "SITL Copter 1",
     "colorLight": "rgba(166,11,11,0.3)",
@@ -11,6 +12,7 @@
   "plane1": {
     "httpEndpoint": "http://dev.maverick.one:7060/graphql",
     "wsEndpoint": "ws://dev.maverick.one:7060/subscriptions",
+    "introspectionEndpoint": "http://dev.maverick.one:7060/schema",
     "websocketsOnly": false,
     "name": "SITL Plane 1",
     "colorLight": "#339999",
@@ -20,6 +22,7 @@
   "sub1": {
     "httpEndpoint": "http://dev.maverick.one:7090/graphql",
     "wsEndpoint": "ws://dev.maverick.one:7090/subscriptions",
+    "introspectionEndpoint": "http://dev.maverick.one:7090/schema",
     "websocketsOnly": false,
     "name": "SITL Sub 1",
     "colorLight": "#996633",

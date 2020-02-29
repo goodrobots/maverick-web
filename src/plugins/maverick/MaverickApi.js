@@ -1,3 +1,5 @@
+import { validate } from 'graphql/validation'
+import { print } from 'graphql/language/printer'
 import { createClient, onLogin } from '../graphql/apollo-functions'
 import clients from './clients.json'
 
@@ -48,12 +50,60 @@ const plugin = {
           this.logInfo('Root component mounted, iteratively creating GQL clients')
           // Process each defined Maverick-API instance and create a client and base heartbeat subscription for each api
           for (const client in clients) {
+            this.fetchClientSchema(client, clients[client]) // async request
             this.createClient(client, clients[client])
           }
         }
       },
 
       methods: {
+        clearAllVerifiedQueries() {
+          for (const api in this.apis) {
+            this.clearVerifiedQueries(api)
+          }
+        },
+
+        clearVerifiedQueries(api) {
+          this.$store.commit('maverick/clearGraphqlVerified', api)
+        },
+
+        verifyQuery (gql, api = this.activeApi, unknownDefault = true) {
+          let gqlHash = this.hashCode(print(gql))
+          let alreadyVerified = this.$store.getters['maverick/graphqlSchemaVerified'](api, gqlHash)
+
+          if (alreadyVerified !== undefined) {
+            // query has already been verified for this api
+            return alreadyVerified
+          }
+
+          // attempt to validate the query 
+          let graphqlSchema = this.$store.getters['maverick/graphqlSchema'](api)
+          if (graphqlSchema === undefined) {
+            // graphqlSchema has not been fetched for this api, return unknownDefault
+            return unknownDefault
+          }
+          const validationErrors = validate(graphqlSchema, gql)
+          let valid = false
+          if (validationErrors.length == 0) {
+            valid = true
+          }
+          this.$store.commit('maverick/updateGraphqlVerified', {api:api, hash:gqlHash, ret:valid})
+          return valid
+        },
+
+        hashCode(s) {
+          let h
+          for(let i = 0; i < s.length; i++) 
+                h = Math.imul(31, h) + s.charCodeAt(i) | 0
+          return h.toString()
+        },
+
+        fetchClientSchema (api, clientdata) {
+          this.$store.dispatch("maverick/fetchSchema", {api:api, introspectionEndpoint:clientdata.introspectionEndpoint}).then(() => {
+            console.log("Schema fetch has been dispatched")
+          })
+        },
+
         createClient (api, clientdata) {
           // Add an apollo client
           const client = createClient({
