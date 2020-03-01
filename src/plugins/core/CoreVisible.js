@@ -1,7 +1,7 @@
 const plugin = {
   install(Vue, options) {
     if (process.env.NODE_ENV !== 'production') {
-      console.log('Installing MaverickVisible plugin')
+      console.log('Installing CoreVisible plugin')
     }
 
     Vue.mixin({
@@ -18,4 +18,4 @@ const plugin = {
   }
 }
 
-export const MaverickVisible = plugin
+export const CoreVisible = plugin

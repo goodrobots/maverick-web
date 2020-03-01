@@ -5,6 +5,7 @@ import planner from './modules/planner'
 import config from './modules/config'
 import analysis from './modules/analysis'
 import maverick from './modules/maverick'
+import video from './modules/video'
 
 Vue.use(Vuex)
 
@@ -14,7 +15,8 @@ export default new Vuex.Store({
     planner,
     config,
     analysis,
-    maverick
+    maverick,
+    video
   },
 
   state: {
@@ -52,6 +54,10 @@ export default new Vuex.Store({
       'maverick': {
         'color': 'mavgrey',
         'icon': 'mdi-console'
+      },
+      'video': {
+        'color': 'mavblue',
+        'icon': 'mdi-video'
       }
     }
   },

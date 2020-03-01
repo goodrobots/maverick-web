@@ -23,6 +23,9 @@ v-content
           v-flex(xs12 sm6 md6 lg3)
             v-btn(color='mavgrey' to='/maverick') Maverick
               v-icon(right) mdi-console
+          v-flex(xs12 sm6 md6 lg3)
+            v-btn(color='mavblue' to='/video') Video
+              v-icon(right) mdi-video
       v-flex(xs12)
         v-spacer
     v-footer.transparent(absolute height="auto")

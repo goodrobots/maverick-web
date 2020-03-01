@@ -59,6 +59,10 @@ export default {
           this.$store.commit('setModuleName', 'maverick')
           this.$store.commit('setNavIcon', false)
           break
+        case /^\/video/.test(this.$store.state.route.path):
+          this.$store.commit('setModuleName', 'video')
+          this.$store.commit('setNavIcon', false)
+          break
         default:
           this.$store.commit('setNavIcon', false)
           this.$store.commit('setModuleName', 'home')
@@ -88,6 +92,8 @@ export default {
 
   mounted () {
     this.logBanner('** Welcome to Maverick Web GCS **')
+    // Try to connect to the default -api client
+    this.createDefaultClient()
   },
 
   methods: {
@@ -99,6 +105,25 @@ export default {
           this.$store.commit('setApiState', { api: api, value: false })
         }
       }
+    },
+    createDefaultClient() {
+      // Port 6800 is the default Flight Controller -api port in Maverick environment4
+      const hostname = window.location.hostname
+      const protocol = window.location.protocol
+      const wsprotocol = (protocol.includes("https")) ? 'wss:' : 'ws:'
+      const apiport = 7000
+      this.logDebug(`hostname: ${hostname}, protocol: ${protocol}, wsprotocol: ${wsprotocol}`)
+      const clientData = {
+        "httpEndpoint": `${protocol}//${hostname}:${apiport}/graphql`,
+        "wsEndpoint": `${wsprotocol}//${hostname}:${apiport}/subscriptions`,
+        "introspectionEndpoint": `${protocol}//${hostname}:${apiport}/schema`,
+        "websocketsOnly": false,
+        "name": "Defualt API",
+        "colorLight": "rgba(166,11,11,0.3)",
+        "colorDark": "rgba(166,11,11,0.9)",
+        "authToken": null
+      }
+      this.createClient('default', clientData)
     },
     processStatusQuery (data, key) {
       const api = key.split('___')[0]

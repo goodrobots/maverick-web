@@ -1,7 +1,7 @@
 const plugin = {
   install (Vue, options) {
     if (process.env.NODE_ENV !== 'production') {
-      console.log('Installing MaverickLog plugin')
+      console.log('Installing CoreLog plugin')
     }
 
     Vue.mixin({
@@ -40,4 +40,4 @@ const plugin = {
   }
 }
 
-export const MaverickLog = plugin
+export const CoreLog = plugin
