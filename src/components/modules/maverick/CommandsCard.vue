@@ -10,7 +10,6 @@
           max-width="800"
           height="600"
           dark
-          :loading="loadingBar"
         >
           <div
             ref="terminal"
@@ -31,6 +30,7 @@ import { Unicode11Addon } from 'xterm-addon-unicode11'
 import { SerializeAddon } from "xterm-addon-serialize"
 
 import { maverickShellQuery, maverickShellSubscription, maverickShellMutate } from '../../../plugins/graphql/gql/MaverickShell.gql'
+import { navSatFixMutate } from '../../../plugins/graphql/gql/NavSatFix.gql'
 
 export default {
   name: "CommandsCard",
@@ -98,8 +98,9 @@ export default {
     this.input = ""
     this.processRunning = false
     term.prompt = () => {
-      term.write("\r\n$ ");
+      term.write("\r$ ");
     };
+
 
     term.clear = () => {
       term.write("\x1b[H\x1b[2J")
@@ -111,11 +112,8 @@ export default {
       const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
 
       if (ev.keyCode === 13) {
-        if (this.input) {
-          this.sendToApi(this.input)
-        } else {
-          term.prompt()
-        }
+        this.term.write("\r\n")
+        this.sendToApi(this.input)
         this.input = ""
       } else if (ev.keyCode === 8) {
         this.input = this.input.slice(0,-1)
@@ -123,15 +121,16 @@ export default {
         if (term._core.buffer.x > 2) {
           term.write("\b \b")
         }
-      } else if (ev.keyCode === 9) { // handle tabs
-        this.sendToApi(this.input + e.key)
+      } else if (ev.keyCode === 9) { // TODO: handle tabs
+        // this.sendToApi(this.input + e.key)
       } else if (printable) {
         term.write(e.key)
         this.input += e.key
       }
     });
 
-    this.term.write("Hello from \x1B[1;3;31mxterm.js\x1B[0m $");
+    this.term.write("\x1B[1;3;31mMAVERICK\x1B[0m \n")
+    this.term.prompt()
   },
   beforeDestroy() {
     // TODO: store this to allow resume
@@ -140,41 +139,30 @@ export default {
   },
   methods: {
     createQuerys() {
-      this.createQuery('MaverickShell', maverickShellQuery, 'dev', null, null, this.processMaverickShellQuery)
-      this.createSubscription('MaverickShell', maverickShellSubscription, 'dev', null, null, this.processMaverickShellSubscription)
+      this.createQuery('MaverickShell', maverickShellQuery, this.activeApi, null, null, this.processMaverickShellQuery)
+      this.createSubscription('MaverickShell', maverickShellSubscription, this.activeApi, null, null, this.processMaverickShellSubscription)
     },
     resizeEventHandler(e) {
       this.fitAddon.fit()
     },
-    writeToTerminal(output, running = false) {
-      let output_lines = output.split(/\r?\n/)
-      output_lines.forEach(element => {
-        if (element.trim().length > 0) {
-          if (running == false) {
-            this.term.write("\r\n")
-            running = true
-          }
-          this.term.writeln(element)
-        }
-      })
+    writeToTerminal(output) {
+      this.term.write(output)
     },
     sendToApi(input) {
-      this.mutateQuery('dev', maverickShellMutate, {
+      this.mutateQuery(this.activeApi, maverickShellMutate, {
         command: input
       })
     },
     processMaverickShellSubscription(data, key) {
       if (data.data && 'MaverickShell' in data.data) {
-        this.writeToTerminal(data.data.MaverickShell.stdout, this.processRunning)
-        this.writeToTerminal(data.data.MaverickShell.stderror, this.processRunning)
+        this.writeToTerminal(data.data.MaverickShell.stdout)
         this.processRunning = data.data.MaverickShell.running
         if (!data.data.MaverickShell.running) {
           this.processRunning = data.data.MaverickShell.running
-          this.term.write("\r$ ");
+          this.term.prompt();
         }
       }
       console.log(data.data.MaverickShell.stdout)
-      console.log(data.data.MaverickShell.stderror)
     },
     processMaverickShellQuery(data, key) {
       if (data.data && 'MaverickShell' in data.data) {
