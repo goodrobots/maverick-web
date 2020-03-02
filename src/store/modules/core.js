@@ -30,12 +30,20 @@ const actions = {
   const getters = {
     graphqlSchema(state) {
       return api => {
-        return state.graphqlSchema[api].schema
+        try {
+          return state.graphqlSchema[api].schema
+        } catch (err) {
+          return undefined
+        }
       }
     },
     graphqlSchemaVerified(state) {
       return (api, hash) => {
-        return state.graphqlSchema[api].verified[hash]
+        try {
+          return state.graphqlSchema[api].verified[hash]
+        } catch (err) {
+          return undefined
+        }
       }
     }
   }
