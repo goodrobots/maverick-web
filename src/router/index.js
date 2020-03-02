@@ -8,6 +8,7 @@ import CockpitModule from '../components/modules/cockpit/CockpitModule'
 import PlannerModule from '../components/modules/planner/PlannerModule'
 
 import ConfigModule from '../components/modules/config/ConfigModule'
+import ConfigConnections from '../components/modules/config/ConfigConnections'
 import ConfigParamSummary from '../components/modules/config/ConfigParamSummary'
 import ConfigParamGroups from '../components/modules/config/ConfigParamGroups'
 import ConfigParamList from '../components/modules/config/ConfigParamList'
@@ -59,7 +60,11 @@ export default new Router({
       children: [
         {
           path: '',
-          redirect: 'parameter-summary'
+          // redirect: 'parameter-summary'
+        },
+        {
+          path: 'connections',
+          component: ConfigConnections
         },
         {
           path: 'parameter-summary',

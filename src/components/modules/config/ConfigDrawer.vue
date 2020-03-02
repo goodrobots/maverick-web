@@ -1,6 +1,13 @@
 <template lang='pug'>
 v-navigation-drawer(app left clipped fixed v-model="drawer")
   v-list(dense)
+    v-subheader.mt-3.grey--text.text--darken-1 CONNECTIONS
+    v-list-item.mt-3(@click="" to="/config/connections")
+      v-list-item-action
+        v-icon mdi-view-dashboard
+      v-list-item-title Edit Connections
+
+  v-list(v-if="activeApi" dense)
     v-subheader.mt-3.grey--text.text--darken-1 FLIGHT CONTROLLER
     v-list-item.mt-3(@click="" to="/config/parameter-summary")
       v-list-item-action
@@ -31,6 +38,8 @@ export default {
         this.$store.commit('setNavDrawer', value)
       }
     }
+  },
+  mounted () {
   }
 }
 </script>

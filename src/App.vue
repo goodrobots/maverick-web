@@ -81,6 +81,12 @@ export default {
     // Watch apis state for any change and process
     apis: {
       handler: function (newValue) {
+        /*
+        // If any of the endpoints have changed, destroy and recreate the client
+        // this.deleteQueries(apiData.key)
+        delete this.$apollo.provider.clients[apiData.key]
+        this.createClient(apiData.key+'new', apiData)
+        */
         for (const api in this.apis) {
           this.createQuery('Status', statusQuery, api, null, null, this.processStatusQuery)
           this.createSubscription('Status', statusSubscription, api, null, null, this.processStatusSubscription)
@@ -100,9 +106,9 @@ export default {
     checkApis () {
       // If an api hasn't been seen for more than 10 seconds, mark it as dead
       for (const api in this.apis) {
-        if (this.appVisible && performance.now() - this.$store.state.apiTimestamps[api] > 10000) {
-          this.logInfo(`deadapi? api: ${api}, timestamp: ${this.$store.state.apiTimestamps[api]}`)
-          this.$store.commit('setApiState', { api: api, value: false })
+        if (this.appVisible && performance.now() - this.$store.state.core.apiTimestamps[api] > 10000) {
+          this.logInfo(`deadapi? api: ${api}, timestamp: ${this.$store.state.core.apiTimestamps[api]}`)
+          this.$store.commit('core/setApiState', { api: api, value: false })
         }
       }
     },
@@ -112,13 +118,13 @@ export default {
       const protocol = window.location.protocol
       const wsprotocol = (protocol.includes("https")) ? 'wss:' : 'ws:'
       const apiport = 7000
-      this.logDebug(`hostname: ${hostname}, protocol: ${protocol}, wsprotocol: ${wsprotocol}`)
+      this.logDebug(`Creating default client:: hostname: ${hostname}, protocol: ${protocol}, wsprotocol: ${wsprotocol}`)
       const clientData = {
         "httpEndpoint": `${protocol}//${hostname}:${apiport}/graphql`,
         "wsEndpoint": `${wsprotocol}//${hostname}:${apiport}/subscriptions`,
-        "introspectionEndpoint": `${protocol}//${hostname}:${apiport}/schema`,
+        "schemaEndpoint": `${protocol}//${hostname}:${apiport}/schema`,
         "websocketsOnly": false,
-        "name": "Defualt API",
+        "name": "Default API",
         "colorLight": "rgba(166,11,11,0.3)",
         "colorDark": "rgba(166,11,11,0.9)",
         "authToken": null
@@ -129,40 +135,40 @@ export default {
       const api = key.split('___')[0]
       if (data.data && 'Status' in data.data) {
         // Store the message data and set the api state to active, only for the first callback
-        if (this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
+        if (this.$store.state.core.apis[api].state !== true) this.$store.commit('core/setApiState', { api: api, value: true })
         // If the uuid for the api has not already been set, set it and create a VehicleInfo query (which needs the uuid to be created)
-        if (!this.$store.state.apis[api].uuid) {
-          this.$store.commit('setApiUuid', { api: api, value: data.data.Status.id })
-          this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, null, this.processVehicleInfoQuery, null, { uuid: this.$store.state.apis[api].uuid })          
+        if (!this.$store.state.core.apis[api].uuid) {
+          this.$store.commit('core/setApiUuid', { api: api, value: data.data.Status.id })
+          this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, null, this.processVehicleInfoQuery, null, { uuid: this.$store.state.core.apis[api].uuid })          
         }
-        if (this.$store.state.apiTimestamps[api] === null) this.$store.commit('setApiSeen', { api: api, value: performance.now() })
-        if (!(api in this.$store.state.statusData)) {
-          this.$store.commit('setStatusData', { api: api, message: data.data.Status })
+        if (this.$store.state.core.apiTimestamps[api] === null) this.$store.commit('core/setApiSeen', { api: api, value: performance.now() })
+        if (!(api in this.$store.state.core.statusData)) {
+          this.$store.commit('core/setStatusData', { api: api, message: data.data.Status })
         }
       }
     },
     processStatusSubscription (data, key) {
       const api = key.split('___')[0]
       // Store the message data and set the api state to active, for subsequent subscription callbacks
-      // if (data.data && this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
-      this.$store.commit('setApiSeen', { api: api, value: performance.now() })
-      if (data.data && this.$store.state.statusData[api] !== data.data.Status) {
-        this.$store.commit('setStatusData', { api: api, message: data.data.Status })
+      // if (data.data && this.$store.state.core.apis[api].state !== true) this.$store.commit('core/setApiState', { api: api, value: true })
+      this.$store.commit('core/setApiSeen', { api: api, value: performance.now() })
+      if (data.data && this.$store.state.core.statusData[api] !== data.data.Status) {
+        this.$store.commit('core/setStatusData', { api: api, message: data.data.Status })
       }
     },
     processVehicleInfoQuery (data, key) {
       const api = key.split('___')[0]
       if (!data.data) {
         this.logInfo(`Invalid GraphQL 'VehicleInfo' data returned from api: ${api}`)
-        this.$store.commit('setApiState', { api: api, value: false })
-        this.$store.commit('setVehicleData', { api: api, message: null })
+        this.$store.commit('core/setApiState', { api: api, value: false })
+        this.$store.commit('core/setVehicleData', { api: api, message: null })
         return false
       }
       if (this.$store.state.vehicleData[api] !== data.data.VehicleInfo) {
-        this.$store.commit('setVehicleData', { api: api, message: data.data.VehicleInfo })
+        this.$store.commit('core/setVehicleData', { api: api, message: data.data.VehicleInfo })
       }
       if (!this.apis[api].icon) {
-        this.$store.commit('setApiIcon', { api: api, value: this.vehicleIcon(data.data.VehicleInfo.typeString) })
+        this.$store.commit('core/setApiIcon', { api: api, value: this.vehicleIcon(data.data.VehicleInfo.typeString) })
       }
     }
   }

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import core from './modules/core'
 import cockpit from './modules/cockpit'
 import planner from './modules/planner'
 import config from './modules/config'
@@ -11,6 +12,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
+    core,
     cockpit,
     planner,
     config,
@@ -27,11 +29,6 @@ export default new Vuex.Store({
     navIcon: false,
     fullScreen: false,
     moduleName: null,
-    apis: {},
-    apiTimestamps: {},
-    statusData: {},
-    vehicleData: {},
-    activeApi: null,
     appVisible: true,
     bingMapsKey: 'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6',
     moduleData: {
@@ -63,6 +60,9 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    setAppVisible (state, data) {
+      state.appVisible = data
+    },
     setDarkUi (state, value) {
       state.darkUi = value
     },
@@ -74,44 +74,6 @@ export default new Vuex.Store({
     },
     setNavDrawer (state, value) {
       state.navDrawer = value
-    },
-    addApi (state, data) {
-      Vue.set(state.apis, data.title, data.value)
-    },
-    setActiveApi (state, api) {
-      state.activeApi = api
-    },
-    setApiState (state, data) {
-      state.apis[data.api].state = data.value
-    },
-    setApiUuid (state, data) {
-      state.apis[data.api].uuid = data.value
-    },
-    setApiIcon (state, data) {
-      state.apis[data.api].icon = data.value
-    },
-    setApiAuth (state, data) {
-      state.apis[data.api].auth = data.value
-    },
-    setApiSeen (state, data) {
-      state.apiTimestamps[data.api] = data.value
-    },
-    setAppVisible (state, data) {
-      state.appVisible = data
-    },
-    setStatusData (state, data) {
-      if (data.api in state.statusData) {
-        state.statusData[data.api] = data.message
-      } else {
-        Vue.set(state.statusData, data.api, data.message)
-      }
-    },
-    setVehicleData (state, data) {
-      if (data.api in state.vehicleData) {
-        state.vehicleData[data.api] = data.message
-      } else {
-        Vue.set(state.vehicleData, data.api, data.message)
-      }
     },
     setNavState (state, value) {
       state.navState = value

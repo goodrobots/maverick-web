@@ -2,11 +2,11 @@
 div
   config-drawer
   v-content
-    router-view(:key="activeApi")
+    v-container(fluid)
+      router-view(:key="activeApi")
 </template>
 
 <script>
-import colors from 'vuetify/lib/util/colors'
 import ConfigDrawer from './ConfigDrawer'
 
 export default {
@@ -20,12 +20,8 @@ export default {
     }
   },
   computed: {
-    activeApi () {
-      return this.$store.state.activeApi
-    }
   },
   mounted () {
-    this.$vuetify.theme.primary = colors.lightGreen.base // Reset theme colours for this component
   }
 }
 </script>

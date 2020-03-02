@@ -102,10 +102,10 @@ export default {
       this.logDebug(data.data)
       if (data.data && 'Status' in data.data) {
         // Store the message data and set the api state to active, only for the first callback
-        if (this.$store.state.apis[api].state !== true) this.$store.commit('setApiState', { api: api, value: true })
-        if (this.$store.state.apiTimestamps[api] === null) this.$store.commit('setApiSeen', { api: api, value: performance.now() })
+        if (this.$store.state.core.apis[api].state !== true) this.$store.commit('core/setApiState', { api: api, value: true })
+        if (this.$store.state.core.apiTimestamps[api] === null) this.$store.commit('core/setApiSeen', { api: api, value: performance.now() })
         if (!(api in this.$store.state.statusData)) {
-          this.$store.commit('setStatusData', { api: api, message: data.data.Status })
+          this.$store.commit('core/setStatusData', { api: api, message: data.data.Status })
         }
       }
     },

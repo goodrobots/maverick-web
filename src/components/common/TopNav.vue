@@ -177,7 +177,7 @@ export default {
 
   methods: {
     changeApi (api) {
-      this.$store.commit('setActiveApi', api)
+      this.$store.commit('core/setActiveApi', api)
     },
     changeMode (mode) {
       this.logDebug(`vehicleMode: setting value: ${mode}`)

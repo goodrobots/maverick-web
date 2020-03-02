@@ -16,13 +16,13 @@ const plugin = {
 
       computed: {
         apis () {
-          return this.$store.state.apis
+          return this.$store.state.core.apis
         },
         activeApi () {
-          return this.$store.state.activeApi
+          return this.$store.state.core.activeApi
         },
         vehicleData () {
-          return this.$store.state.vehicleData
+          return this.$store.state.core.vehicleData
         },
         navColor () {
           return this.$store.state.navColor
@@ -58,12 +58,12 @@ const plugin = {
         },
 
         clearVerifiedQueries(api) {
-          this.$store.commit('maverick/clearGraphqlVerified', api)
+          this.$store.commit('core/clearGraphqlVerified', api)
         },
 
         verifyQuery (gql, api = this.activeApi, unknownDefault = true) {
           let gqlHash = this.hashCode(print(gql))
-          let alreadyVerified = this.$store.getters['maverick/graphqlSchemaVerified'](api, gqlHash)
+          let alreadyVerified = this.$store.getters['core/graphqlSchemaVerified'](api, gqlHash)
 
           if (alreadyVerified !== undefined) {
             // query has already been verified for this api
@@ -71,7 +71,7 @@ const plugin = {
           }
 
           // attempt to validate the query 
-          let graphqlSchema = this.$store.getters['maverick/graphqlSchema'](api)
+          let graphqlSchema = this.$store.getters['core/graphqlSchema'](api)
           if (graphqlSchema === undefined) {
             // graphqlSchema has not been fetched for this api, return unknownDefault
             return unknownDefault
@@ -81,7 +81,7 @@ const plugin = {
           if (validationErrors.length == 0) {
             valid = true
           }
-          this.$store.commit('maverick/updateGraphqlVerified', {api:api, hash:gqlHash, ret:valid})
+          this.$store.commit('core/updateGraphqlVerified', {api:api, hash:gqlHash, ret:valid})
           return valid
         },
 
@@ -93,12 +93,17 @@ const plugin = {
         },
 
         fetchClientSchema (api, clientdata) {
-          this.$store.dispatch("maverick/fetchSchema", {api:api, introspectionEndpoint:clientdata.introspectionEndpoint}).then(() => {
-            this.logDebug(`Schema fetch has been dispatched for api: ${api}`)
+          this.$store.dispatch("core/fetchSchema", {api:api, schemaEndpoint:clientdata.schemaEndpoint}).then(() => {
+            this.logDebug(`Schema fetch has been dispatched for api: ${api.key}`)
           })
         },
 
         createClient (api, clientdata) {
+          // Add a vuex apis entry
+          this.$store.commit('core/addApi', {
+            title: api,
+            value: { ...{ key: api, state: false, auth: false, icon: null, uuid: null }, ...clientdata }
+          })
           // Add an apollo client
           const client = createClient({
             httpEndpoint: clientdata.httpEndpoint,
@@ -106,11 +111,6 @@ const plugin = {
             websocketsOnly: clientdata.websocketsOnly
           })
           this.$set(this.$apollo.provider.clients, api, client)
-          // Add a vuex apis entry
-          this.$store.commit('addApi', {
-            title: api,
-            value: { ...{ state: false, auth: false, icon: null, uuid: null }, ...clientdata }
-          })
           // Set the client auth token
           if (clientdata.authToken) {
             this.logDebug(`Setting auth token: ${clientdata.authToken}`)
@@ -135,7 +135,7 @@ const plugin = {
                 // Store the message data and set the api state to active
                 // Note: Must use this.$set to add object property, to keep new property reactive
                 this.$set(this[container], cbapi, data.data[message])
-                this.$store.commit('setApiState', { api: cbapi, value: true })
+                this.$store.commit('core/setApiState', { api: cbapi, value: true })
               }
             }
             let queryFields = {
@@ -170,8 +170,8 @@ const plugin = {
               if (data.data && message in data.data && this[container][cbapi] !== data.data[message]) {
                 // Store the message data and set the api state to active
                 this[container][cbapi] = data.data[message]
-                if (this.$store && this.$store.state.apis[cbapi] && !this.$store.state.apis[cbapi].state && message in data.data) {
-                  this.$store.commit('setApiState', { api: cbapi, value: true })
+                if (this.$store && this.$store.state.core.apis[cbapi] && !this.$store.state.core.apis[cbapi].state && message in data.data) {
+                  this.$store.commit('core/setApiState', { api: cbapi, value: true })
                 }
               }
             }
