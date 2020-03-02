@@ -9,6 +9,7 @@ import PlannerModule from '../components/modules/planner/PlannerModule'
 
 import ConfigModule from '../components/modules/config/ConfigModule'
 import ConfigConnections from '../components/modules/config/ConfigConnections'
+import ConfigModules from '../components/modules/config/ConfigModules'
 import ConfigParamSummary from '../components/modules/config/ConfigParamSummary'
 import ConfigParamGroups from '../components/modules/config/ConfigParamGroups'
 import ConfigParamList from '../components/modules/config/ConfigParamList'
@@ -61,6 +62,10 @@ export default new Router({
         {
           path: '',
           // redirect: 'parameter-summary'
+        },
+        {
+          path: 'modules',
+          component: ConfigModules
         },
         {
           path: 'connections',

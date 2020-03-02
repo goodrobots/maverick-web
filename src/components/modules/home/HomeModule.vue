@@ -8,24 +8,9 @@ v-content
         img.front-gr-logo(:src="publicPath + 'img/logos/maverick-logo-complete-white.svg'" height="250px")
       v-flex(xs12)
         v-layout(justify-center wrap)
-          //- v-flex(xs12 sm6 md6 lg3)
-          //-   v-btn(color='mavorange' to='/cockpit') Cockpit
-          //-     v-icon(right) mdi-airplane-takeoff
-          //- v-flex(xs12 sm6 md6 lg3)
-          //-   v-btn(color='mavblue' to='/planner') Planner
-          //-     v-icon(right) mdi-map-marker-circle
-          //- v-flex(xs12 sm6 md6 lg3)
-          //-   v-btn(color='mavpurple' to='/config') Config
-          //-     v-icon(right) mdi-settings
-          //- v-flex(xs12 sm6 md6 lg3)
-          //-   v-btn(color='mavgreen' to='/analysis') Analysis
-          //-     v-icon(right) mdi-equalizer
-          v-flex(xs12 sm6 md6 lg3)
-            v-btn(color='mavgrey' to='/maverick') Maverick
-              v-icon(right) mdi-console
-          v-flex(xs12 sm6 md6 lg3)
-            v-btn(color='mavblue' to='/video') Video
-              v-icon(right) mdi-video
+          v-flex(v-for="(data, key) in $store.state.modules" v-if="data.enabled == true" :key="key" :color="data.color" xs12 sm6 md6 lg4)
+            v-btn(:color="data.color" :to="'/' + key" block) {{ key | capitalize }}
+                  v-icon(right) {{ data.icon }}
       v-flex(xs12)
         v-spacer
     v-footer.transparent(absolute height="auto")

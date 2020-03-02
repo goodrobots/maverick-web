@@ -1,11 +1,15 @@
 <template lang='pug'>
 v-navigation-drawer(app left clipped fixed v-model="drawer")
   v-list(dense)
-    v-subheader.mt-3.grey--text.text--darken-1 CONNECTIONS
+    v-subheader.mt-3.grey--text.text--darken-1 GENERAL CONFIG
     v-list-item.mt-3(@click="" to="/config/connections")
       v-list-item-action
-        v-icon mdi-view-dashboard
-      v-list-item-title Edit Connections
+        v-icon mdi-transit-connection
+      v-list-item-title Connections
+    v-list-item.mt-3(@click="" to="/config/modules")
+      v-list-item-action
+        v-icon mdi-view-module
+      v-list-item-title Modules
 
   v-list(v-if="activeApi" dense)
     v-subheader.mt-3.grey--text.text--darken-1 FLIGHT CONTROLLER

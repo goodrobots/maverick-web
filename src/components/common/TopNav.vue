@@ -67,7 +67,7 @@ div
         template(v-slot:activator="{ on }")
           v-btn.mx-3(:color="navColor" small v-on="on") {{ moduleName | capitalize }}
         v-list
-          v-list-item(v-for="(data, key) in $store.state.moduleData" :key="key" @click='changeModule(key)' :color="data.color")
+          v-list-item(v-for="(data, key) in $store.state.modules" v-if="data.enabled == true" :key="key" :color="data.color")
             v-btn(:color="data.color" :to="'/' + key" block) {{ key | capitalize }}
                   v-icon(right) {{ data.icon }}
 
@@ -182,9 +182,6 @@ export default {
     changeMode (mode) {
       this.logDebug(`vehicleMode: setting value: ${mode}`)
       this.mutateQuery(this.activeApi, vehicleStateMutate, { mode: mode })
-    },
-    changeModule (module) {
-      // this.$store.
     },
     createQueries () {
       if (this.activeApi) {

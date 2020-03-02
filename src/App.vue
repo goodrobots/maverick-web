@@ -67,8 +67,8 @@ export default {
           this.$store.commit('setNavIcon', false)
           this.$store.commit('setModuleName', 'home')
       }
-      if (this.$store.state.moduleName in this.$store.state.moduleData) {
-        this.$store.commit('setNavColor', this.$store.state.moduleData[this.$store.state.moduleName].color)
+      if (this.$store.state.moduleName in this.$store.state.modules) {
+        this.$store.commit('setNavColor', this.$store.state.modules[this.$store.state.moduleName].color)
       }
       return this.$store.state.moduleName
     },
@@ -139,9 +139,9 @@ export default {
         // If the uuid for the api has not already been set, set it and create a VehicleInfo query (which needs the uuid to be created)
         if (!this.$store.state.core.apis[api].uuid) {
           this.$store.commit('core/setApiUuid', { api: api, value: data.data.Status.id })
-          // this.logDebug(api)
-          // this.logDebug(this.verifyQuery(vehicleInfoQuery, api))
-          this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, !this.verifyQuery(vehicleInfoQuery, api), this.processVehicleInfoQuery, null, { uuid: this.$store.state.core.apis[api].uuid })          
+          if (this.verifyQuery(vehicleInfoQuery, api)) {
+            this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, !this.verifyQuery(vehicleInfoQuery, api), this.processVehicleInfoQuery, null, { uuid: this.$store.state.core.apis[api].uuid })          
+          }
         }
         if (this.$store.state.core.apiTimestamps[api] === null) this.$store.commit('core/setApiSeen', { api: api, value: performance.now() })
         if (!(api in this.$store.state.core.statusData)) {

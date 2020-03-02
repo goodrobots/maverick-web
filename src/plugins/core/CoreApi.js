@@ -34,6 +34,14 @@ const plugin = {
           if (newValue && this.$apollo) {
             this.logInfo('App Visibility changed to Visible, turning on all GraphQL queries')
             this.$apollo.skipAll = false
+            /*
+            for (const query in this.$apollo.queries) {
+              if (query != undefined) {
+                this.logDebug(query)
+                this.logDebug(this.$apollo.queries[query])
+              }
+            }
+            */
           } else if (this.$apollo) {
             this.logInfo('App Visibility changed to Invisible, turning off all GraphQL queries')
             this.$apollo.skipAll = true
