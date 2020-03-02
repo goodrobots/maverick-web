@@ -139,7 +139,8 @@ export default {
         // If the uuid for the api has not already been set, set it and create a VehicleInfo query (which needs the uuid to be created)
         if (!this.$store.state.core.apis[api].uuid) {
           this.$store.commit('core/setApiUuid', { api: api, value: data.data.Status.id })
-          this.logDebug('vehicleinfo', this.verifyQuery(vehicleInfoQuery, api))
+          // this.logDebug(api)
+          // this.logDebug(this.verifyQuery(vehicleInfoQuery, api))
           this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, !this.verifyQuery(vehicleInfoQuery, api), this.processVehicleInfoQuery, null, { uuid: this.$store.state.core.apis[api].uuid })          
         }
         if (this.$store.state.core.apiTimestamps[api] === null) this.$store.commit('core/setApiSeen', { api: api, value: performance.now() })

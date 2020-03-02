@@ -61,7 +61,7 @@ const plugin = {
           this.$store.commit('core/clearGraphqlVerified', api)
         },
 
-        verifyQuery (gql, api = this.activeApi, unknownDefault = true) {
+        verifyQuery (gql, api = this.activeApi, unknownDefault = false) {
           let gqlHash = this.hashCode(print(gql))
           let alreadyVerified = this.$store.getters['core/graphqlSchemaVerified'](api, gqlHash)
 
