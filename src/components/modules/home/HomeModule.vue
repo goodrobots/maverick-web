@@ -7,7 +7,7 @@ v-content
       v-flex(xs12)
         img.front-gr-logo(:src="publicPath + 'img/logos/maverick-logo-complete-white.svg'" height="250px")
       v-flex(xs12)
-        v-layout(justify-center wrap)
+        v-layout.mx-auto(justify-center wrap)
           v-flex(v-for="(data, key) in $store.state.modules" v-if="data.enabled == true" :key="key" :color="data.color" xs12 sm6 md6 lg4)
             v-btn(:color="data.color" :to="'/' + key" block) {{ key | capitalize }}
                   v-icon(right) {{ data.icon }}

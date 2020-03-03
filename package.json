@@ -33,6 +33,7 @@
     "vuelayers": "^0.11.21",
     "vuetify": "^2.2.15",
     "vuex": "^3.1.2",
+    "vuex-persist": "^2.2.0",
     "vuex-router-sync": "^5.0.0",
     "xterm": "^4.4.0",
     "xterm-addon-fit": "^0.3.0",

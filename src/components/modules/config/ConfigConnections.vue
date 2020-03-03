@@ -27,6 +27,12 @@ div
                 v-switch.pl-4(:color="navColor" :input-value="isExpanded(item)" :label="isExpanded(item) ? 'Editing' : 'Edit'" @change="(v) => expand(item, v)")
           v-list(v-if="isExpanded(item)" dense)
             v-list-item
+              v-divider
+            v-list-item
+              v-list-item-content
+                v-text-field(v-model="item.name" label="API Name/Description" required)
+              v-list-item-content.align-end
+            v-list-item
               v-list-item-content
                 v-text-field(v-model="item.httpEndpoint" label="GraphQL Endpoint" required)
               v-list-item-content.align-end

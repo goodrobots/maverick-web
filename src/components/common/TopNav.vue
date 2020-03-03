@@ -86,14 +86,6 @@ import { statusTextQuery, statusTextSubscription } from '../../plugins/graphql/g
 export default {
   name: 'TopNav',
 
-  filters: {
-    capitalize: function (value) {
-      if (!value) return ''
-      value = value.toString()
-      return value.charAt(0).toUpperCase() + value.slice(1)
-    }
-  },
-
   data () {
     return {
       publicPath: process.env.BASE_URL,

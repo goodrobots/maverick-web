@@ -1,24 +1,34 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VuexPersist from 'vuex-persist'
+
 import core from './modules/core'
 import cockpit from './modules/cockpit'
 import planner from './modules/planner'
-import config from './modules/config'
-import analysis from './modules/analysis'
 import maverick from './modules/maverick'
-import video from './modules/video'
 
 Vue.use(Vuex)
 
+const vuexPersist = new VuexPersist({
+  key: 'maverick',
+  storage: window.localStorage,
+  reducer: (state) => ({ 
+    core: state.core,
+    cockpit: state.cockpit,
+    planner: state.planner
+  }),
+})
+
 export default new Vuex.Store({
+  plugins: [
+    vuexPersist.plugin
+  ],
+
   modules: {
     core,
     cockpit,
     planner,
-    config,
-    analysis,
-    maverick,
-    video
+    maverick
   },
 
   state: {

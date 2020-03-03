@@ -98,7 +98,7 @@ export default {
 
   mounted () {
     this.logBanner('** Welcome to Maverick Web GCS **')
-    // Try to connect to the default -api client
+    // Try to connect to the default -api client if one doesn't already exist
     this.createDefaultClient()
   },
 
@@ -117,7 +117,7 @@ export default {
       const hostname = window.location.hostname
       const protocol = window.location.protocol
       const wsprotocol = (protocol.includes("https")) ? 'wss:' : 'ws:'
-      const apiport = 7000
+      const apiport = 6800
       this.logDebug(`Creating default client:: hostname: ${hostname}, protocol: ${protocol}, wsprotocol: ${wsprotocol}`)
       const clientData = {
         "httpEndpoint": `${protocol}//${hostname}:${apiport}/graphql`,
@@ -129,7 +129,14 @@ export default {
         "colorDark": "rgba(166,11,11,0.9)",
         "authToken": null
       }
-      this.createClient('default', clientData)
+
+      // If our persistent storage already has a definition for default, use it
+      if (this.apis['default']) {
+        this.createClient('default', this.apis['default'])
+      // Otherwise use the defaults
+      } else {
+        this.createClient('default', clientData)
+      }
     },
     processStatusQuery (data, key) {
       const api = key.split('___')[0]
