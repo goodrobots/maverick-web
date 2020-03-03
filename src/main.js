@@ -23,7 +23,7 @@ import './plugins/core'
 import './plugins/mavlink'
 
 // Sync the vuex store with router
-// sync(store, router)
+sync(store, router)
 
 // Create app
 Vue.config.productionTip = false
