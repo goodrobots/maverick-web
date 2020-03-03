@@ -30,19 +30,19 @@ div
               v-divider
             v-list-item
               v-list-item-content
-                v-text-field(v-model="item.name" label="API Name/Description" required)
+                v-text-field(v-model="item.name" label="API Name/Description")
               v-list-item-content.align-end
             v-list-item
               v-list-item-content
-                v-text-field(v-model="item.httpEndpoint" label="GraphQL Endpoint" required)
+                v-text-field(v-model="item.httpEndpoint" label="GraphQL Endpoint")
               v-list-item-content.align-end
             v-list-item
               v-list-item-content
-                v-text-field(v-model="item.wsEndpoint" label="Websockets Endpoint" required)
+                v-text-field(v-model="item.wsEndpoint" label="Websockets Endpoint")
               v-list-item-content.align-end
             v-list-item
               v-list-item-content
-                v-text-field(v-model="item.schemaEndpoint" label="Schema Endpoint" required)
+                v-text-field(v-model="item.schemaEndpoint" label="Schema Endpoint")
               v-list-item-content.align-end
             v-list-item
               v-divider
@@ -69,6 +69,7 @@ export default {
   },
   methods: {
     save(apiData) {
+      this.logDebug(apiData)
       this.$store.commit('core/setApiData', {api: apiData.key, data: apiData})
       // If any of the endpoints have changed, destroy and recreate the client
       // this.deleteQueries(apiData.key)

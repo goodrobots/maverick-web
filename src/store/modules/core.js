@@ -33,6 +33,7 @@ const actions = {
         try {
           return state.graphqlSchema[api].schema
         } catch (err) {
+          console.error(err)
           return undefined
         }
       }
@@ -42,6 +43,7 @@ const actions = {
         try {
           return state.graphqlSchema[api].verified[hash]
         } catch (err) {
+          console.error(err)
           return undefined
         }
       }

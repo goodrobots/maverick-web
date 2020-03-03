@@ -111,7 +111,7 @@ const plugin = {
 
         fetchClientSchema (api, clientdata) {
           this.$store.dispatch("core/fetchSchema", {api:api, schemaEndpoint:clientdata.schemaEndpoint}).then(() => {
-            this.logDebug(`Schema fetch has been dispatched for api: ${api.key}`)
+            this.logDebug('Schema fetch has been dispatched for api: ' + api.key)
           })
         },
 
@@ -135,7 +135,7 @@ const plugin = {
           }
 
           // Fetch and parse the client schema
-          this.fetchClientSchema(client, clientdata) // async request
+          this.fetchClientSchema(api, clientdata) // async request
         },
 
         createQuery (message, gql, api, container, skip = false, callback = null, errorCallback = null, variables = null) {

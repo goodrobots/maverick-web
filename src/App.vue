@@ -146,6 +146,9 @@ export default {
         // If the uuid for the api has not already been set, set it and create a VehicleInfo query (which needs the uuid to be created)
         if (!this.$store.state.core.apis[api].uuid) {
           this.$store.commit('core/setApiUuid', { api: api, value: data.data.Status.id })
+        }
+        // If the VehicleInfo query doesn't already exist for this client, create it
+        if (!(api + '___VehicleInfo___' in this.$apollo.queries)) {
           if (this.verifyQuery(vehicleInfoQuery, api)) {
             this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, !this.verifyQuery(vehicleInfoQuery, api), this.processVehicleInfoQuery, null, { uuid: this.$store.state.core.apis[api].uuid })          
           }
@@ -173,7 +176,7 @@ export default {
         this.$store.commit('core/setVehicleData', { api: api, message: null })
         return false
       }
-      if (this.$store.state.vehicleData[api] !== data.data.VehicleInfo) {
+      if (this.$store.state.core.vehicleData[api] !== data.data.VehicleInfo) {
         this.$store.commit('core/setVehicleData', { api: api, message: data.data.VehicleInfo })
       }
       if (!this.apis[api].icon) {
