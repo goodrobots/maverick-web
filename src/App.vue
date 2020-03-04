@@ -1,12 +1,12 @@
 <template lang='pug'>
 div#fullscreen
   v-app(:dark="darkUi")
+    action-button(v-if="this.moduleName !== 'home'")
     top-nav(v-if="navState")
     v-fade-transition(mode="out-in")
       // cache the planner module to prevent from being destroyed on component change
       keep-alive(include="PlannerModule")
         router-view
-  action-button(v-if="this.moduleName !== 'home'" :dark="darkUi")
 </template>
 
 <script>

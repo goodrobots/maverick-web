@@ -37,7 +37,8 @@ const plugin = {
           return this.$store.state.navColor
         },
         navIcon () {
-          return this.$store.state.navIcon
+          return this.$store.state.modules[this.moduleName].icon
+          // return this.$store.state.navIcon
         },
         navDrawer () {
           return this.$store.state.navDrawer

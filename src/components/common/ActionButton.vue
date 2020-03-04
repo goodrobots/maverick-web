@@ -1,10 +1,9 @@
 <template lang='pug'>
 v-card.transparent.navfab
 
-  v-speed-dial.navfab(v-model="navfab" direction="top" bottom=true right=true open-on-hover=false transition="slide-y-reverse-transition")
+  v-speed-dial(v-model="navfab" direction="top" bottom=true right=true open-on-hover=false transition="slide-y-reverse-transition")
     template(v-slot:activator)
-      // v-btn(:color="navColor" dark fab hover v-model="navfab")
-      v-btn(color="blue" dark fab hover v-model="navfab")
+      v-btn(:color="navColor" dark fab hover v-model="navfab")
         v-icon(v-if="navfab") mdi-close
         v-icon(v-else v-html="navIcon")
     v-tooltip(v-if="(moduleName !== 'maverick')" left)
@@ -45,11 +44,11 @@ v-card.transparent.navfab
           v-icon(v-else) mdi-fullscreen-exit
       span Fullscreen
 
-  // v-speed-dial.navfab(v-model="navfab" direction="left" bottom=true right=true open-on-hover=false transition="slide-x-reverse-transition")
+  v-speed-dial(v-model="navfab" direction="left" bottom=true right=true open-on-hover=false transition="slide-x-reverse-transition")
     template(v-slot:activator)
       v-btn(:color="navColor" dark fab hover v-model="navfab")
-        v-icon(v-html="navIcon")
-        v-icon mdi-close
+        v-icon(v-if="navfab") mdi-close
+        v-icon(v-else v-html="navIcon")
     // Cockpit specific actions
     template(v-if="(moduleName === 'cockpit')")
       v-tooltip(bottom)
@@ -88,30 +87,8 @@ export default {
     navState () {
       return this.$store.state.navState
     },
-    navColor () {
-      return this.$store.state.navColor
-    },
     fullScreen () {
       return this.$store.state.fullScreen
-    },
-    moduleName () {
-      return this.$store.state.moduleName
-    },
-    navIcon () {
-      switch (this.moduleName) {
-        case 'cockpit':
-          return 'mdi-airplane-takeoff'
-        case 'planner':
-          return 'mdi-map-marker-circle'
-        case 'config':
-          return 'mdi-settings'
-        case 'analysis':
-          return 'mdi-equalizer'
-        case 'maverick':
-          return 'mdi-console'
-        default:
-          return null
-      }
     },
     // Config states
     cockpitMapState () {
