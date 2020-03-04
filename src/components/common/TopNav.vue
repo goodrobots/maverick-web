@@ -108,32 +108,14 @@ export default {
   },
 
   computed: {
-    activeApi () {
-      return this.$store.state.activeApi
-    },
     height () {
       return window.innerHeight
     },
-    moduleName () {
-      return this.$store.state.moduleName
-    },
-    navIcon () {
-      return this.$store.state.navIcon
-    },
-    navColor () {
-      return this.$store.state.navColor
-    },
-    navDrawer () {
-      return this.$store.state.navDrawer
-    },
-    routePath () {
-      return this.$store.state.route.path
-    },
     statusData () {
-      return this.$store.state.statusData
+      return this.$store.state.core.statusData
     },
     vehicleData () {
-      return this.$store.state.vehicleData
+      return this.$store.state.core.vehicleData
     },
     vehicleModeGroup () {
       if (this.vehicleData[this.activeApi]) {
@@ -158,13 +140,13 @@ export default {
     // Watch apis state for any change and process
     activeApi: {
       handler: function (newValue) {
-        // this.createQueries()
+        this.createQueries()
       }
     }
   },
 
   mounted () {
-    // this.createQueries()
+    setInterval(() => this.createQueries(), 2000)
   },
 
   methods: {
@@ -177,12 +159,18 @@ export default {
     },
     createQueries () {
       if (this.activeApi) {
-        this.createQuery('VehicleState', vehicleStateQuery, this.activeApi, 'vehicleStateData')
-        this.createSubscription('VehicleState', vehicleStateSubscription, this.activeApi, 'vehicleStateData')
-        this.createQuery('VfrHud', vfrHudQuery, this.activeApi, 'vfrHudData')
-        this.createSubscription('VfrHud', vfrHudSubscription, this.activeApi, 'vfrHudData')
-        this.createQuery('StatusText', statusTextQuery, this.activeApi, null, null, this.processStatusText)
-        this.createSubscription('StatusText', statusTextSubscription, this.activeApi, null, null, this.processStatusText)
+        if (this.verifyQuery(vehicleStateQuery)) {
+          this.createQuery('VehicleState', vehicleStateQuery, this.activeApi, 'vehicleStateData')
+          this.createSubscription('VehicleState', vehicleStateSubscription, this.activeApi, 'vehicleStateData')
+        }
+        if (this.verifyQuery(vfrHudQuery)) {
+          this.createQuery('VfrHud', vfrHudQuery, this.activeApi, 'vfrHudData')
+          this.createSubscription('VfrHud', vfrHudSubscription, this.activeApi, 'vfrHudData')
+        }
+        if (this.verifyQuery(statusTextQuery)) {
+          this.createQuery('StatusText', statusTextQuery, this.activeApi, null, null, this.processStatusText)
+          this.createSubscription('StatusText', statusTextSubscription, this.activeApi, null, null, this.processStatusText)
+        }
       }
     },
     processStatusText (data, key) {

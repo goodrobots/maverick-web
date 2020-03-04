@@ -30,12 +30,21 @@ const plugin = {
         activeApi () {
           return this.$store.state.core.activeApi
         },
-        vehicleData () {
-          return this.$store.state.core.vehicleData
+        moduleName () {
+          return this.$store.state.moduleName
         },
         navColor () {
           return this.$store.state.navColor
         },
+        navIcon () {
+          return this.$store.state.navIcon
+        },
+        navDrawer () {
+          return this.$store.state.navDrawer
+        },
+        vehicleData () {
+          return this.$store.state.core.vehicleData
+        }
       },
 
       watch: {
@@ -93,9 +102,18 @@ const plugin = {
             // graphqlSchema has not been fetched for this api, return unknownDefault
             return unknownDefault
           }
-          const validationErrors = validate(graphqlSchema, gql)
+          // this.logDebug(graphqlSchema)
+          let validationErrors = undefined
+          /*
+          try {
+            validationErrors = validate(graphqlSchema, gql)
+          } catch (err) {
+            this.logDebug(`Validation error: ${err}`)
+            return unknownDefault
+          }
+          */
           let valid = false
-          if (validationErrors.length == 0) {
+          if (validationErrors == undefined || validationErrors.length == 0) {
             valid = true
           }
           this.$store.commit('core/updateGraphqlVerified', {api:api, hash:gqlHash, ret:valid})
@@ -111,7 +129,7 @@ const plugin = {
 
         fetchClientSchema (api, clientdata) {
           this.$store.dispatch("core/fetchSchema", {api:api, schemaEndpoint:clientdata.schemaEndpoint}).then(() => {
-            this.logDebug('Schema fetch has been dispatched for api: ' + api.key)
+            this.logDebug('Schema fetch has been dispatched for api: ' + api)
           })
         },
 
@@ -143,6 +161,11 @@ const plugin = {
           const varvalues = variables && Object.values(variables) ? Object.values(variables).join('~') : ''
           const queryKey = [api, message, varvalues].join('___')
           // If a query with the calculated key doesn't exist, and the client appears to exist, then create the query
+          /*
+          this.logDebug(api)
+          this.logDebug(message)
+          this.logDebug(this.$root.$apollo.provider.clients)
+          */
           if (!this.$apollo.queries[queryKey] && this.$apollo.provider.clients[api]) {
             this.logDebug(`Creating GQL Query: api: ${api}, message: ${message}, queryKey: ${queryKey}, container: ${container}`)
             // If a callback function has been passed use it as the result processor, otherwise use a default function
