@@ -6,31 +6,13 @@ v-card.transparent.navfab
       v-btn(:color="navColor" dark fab hover v-model="navfab")
         v-icon(v-if="navfab") mdi-close
         v-icon(v-else v-html="navIcon")
-    v-tooltip(v-if="(moduleName !== 'maverick')" left)
-      template(v-slot:activator="{ on }")
-        v-btn(fab dark :small="(moduleName !== 'maverick')" color="mavgrey" to="/maverick" v-on="on")
-          v-icon mdi-console
-      span Maverick
-    v-tooltip(v-if="(moduleName !== 'analysis')" left)
-      template(v-slot:activator="{ on }")
-        v-btn(fab dark :small="(moduleName !== 'analysis')" color="mavgreen" to="/analysis" v-on="on")
-          v-icon mdi-equalizer
-      span Analysis
-    v-tooltip(v-if="(moduleName !== 'config')" left)
-      template(v-slot:activator="{ on }")
-        v-btn(fab dark :small="(moduleName !== 'config')" color="mavpurple" to="/config" v-on="on")
-          v-icon mdi-settings
-      span Configuration
-    v-tooltip(v-if="(moduleName !== 'planner')" left)
-      template(v-slot:activator="{ on }")
-        v-btn(fab dark :small="(moduleName !== 'planner')" color="mavblue" to="/planner" v-on="on")
-          v-icon mdi-map-marker-circle
-      span Planner
-    v-tooltip(v-if="(moduleName !== 'cockpit')" left)
-      template(v-slot:activator="{ on }")
-        v-btn(fab dark :small="(moduleName !== 'cockpit')" color="mavorange" to="/cockpit" v-on="on")
-          v-icon mdi-airplane-takeoff
-      span Cockpit
+    // Create icon for each enabled module
+    template(v-for="(data, key) in $store.state.modules" v-if="data.enabled == true")
+      v-tooltip(v-if="(moduleName !== key)" left)
+        template(v-slot:activator="{ on }")
+          v-btn(fab dark :small="(moduleName !== key)" :color="data.color" :to="'/' + key" v-on="on")
+            v-icon(v-text="data.icon")
+        span {{ key | capitalize }}
     v-tooltip(left)
       template(v-slot:activator="{ on }")
         v-btn(fab dark small :color="(navState) ? navColor : 'grey'" @click="toggleNavState" v-on="on")
