@@ -30,50 +30,47 @@ export default {
   },
 
   computed: {
-    darkUi () {
-      return this.$store.state.darkUi
-    },
     moduleName () {
       switch (true) {
         case /^\/cockpit/.test(this.$store.state.route.path):
-          this.$store.commit('setModuleName', 'cockpit')
-          this.$store.commit('setNavIcon', false)
+          this.$store.commit('data/setModuleName', 'cockpit')
+          this.$store.commit('data/setNavDrawer', false)
           break
         case /^\/planner/.test(this.$store.state.route.path):
-          this.$store.commit('setModuleName', 'planner')
-          this.$store.commit('setNavIcon', false)
+          this.$store.commit('data/setModuleName', 'planner')
+          this.$store.commit('data/setNavDrawer', false)
           break
         case /^\/config/.test(this.$store.state.route.path):
-          this.$store.commit('setModuleName', 'config')
-          this.$store.commit('setNavIcon', true)
+          this.$store.commit('data/setModuleName', 'config')
+          this.$store.commit('data/setNavDrawer', true)
           break
         case /^\/analysis/.test(this.$store.state.route.path):
-          this.$store.commit('setModuleName', 'analysis')
-          this.$store.commit('setNavIcon', false)
+          this.$store.commit('data/setModuleName', 'analysis')
+          this.$store.commit('data/setNavDrawer', false)
           break
         case /^\/test/.test(this.$store.state.route.path):
-          this.$store.commit('setModuleName', 'test')
-          this.$store.commit('setNavIcon', false)
+          this.$store.commit('data/setModuleName', 'test')
+          this.$store.commit('data/setNavDrawer', false)
           break
         case /^\/maverick/.test(this.$store.state.route.path):
-          this.$store.commit('setModuleName', 'maverick')
-          this.$store.commit('setNavIcon', false)
+          this.$store.commit('data/setModuleName', 'maverick')
+          this.$store.commit('data/setNavDrawer', false)
           break
         case /^\/video/.test(this.$store.state.route.path):
-          this.$store.commit('setModuleName', 'video')
-          this.$store.commit('setNavIcon', false)
+          this.$store.commit('data/setModuleName', 'video')
+          this.$store.commit('data/setNavDrawer', false)
           break
         default:
-          this.$store.commit('setNavIcon', false)
-          this.$store.commit('setModuleName', 'home')
+          this.$store.commit('data/setModuleName', 'home')
+          this.$store.commit('data/setNavDrawer', false)
       }
-      if (this.$store.state.moduleName in this.$store.state.modules) {
-        this.$store.commit('setNavColor', this.$store.state.modules[this.$store.state.moduleName].color)
+      if (this.$store.state.data.moduleName in this.$store.state.data.modules) {
+        this.$store.commit('data/setNavColor', this.$store.state.data.modules[this.$store.state.data.moduleName].color)
       }
-      return this.$store.state.moduleName
+      return this.$store.state.data.moduleName
     },
     navState () {
-      return this.moduleName === 'home' || this.moduleName === 'test' ? false : this.$store.state.navState // Return false if home screen, otherwise from vuex state
+      return this.moduleName === 'home' || this.moduleName === 'test' ? false : this.$store.state.data.navState // Return false if home screen, otherwise from vuex state
     }
   },
 
@@ -108,7 +105,7 @@ export default {
       for (const api in this.apis) {
         if (this.appVisible && performance.now() - this.$store.state.core.apiTimestamps[api] > 10000) {
           this.logInfo(`deadapi? api: ${api}, timestamp: ${this.$store.state.core.apiTimestamps[api]}`)
-          this.$store.commit('core/setApiState', { api: api, value: false })
+          this.$store.commit('data/setApiState', { api: api, value: false })
         }
       }
     },
@@ -142,15 +139,18 @@ export default {
       const api = key.split('___')[0]
       if (data.data && 'Status' in data.data) {
         // Store the message data and set the api state to active, only for the first callback
-        if (this.$store.state.core.apis[api].state !== true) this.$store.commit('core/setApiState', { api: api, value: true })
+        // if (this.$store.state.core.apis[api].state !== true) this.$store.commit('data/setApiState', { api: api, value: true })
+        if (this.apis[api].state !== true) this.$store.commit('data/setApiState', { api: api, value: true })
         // If the uuid for the api has not already been set, set it and create a VehicleInfo query (which needs the uuid to be created)
-        if (!this.$store.state.core.apis[api].uuid) {
-          this.$store.commit('core/setApiUuid', { api: api, value: data.data.Status.id })
+        // if (!this.$store.state.core.apis[api].uuid) {
+        if (!this.apis[api].uuid) {
+          this.$store.commit('data/setApiUuid', { api: api, value: data.data.Status.id })
         }
         // If the VehicleInfo query doesn't already exist for this client, create it
         if (!(api + '___VehicleInfo___' in this.$apollo.queries)) {
           if (this.verifyQuery(vehicleInfoQuery, api)) {
-            this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, !this.verifyQuery(vehicleInfoQuery, api), this.processVehicleInfoQuery, null, { uuid: this.$store.state.core.apis[api].uuid })          
+            // this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, !this.verifyQuery(vehicleInfoQuery, api), this.processVehicleInfoQuery, null, { uuid: this.$store.state.core.apis[api].uuid })          
+            this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, !this.verifyQuery(vehicleInfoQuery, api), this.processVehicleInfoQuery, null, { uuid: this.apis[api].uuid })
           }
         }
         if (this.$store.state.core.apiTimestamps[api] === null) this.$store.commit('core/setApiSeen', { api: api, value: performance.now() })
@@ -162,7 +162,7 @@ export default {
     processStatusSubscription (data, key) {
       const api = key.split('___')[0]
       // Store the message data and set the api state to active, for subsequent subscription callbacks
-      // if (data.data && this.$store.state.core.apis[api].state !== true) this.$store.commit('core/setApiState', { api: api, value: true })
+      // if (data.data && this.$store.state.core.apis[api].state !== true) this.$store.commit('data/setApiState', { api: api, value: true })
       this.$store.commit('core/setApiSeen', { api: api, value: performance.now() })
       if (data.data && this.$store.state.core.statusData[api] !== data.data.Status) {
         this.$store.commit('core/setStatusData', { api: api, message: data.data.Status })
@@ -172,7 +172,7 @@ export default {
       const api = key.split('___')[0]
       if (!data.data) {
         this.logInfo(`Invalid GraphQL 'VehicleInfo' data returned from api: ${api}`)
-        this.$store.commit('core/setApiState', { api: api, value: false })
+        this.$store.commit('data/setApiState', { api: api, value: false })
         this.$store.commit('core/setVehicleData', { api: api, message: null })
         return false
       }
@@ -180,7 +180,7 @@ export default {
         this.$store.commit('core/setVehicleData', { api: api, message: data.data.VehicleInfo })
       }
       if (!this.apis[api].icon) {
-        this.$store.commit('core/setApiIcon', { api: api, value: this.vehicleIcon(data.data.VehicleInfo.typeString) })
+        this.$store.commit('data/setApiIcon', { api: api, value: this.vehicleIcon(data.data.VehicleInfo.typeString) })
       }
     }
   }

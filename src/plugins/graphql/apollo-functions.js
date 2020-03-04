@@ -18,7 +18,7 @@ export async function onLogin (apolloClient, token, api, store) {
   try {
     await apolloClient.resetStore()
     // Set vuex client auth state to true
-    store.commit('core/setApiAuth', {
+    store.commit('data/setApiAuth', {
       api: api,
       value: true
     })

@@ -67,12 +67,12 @@ div
         template(v-slot:activator="{ on }")
           v-btn.mx-3(:color="navColor" small v-on="on") {{ moduleName | capitalize }}
         v-list
-          v-list-item(v-for="(data, key) in $store.state.modules" v-if="data.enabled == true" :key="key" :color="data.color")
+          v-list-item(v-for="(data, key) in $store.state.data.modules" v-if="data.enabled == true" :key="key" :color="data.color")
             v-btn(:color="data.color" :to="'/' + key" block) {{ key | capitalize }}
                   v-icon(right) {{ data.icon }}
 
       v-fade-transition(mode="out-in")
-        v-app-bar-nav-icon(v-if="navIcon" @click.stop="toggleDrawer")
+        v-app-bar-nav-icon(v-if="navDrawer" @click.stop="toggleDrawer")
 
   v-snackbar(v-if="statusText" :timeout="6000" color="red" :top="true" v-model="snackbar") {{ statusText.message }}
     v-btn(text @click.native="snackbar = false") CLOSE
@@ -187,7 +187,7 @@ export default {
       this.tickers.vfrHud = true
     },
     toggleDrawer () {
-      this.$store.commit('setNavDrawer', !this.$store.state.navDrawer)
+      this.$store.commit('data/setNavDrawer', !this.$store.state.data.navDrawer)
     }
   }
 

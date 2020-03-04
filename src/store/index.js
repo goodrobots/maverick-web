@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import VuexPersist from 'vuex-persist'
 
 import core from './modules/core'
+import data from './modules/data'
 import cockpit from './modules/cockpit'
 import planner from './modules/planner'
 import maverick from './modules/maverick'
@@ -13,7 +14,7 @@ const vuexPersist = new VuexPersist({
   key: 'maverick',
   storage: window.localStorage,
   reducer: (state) => ({ 
-    core: state.core,
+    data: state.data,
     cockpit: state.cockpit,
     planner: state.planner
   }),
@@ -26,79 +27,23 @@ export default new Vuex.Store({
 
   modules: {
     core,
+    data,
     cockpit,
     planner,
     maverick
   },
 
   state: {
-    darkUi: true,
-    navDrawer: true,
-    navColor: null,
-    navState: true,
-    navIcon: false,
-    fullScreen: false,
-    moduleName: null,
-    appVisible: true,
-    bingMapsKey: 'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6',
-    modules: {
-      'cockpit': {
-        'color': 'mavorange',
-        'icon': 'mdi-airplane-takeoff',
-        'enabled': false
-      },
-      'planner': {
-        'color': 'mavblue',
-        'icon': 'mdi-map-marker-circle',
-        'enabled': false
-      },
-      'config': {
-        'color': 'mavpurple',
-        'icon': 'mdi-settings',
-        'enabled': true
-      },
-      'analysis': {
-        'color': 'mavgreen',
-        'icon': 'mdi-equalizer',
-        'enabled': false
-      },
-      'maverick': {
-        'color': 'mavgrey',
-        'icon': 'mdi-console',
-        'enabled': true
-      },
-      'video': {
-        'color': 'mavblue',
-        'icon': 'mdi-video',
-        'enabled': true
-      }
-    }
+    fullScreen: false,  // this should not be persisted
+    appVisible: true // this should not be persisted
   },
 
   mutations: {
     setAppVisible (state, data) {
       state.appVisible = data
     },
-    setDarkUi (state, value) {
-      state.darkUi = value
-    },
-    setNavColor (state, color) {
-      state.navColor = color
-    },
-    setNavIcon (state, value) {
-      state.navIcon = value
-    },
-    setNavDrawer (state, value) {
-      state.navDrawer = value
-    },
-    setNavState (state, value) {
-      state.navState = value
-    },
     setFullScreen (state, value) {
       state.fullScreen = value
-    },
-    setModuleName (state, value) {
-      state.moduleName = value
     }
   }
 })

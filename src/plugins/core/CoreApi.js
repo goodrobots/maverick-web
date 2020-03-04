@@ -25,23 +25,25 @@ const plugin = {
 
       computed: {
         apis () {
-          return this.$store.state.core.apis
+          return this.$store.state.data.apis
         },
         activeApi () {
           return this.$store.state.core.activeApi
         },
+        darkUi () {
+          return this.$store.state.data.darkUi
+        },
         moduleName () {
-          return this.$store.state.moduleName
+          return this.$store.state.data.moduleName
         },
         navColor () {
-          return this.$store.state.navColor
+          return this.$store.state.data.navColor
         },
         navIcon () {
-          return this.$store.state.modules[this.moduleName].icon
-          // return this.$store.state.navIcon
+          return this.$store.state.data.modules[this.moduleName].icon
         },
         navDrawer () {
-          return this.$store.state.navDrawer
+          return this.$store.state.data.navDrawer
         },
         vehicleData () {
           return this.$store.state.core.vehicleData
@@ -134,7 +136,7 @@ const plugin = {
 
         createClient (api, clientdata) {
           // Add a vuex apis entry
-          this.$store.commit('core/addApi', {
+          this.$store.commit('data/addApi', {
             title: api,
             value: { ...{ key: api, state: false, auth: false, icon: null, uuid: null }, ...clientdata }
           })
@@ -174,7 +176,7 @@ const plugin = {
                 // Store the message data and set the api state to active
                 // Note: Must use this.$set to add object property, to keep new property reactive
                 this.$set(this[container], cbapi, data.data[message])
-                this.$store.commit('core/setApiState', { api: cbapi, value: true })
+                this.$store.commit('data/setApiState', { api: cbapi, value: true })
               }
             }
             let queryFields = {
@@ -209,8 +211,9 @@ const plugin = {
               if (data.data && message in data.data && this[container][cbapi] !== data.data[message]) {
                 // Store the message data and set the api state to active
                 this[container][cbapi] = data.data[message]
-                if (this.$store && this.$store.state.core.apis[cbapi] && !this.$store.state.core.apis[cbapi].state && message in data.data) {
-                  this.$store.commit('core/setApiState', { api: cbapi, value: true })
+                // if (this.$store && this.$store.state.core.apis[cbapi] && !this.$store.state.core.apis[cbapi].state && message in data.data) {
+                if (this.$store && this.apis[cbapi] && !this.apis[cbapi].state && message in data.data) {
+                  this.$store.commit('data/setApiState', { api: cbapi, value: true })
                 }
               }
             }

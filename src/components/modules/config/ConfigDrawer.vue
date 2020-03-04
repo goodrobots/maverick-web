@@ -36,10 +36,10 @@ export default {
   computed: {
     drawer: {
       get () {
-        return this.$store.state.navDrawer
+        return this.$store.state.data.navDrawer
       },
       set (value) {
-        this.$store.commit('setNavDrawer', value)
+        this.$store.commit('data/setNavDrawer', value)
       }
     }
   },

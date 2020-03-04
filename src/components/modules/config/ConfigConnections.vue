@@ -11,7 +11,7 @@ div
     
     template(v-slot:default="{ items, isExpanded, expand }")
       v-row
-        v-col(v-for="item in items" :key="item.name" cols="12" sm="12" md="12" lg="12")
+        v-col(v-for="item in items" :key="item.key" cols="12" sm="12" md="12" lg="12")
           v-card
             div.d-flex.flex-no-wrap.justify-space-between
               div
@@ -69,8 +69,7 @@ export default {
   },
   methods: {
     save(apiData) {
-      this.logDebug(apiData)
-      this.$store.commit('core/setApiData', {api: apiData.key, data: apiData})
+      this.$store.commit('data/setApiData', {api: apiData.key, data: apiData})
       // If any of the endpoints have changed, destroy and recreate the client
       // this.deleteQueries(apiData.key)
       // delete this.$apollo.provider.clients[apiData.key]
