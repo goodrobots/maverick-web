@@ -128,18 +128,20 @@ const plugin = {
           return h.toString()
         },
 
-        fetchClientSchema (api, clientdata) {
-          this.$store.dispatch("core/fetchSchema", {api:api, schemaEndpoint:clientdata.schemaEndpoint}).then(() => {
+        async fetchClientSchema (api, clientdata) {
+          await this.$store.dispatch("core/fetchSchema", {api:api, schemaEndpoint:clientdata.schemaEndpoint}).then(() => {
             this.logDebug('Schema fetch has been dispatched for api: ' + api)
           })
         },
 
-        createClient (api, clientdata) {
-          // Add a vuex apis entry
-          this.$store.commit('data/addApi', {
-            title: api,
-            value: { ...{ key: api, state: false, auth: false, icon: null, uuid: null }, ...clientdata }
+        async createClient (api, clientdata) {
+          // Fetch and parse the client schema
+          let schemaFetchPromise = new Promise((resolve, reject) => {
+            this.fetchClientSchema(api, clientdata).then(() => {
+              resolve()
+            })
           })
+          // While the above is resolving, do as much as possible...
           // Add an apollo client
           const client = createClient({
             httpEndpoint: clientdata.httpEndpoint,
@@ -152,9 +154,14 @@ const plugin = {
             this.logDebug(`Setting auth token: ${clientdata.authToken}`)
             onLogin(client, clientdata.authToken, api, this.$store)
           }
-
-          // Fetch and parse the client schema
-          this.fetchClientSchema(api, clientdata) // async request
+          // Wait for the fetch to resolve before making the api
+          //   accessable to the web app via the vuex store
+          await schemaFetchPromise
+          // Add a vuex apis entry
+          this.$store.commit('data/addApi', {
+            title: api,
+            value: { ...{ key: api, state: false, auth: false, icon: null, uuid: null }, ...clientdata }
+          })
         },
 
         createQuery (message, gql, api, container, skip = false, callback = null, errorCallback = null, variables = null) {
