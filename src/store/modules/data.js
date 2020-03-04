@@ -42,7 +42,9 @@ const state = {
       'icon': 'mdi-video',
       'enabled': true
     }
-  }}
+  },
+  videostreams: {}
+}
 
 const mutations = {
   addApi (state, data) {
@@ -80,6 +82,12 @@ const mutations = {
   },
   setModuleName (state, value) {
     state.moduleName = value
+  },
+  addVideoStream (state, data) {
+    Vue.set(state.videostreams, data.key, data.data)
+  },
+  updateVideoStream (state, data) {
+    state.videostreams[data.key] = data.data
   }
 }
 

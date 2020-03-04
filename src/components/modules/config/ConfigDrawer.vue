@@ -10,6 +10,10 @@ v-navigation-drawer(app left clipped fixed v-model="drawer")
       v-list-item-action
         v-icon mdi-view-module
       v-list-item-title Modules
+    v-list-item.mt-3(@click="" to="/config/video")
+      v-list-item-action
+        v-icon mdi-video
+      v-list-item-title Video
 
   v-list(v-if="activeApi" dense)
     v-subheader.mt-3.grey--text.text--darken-1 FLIGHT CONTROLLER

@@ -10,6 +10,7 @@ import PlannerModule from '../components/modules/planner/PlannerModule'
 import ConfigModule from '../components/modules/config/ConfigModule'
 import ConfigConnections from '../components/modules/config/ConfigConnections'
 import ConfigModules from '../components/modules/config/ConfigModules'
+import ConfigVideo from '../components/modules/config/ConfigVideo'
 import ConfigParamSummary from '../components/modules/config/ConfigParamSummary'
 import ConfigParamGroups from '../components/modules/config/ConfigParamGroups'
 import ConfigParamList from '../components/modules/config/ConfigParamList'
@@ -70,6 +71,10 @@ export default new Router({
         {
           path: 'connections',
           component: ConfigConnections
+        },
+        {
+          path: 'video',
+          component: ConfigVideo
         },
         {
           path: 'parameter-summary',
