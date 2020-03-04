@@ -105,14 +105,12 @@ const plugin = {
           }
           // this.logDebug(graphqlSchema)
           let validationErrors = undefined
-          /*
           try {
             validationErrors = validate(graphqlSchema, gql)
           } catch (err) {
             this.logDebug(`Validation error: ${err}`)
             return unknownDefault
           }
-          */
           let valid = false
           if (validationErrors == undefined || validationErrors.length == 0) {
             valid = true
