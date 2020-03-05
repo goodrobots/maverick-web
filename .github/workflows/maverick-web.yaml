@@ -7,10 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install requirements and build distribution
+      - name: Setup yarn
         uses: actions/setup-node@v1
         with:
           node-version: '10.x'
+      - name: Create distribution
         run: yarn install
         run: yarn build --report
       - name: Upload distribution artifact
