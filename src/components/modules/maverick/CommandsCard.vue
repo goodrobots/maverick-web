@@ -134,7 +134,7 @@ export default {
   },
   beforeDestroy() {
     // TODO: store this to allow resume
-    console.log(JSON.stringify(this.serializeAddon.serialize()))
+    this.logDebug(JSON.stringify(this.serializeAddon.serialize()))
     window.removeEventListener("resize", this.resizeEventHandler);
   },
   methods: {
@@ -162,7 +162,6 @@ export default {
           this.term.prompt();
         }
       }
-      console.log(data.data.MaverickShell.stdout)
     },
     processMaverickShellQuery(data, key) {
       if (data.data && 'MaverickShell' in data.data) {

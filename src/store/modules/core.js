@@ -18,11 +18,10 @@ const actions = {
       axios
         .get(schemaEndpoint)
         .then((response) => {
-          // console.log(response);
           commit('updateGraphqlSchema', {api:api, graphqlSchema:buildClientSchema(response.data)})
           resolve()
         }, (error) => {
-          console.log(error);
+          console.log(error); // eslint-disable-line no-console
         });
     })
   }
@@ -34,7 +33,7 @@ const getters = {
       try {
         return state.graphqlSchema[api].schema
       } catch (err) {
-        console.error(err)
+        console.error(err) // eslint-disable-line no-console
         return undefined
       }
     }
@@ -44,7 +43,7 @@ const getters = {
       try {
         return state.graphqlSchema[api].verified[hash]
       } catch (err) {
-        console.error(err)
+        console.error(err) // eslint-disable-line no-console
         return undefined
       }
     }

@@ -5,7 +5,7 @@ import { createClient, onLogin } from '../graphql/apollo-functions'
 const plugin = {
   install (Vue, options) {
     if (process.env.NODE_ENV !== 'production') {
-      console.log('Installing CoreApi plugin')
+      console.log('Installing CoreApi plugin') // eslint-disable-line no-console
     }
 
     Vue.mixin({

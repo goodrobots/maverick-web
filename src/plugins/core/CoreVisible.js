@@ -1,7 +1,7 @@
 const plugin = {
   install(Vue, options) {
     if (process.env.NODE_ENV !== 'production') {
-      console.log('Installing CoreVisible plugin')
+      console.log('Installing CoreVisible plugin') // eslint-disable-line no-console
     }
 
     Vue.mixin({

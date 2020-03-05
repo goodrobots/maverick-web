@@ -278,18 +278,18 @@ export default {
         const bitmask = JSON.parse(this.editedItem.meta.bitmask)
         const reverseKeys = Object.keys(bitmask).reverse()
         let paramVal = this.editedItem.value
-        console.log(reverseKeys)
+        this.logDebug(reverseKeys)
         const selectedBits = []
         for (const i in reverseKeys) {
           const keyVal = reverseKeys[i]
-          console.log(keyVal)
+          this.logDebug(keyVal)
           if (paramVal - keyVal >= 0) {
-            console.log(keyVal)
+            this.logDebug(keyVal)
             selectedBits.push(keyVal.toString())
             paramVal -= keyVal
           }
         }
-        console.log(selectedBits)
+        this.logDebug(selectedBits)
         this.editedItem.bitmasks = selectedBits
         this.editedItem.type = 'bitmask'
       } else if (
@@ -374,8 +374,8 @@ export default {
     },  
     save () {
       if (this.editedItem.bitmasks) {
-        console.log('bitmasks!')
-        console.log(this.editedItem.bitmasks)
+        this.logDebug('bitmasks!')
+        this.logDebug(this.editedItem.bitmasks)
       }
       this.mutateQuery(this.activeApi, updateParam, { id: this.editedItem.id, value: this.editedItem.value })
       // console.log('Saved param: ' + this.editedItem.id + ' with value: ' + this.editedItem.value)

@@ -3,7 +3,7 @@ import mavlinkEnums from './mavlinkEnumData.json'
 const plugin = {
   install (Vue, options) {
     if (process.env.NODE_ENV !== 'production') {
-      console.log('Installing MavlinkMeta plugin')
+      console.log('Installing MavlinkMeta plugin') // eslint-disable-line no-console
     }
 
     Vue.mixin({
