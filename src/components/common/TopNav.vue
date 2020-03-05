@@ -46,7 +46,14 @@ div
           v-btn(v-if="activeApi" small v-on="on" v-text="apis[activeApi]['name']")
           v-btn.text--blue-grey.lighten-5(v-else small v-on="on") No Active API
         v-list(rounded)
-          v-list-item(v-for="(data, key) in vehicleData" :key="key" @click='changeApi(key)')
+          v-list-item(v-for="(data, key) in apis" :key="key" @click='changeApi(key)')
+            v-list-item-avatar
+              v-img(v-if="apistate[key] && apistate[key].icon" :src="publicPath + apistate[key].icon" contain=true)
+            v-list-item-content
+              v-list-item-title {{ data.name }}
+            v-icon(right v-if="apis[key].state" color='green' small) mdi-check-circle-outline
+            v-icon(right v-else color='red' small) mdi-alert-circle-outline
+          // v-list-item(v-for="(data, key) in vehicleData" :key="key" @click='changeApi(key)')
             v-list-item-avatar
               v-img(v-if="apis[key] && apis[key].icon" :src="publicPath + apis[key].icon" contain=true)
             v-list-item-content
