@@ -138,6 +138,8 @@ const plugin = {
         },
 
         async createClient (api, clientdata) {
+          // Add a vuex apis entry
+          this.$store.commit('core/addApiState', api)
           // Fetch and parse the client schema
           let schemaFetchPromise = new Promise((resolve, reject) => {
             this.fetchClientSchema(api, clientdata).then(() => {
@@ -159,8 +161,6 @@ const plugin = {
           }
           // Wait for the fetch to resolve before setting the api state
           await schemaFetchPromise
-          // Add a vuex apis entry
-          this.$store.commit('core/addApiState', api)
           this.$store.commit('core/setApiState', {api: api, field: 'schemaready', value: true})
         },
 

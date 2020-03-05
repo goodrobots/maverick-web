@@ -1,6 +1,6 @@
 <template lang='pug'>
 div
-  v-data-iterator(:items="items" item-key="key" hide-default-footer :single-expand="expand")
+  v-data-iterator(:items="items" item-key="name" hide-default-footer :single-expand="expand")
 
     template(v-slot:header)
       v-toolbar.mb-1(:color="navColor" dark flat)
@@ -14,14 +14,14 @@ div
     
     template(v-slot:default="{ items, isExpanded, expand }")
       v-row
-        v-col(v-for="item in items" :key="item.key" cols="12" sm="12" md="12" lg="12")
+        v-col(v-for="item in items" :key="item.name" cols="12" sm="12" md="12" lg="12")
           v-card
             div.d-flex.flex-no-wrap.justify-space-between
               div
                 v-card-title.headline
                   span {{ item.name }}
               div
-                v-switch.pl-4(:color="navColor" :input-value="isExpanded(item)" label="Edit" @change="(v) => expand(item, v)")
+                v-switch.pl-4(:color="navColor" :input-value="isExpanded(item)" :label="isExpanded(item) ? 'Editing' : 'Edit'" @change="(v) => expand(item, v)")
           v-list(v-if="isExpanded(item)" dense)
             v-list-item
               v-divider
@@ -54,7 +54,10 @@ div
               v-text-field(v-model="newitem.name" label="Stream Name/Description" required)
           v-row
             v-col(cols="12" sm="12" md="12")
-              v-text-field(v-model="newitem.webrtcEndpoint" label="WebRTC Endpoint" required)
+              v-text-field(v-model="newitem.hostname" label="Hostname (FQDN) / IP Address" required)
+          v-row
+            v-col(cols="12" sm="6" md="6")
+              v-text-field(v-model="newitem.port" label="Port" hint="Maverick default port is 6796" required)
       v-divider
       v-card-actions
         v-btn.ma-2(color="green" @click="createStream()") Create Stream
@@ -91,7 +94,13 @@ export default {
     createStream() {
       this.dialog = false // Close dialog
       this.logDebug('Creating new video stream: ' + this.newitem.key)
-      this.$store.commit('data/addVideoStream', {key: this.newitem.key, data: this.newitem})
+      const protocol = 'wss'
+      let data = {
+        key: this.newitem.key,
+        name: this.newitem.name,
+        webrtcEndpoint: `${protocol}://${this.newitem.hostname}:${this.newitem.port}`
+      }
+      this.$store.commit('data/addVideoStream', {key: data.key, data: data})
     }
   }
 }

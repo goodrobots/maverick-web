@@ -1,6 +1,6 @@
 <template lang='pug'>
 div
-  v-data-iterator(:items="items" hide-default-footer single-expand=true)
+  v-data-iterator(:items="items" item-key="name" hide-default-footer :single-expand="expand")
 
     template(v-slot:header)
       v-toolbar.mb-1(:color="navColor" dark flat)
@@ -14,7 +14,7 @@ div
     
     template(v-slot:default="{ items, isExpanded, expand }")
       v-row
-        v-col(v-for="item in items" :key="item.key" cols="12" sm="12" md="12" lg="12")
+        v-col(v-for="item in items" :key="item.name" cols="12" sm="12" md="12" lg="12")
           v-card
             div.d-flex.flex-no-wrap.justify-space-between
               div
@@ -88,7 +88,8 @@ export default {
       search: '',
       filter: {},
       dialog: false,
-      newitem: {}
+      newitem: {},
+      expand: true
     }
   },
   computed: {
