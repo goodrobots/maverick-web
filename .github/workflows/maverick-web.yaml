@@ -12,6 +12,8 @@ jobs:
         with:
           node-version: '10.x'
       - name: Create distribution
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
         run: |
           yarn install
           yarn build --report
