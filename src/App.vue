@@ -96,7 +96,7 @@ export default {
       for (const api in this.apis) {
         let lastseen = (this.apistate && this.apistate.hasOwnProperty(api)) ? this.apistate[api].lastseen : 0
         if (this.appVisible && performance.now() - lastseen > 10000) {
-          this.logInfo(`deadapi? api: ${api}, timestamp: ${lastseen}`)
+          // this.logInfo(`deadapi? api: ${api}, timestamp: ${lastseen}`)
           this.$store.commit('core/setApiState', { api: api, field: 'state', value: false })
         }
       }
