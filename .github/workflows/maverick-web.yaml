@@ -12,8 +12,9 @@ jobs:
         with:
           node-version: '10.x'
       - name: Create distribution
-        run: yarn install
-        run: yarn build --report
+        run: |
+          yarn install
+          yarn build --report
       - name: Upload distribution artifact
         uses: actions/upload-artifact@v1
         with:
