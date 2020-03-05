@@ -3,19 +3,19 @@ name: Maverick-Web
 on: [push]
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
     steps:
-        - name: Install requirements and build distribution
-        - uses: actions/checkout@v2
-        - uses: actions/setup-node@v1
+      - name: Install requirements and build distribution
+      - uses: actions/checkout@v2
+        uses: actions/setup-node@v1
         with:
-            node-version: '10.x'
+          node-version: '10.x'
         - run: yarn install
         - run: yarn build --report
 
-        - name: Upload distribution artifact
-        - uses: actions/upload-artifact@v1
+      - name: Upload distribution artifact
+        uses: actions/upload-artifact@v1
         with:
           name: maverick-web
           path: ./dist
