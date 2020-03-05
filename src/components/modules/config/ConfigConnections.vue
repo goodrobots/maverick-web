@@ -19,7 +19,7 @@ div
             v-toolbar
               v-toolbar-title
                 span {{ item.name }}
-                v-chip.ma-2(v-if="item.state" color='green' small)
+                v-chip.ma-2(v-if="isApiReady(item.key)" color='green' small)
                   v-icon(left) mdi-check-circle
                   span Connected
                 v-chip.ma-2(v-else color='red' small)
@@ -27,47 +27,66 @@ div
                   span Not Connected
               v-spacer
               v-switch.mt-4(:color="navColor" :input-value="isExpanded(item)" :label="isExpanded(item) ? 'Editing' : 'Edit'" @change="(v) => expand(item, v)")
-            // div.d-flex.flex-no-wrap.justify-space-between
-              div
-                v-card-title.headline
-                  span {{ item.name }}
-                  v-chip.ma-2(v-if="item.state" color='green' small)
-                    v-icon(left) mdi-check-circle
-                    span Connected
-                  v-chip.ma-2(v-else color='red' small)
-                    v-icon(left) mdi-alert-circle
-                    span Not Connected
-              div
-                v-switch.pl-4(:color="navColor" :input-value="isExpanded(item)" :label="isExpanded(item) ? 'Editing' : 'Edit'" @change="(v) => expand(item, v)")
-          v-list(v-if="isExpanded(item)" dense)
-            v-list-item
-              v-divider
-            v-list-item
-              v-list-item-content
-                v-text-field(v-model="item.name" label="API Name/Description")
-              v-list-item-content.align-end
-            v-list-item
-              v-list-item-content
-                v-text-field(v-model="item.httpEndpoint" label="GraphQL Endpoint")
-              v-list-item-content.align-end
-            v-list-item
-              v-list-item-content
-                v-text-field(v-model="item.wsEndpoint" label="Websockets Endpoint")
-              v-list-item-content.align-end
-            v-list-item
-              v-list-item-content
-                v-text-field(v-model="item.schemaEndpoint" label="Schema Endpoint")
-              v-list-item-content.align-end
-            v-list-item
-              v-divider
-            v-list-item
-              v-btn(color='green' @click="save(item)") Save
-              v-btn.ml-2(color='blue' @click="connect(item)") Connect
-              v-spacer
-              v-btn(color='red' @click="remove(item)")
-                v-icon(left) mdi-delete
-                span Delete
-  
+          v-row(v-if="isExpanded(item)")
+            v-col.pt-0.pr-1(cols="12" sm="12" md="6" lg="6")
+              v-list(dense)
+                v-list-item
+                  v-list-item-content
+                    v-text-field(v-model="item.name" label="API Name/Description")
+                  // v-list-item-content.align-end
+                v-list-item
+                  v-list-item-content
+                    v-text-field(v-model="item.httpEndpoint" label="GraphQL Endpoint")
+                  // v-list-item-content.align-end
+                v-list-item
+                  v-list-item-content
+                    v-text-field(v-model="item.wsEndpoint" label="Websockets Endpoint")
+                  // v-list-item-content.align-end
+                v-list-item
+                  v-list-item-content
+                    v-text-field(v-model="item.schemaEndpoint" label="Schema Endpoint")
+                  // v-list-item-content.align-end
+                v-list-item
+                  v-divider
+                v-list-item
+                  v-btn(color='green' @click="save(item)") Save
+                  v-btn.ml-2(color='blue' @click="connect(item)") Connect
+                  v-spacer
+                  v-btn(color='red' @click="remove(item)")
+                    v-icon(left) mdi-delete
+                    span Delete
+            v-col.pt-0.pl-1(cols="12" sm="12" md="6" lg="6")
+              v-list(dense)
+                v-list-item
+                  v-list-item-content API Unique ID
+                  v-list-item-content
+                    span.green--text.text--lighten-1(v-if="apistate[item.key].uuid") {{ apistate[item.key].uuid }}
+                    v-icon(v-else color='red') mdi-alert-circle-outline
+                v-list-item
+                  v-list-item-content API Last Seen
+                  v-list-item-content
+                    span.green--text.text--lighten-1(v-if="lastseen(item.key) < 60") {{ lastseen(item.key).toFixed(2) }} seconds ago
+                    span.red--text.text--lighten-1(v-else) {{ lastseen(item.key).toFixed(2) }} seconds ago
+                v-list-item
+                  v-list-item-content API Connection State
+                  v-list-item-content
+                    v-icon(v-if="apistate[item.key].state" color='green') mdi-check-circle-outline
+                    v-icon(v-else color='red') mdi-alert-circle-outline
+                v-list-item
+                  v-list-item-content API Schema Ready
+                  v-list-item-content
+                    v-icon(v-if="apistate[item.key].schemaready" color='green') mdi-check-circle-outline
+                    v-icon(v-else color='red') mdi-alert-circle-outline
+                v-list-item
+                  v-list-item-content Authentication Set
+                  v-list-item-content
+                    v-icon(v-if="apistate[item.key].auth" color='green') mdi-check-circle-outline
+                    v-icon(v-else color='red') mdi-alert-circle-outline
+                v-list-item
+                  v-list-item-content Icon Set
+                  v-list-item-content {{ apistate[item.key].icon }}
+                    v-icon(v-if="apistate[item.key].icon" color='green') {{ apistate[item.key].icon }}
+                    v-icon(v-else color='red') mdi-alert-circle-outline
   v-dialog(v-model="dialog" max-width="600px")
     v-card
       v-card-title.headline(:class="navColor" primary-title)
@@ -127,6 +146,10 @@ export default {
     }
   },
   methods: {
+    lastseen (api) {
+      let lastseen = (this.apistate && this.apistate.hasOwnProperty(api)) ? this.apistate[api].lastseen : 0
+      return (performance.now() - lastseen)
+    },
     save(apiData) {
       this.$store.commit('data/setApiData', {api: apiData.key, data: apiData})
       // If any of the endpoints have changed, destroy and recreate the client

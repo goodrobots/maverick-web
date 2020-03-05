@@ -294,6 +294,14 @@ const plugin = {
           } else {
             return null
           }
+        },
+
+        tickCross (boolean) {
+          if (boolean) {
+            return "v-icon(color='green') mdi-check-circle-outline"
+          } else {
+            return "v-icon(color='red') mdi-alert-circle-outline"
+          }
         }
       }
     })
