@@ -5,7 +5,7 @@ import axios from 'axios'
 // This vuex module contains data that should *not* be persisted
 
 const state = {
-  apiTimestamps: {},
+  apiState: {},
   statusData: {},
   vehicleData: {},
   activeApi: null,
@@ -54,8 +54,20 @@ const mutations = {
   setActiveApi (state, api) {
     state.activeApi = api
   },
-  setApiSeen (state, data) {
-    state.apiTimestamps[data.api] = data.value
+  addApiState (state, api) {
+    Vue.set(state.apiState, api, {state: false, schemaready: false, auth: false, uuid: null, icon: null, lastseen: null})
+  },
+  setApiState (state, data) {
+    state.apiState[data.api][data.field] = data.value
+  },
+  setApiUuid (state, data) {
+    state.apiState[data.api].uuid = data.value
+  },
+  setApiIcon (state, data) {
+    state.apiState[data.api].icon = data.value
+  },
+  setApiAuth (state, data) {
+    state.apiState[data.api].auth = data.value
   },
   setStatusData (state, data) {
     if (data.api in state.statusData) {

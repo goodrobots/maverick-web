@@ -48,22 +48,10 @@ const state = {
 
 const mutations = {
   addApi (state, data) {
-    Vue.set(state.apis, data.title, data.value)
+    Vue.set(state.apis, data.key, data.data)
   },
   setApiData (state, data) {
     state.apis[data.api] = data.data
-  },
-  setApiState (state, data) {
-    state.apis[data.api].state = data.value
-  },
-  setApiUuid (state, data) {
-    state.apis[data.api].uuid = data.value
-  },
-  setApiIcon (state, data) {
-    state.apis[data.api].icon = data.value
-  },
-  setApiAuth (state, data) {
-    state.apis[data.api].auth = data.value
   },
   setDarkUi (state, value) {
     state.darkUi = value

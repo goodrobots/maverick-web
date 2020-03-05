@@ -1,6 +1,6 @@
 <template lang='pug'>
 div
-  v-data-iterator(:items="items" hide-default-footer single-expand=true)
+  v-data-iterator(:items="items" item-key="key" hide-default-footer :single-expand="expand")
 
     template(v-slot:header)
       v-toolbar.mb-1(:color="navColor" dark flat)
@@ -21,7 +21,7 @@ div
                 v-card-title.headline
                   span {{ item.name }}
               div
-                v-switch.pl-4(:color="navColor" :input-value="isExpanded(item)" :label="isExpanded(item) ? 'Editing' : 'Edit'" @change="(v) => expand(item, v)")
+                v-switch.pl-4(:color="navColor" :input-value="isExpanded(item)" label="Edit" @change="(v) => expand(item, v)")
           v-list(v-if="isExpanded(item)" dense)
             v-list-item
               v-divider
@@ -71,7 +71,8 @@ export default {
       search: '',
       filter: {},
       dialog: false,
-      newitem: {}
+      newitem: {},
+      expand: true
     }
   },
   computed: {
@@ -90,9 +91,7 @@ export default {
     createStream() {
       this.dialog = false // Close dialog
       this.logDebug('Creating new video stream: ' + this.newitem.key)
-      this.logDebug(this.newitem)
       this.$store.commit('data/addVideoStream', {key: this.newitem.key, data: this.newitem})
-      this.logDebug(this.$store.state.data.videostreams)
     }
   }
 }

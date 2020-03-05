@@ -27,6 +27,9 @@ const plugin = {
         apis () {
           return this.$store.state.data.apis
         },
+        apistate() {
+          return this.$store.state.core.apiState
+        },
         activeApi () {
           return this.$store.state.core.activeApi
         },
@@ -55,14 +58,6 @@ const plugin = {
           if (newValue && this.$apollo) {
             this.logInfo('App Visibility changed to Visible, turning on all GraphQL queries')
             this.$apollo.skipAll = false
-            /*
-            for (const query in this.$apollo.queries) {
-              if (query != undefined) {
-                this.logDebug(query)
-                this.logDebug(this.$apollo.queries[query])
-              }
-            }
-            */
           } else if (this.$apollo) {
             this.logInfo('App Visibility changed to Invisible, turning off all GraphQL queries')
             this.$apollo.skipAll = true
@@ -88,6 +83,14 @@ const plugin = {
 
         clearVerifiedQueries(api) {
           this.$store.commit('core/clearGraphqlVerified', api)
+        },
+
+        isApiReady (api) {
+          try {
+            return this.apistate[api].state === true && this.apistate[api].schemaready === true
+          } catch {
+            return false
+          }
         },
 
         verifyQuery (gql, api = this.activeApi, unknownDefault = false) {
@@ -154,14 +157,11 @@ const plugin = {
             this.logDebug(`Setting auth token: ${clientdata.authToken}`)
             onLogin(client, clientdata.authToken, api, this.$store)
           }
-          // Wait for the fetch to resolve before making the api
-          //   accessable to the web app via the vuex store
+          // Wait for the fetch to resolve before setting the api state
           await schemaFetchPromise
           // Add a vuex apis entry
-          this.$store.commit('data/addApi', {
-            title: api,
-            value: { ...{ key: api, state: false, auth: false, icon: null, uuid: null }, ...clientdata }
-          })
+          this.$store.commit('core/addApiState', api)
+          this.$store.commit('core/setApiState', {api: api, field: 'schemaready', value: true})
         },
 
         createQuery (message, gql, api, container, skip = false, callback = null, errorCallback = null, variables = null) {
@@ -169,11 +169,6 @@ const plugin = {
           const varvalues = variables && Object.values(variables) ? Object.values(variables).join('~') : ''
           const queryKey = [api, message, varvalues].join('___')
           // If a query with the calculated key doesn't exist, and the client appears to exist, then create the query
-          /*
-          this.logDebug(api)
-          this.logDebug(message)
-          this.logDebug(this.$root.$apollo.provider.clients)
-          */
           if (!this.$apollo.queries[queryKey] && this.$apollo.provider.clients[api]) {
             this.logDebug(`Creating GQL Query: api: ${api}, message: ${message}, queryKey: ${queryKey}, container: ${container}`)
             // If a callback function has been passed use it as the result processor, otherwise use a default function
@@ -183,7 +178,7 @@ const plugin = {
                 // Store the message data and set the api state to active
                 // Note: Must use this.$set to add object property, to keep new property reactive
                 this.$set(this[container], cbapi, data.data[message])
-                this.$store.commit('data/setApiState', { api: cbapi, value: true })
+                this.$store.commit('core/setApiState', { api: cbapi, field: 'state', value: true })
               }
             }
             let queryFields = {
@@ -218,9 +213,8 @@ const plugin = {
               if (data.data && message in data.data && this[container][cbapi] !== data.data[message]) {
                 // Store the message data and set the api state to active
                 this[container][cbapi] = data.data[message]
-                // if (this.$store && this.$store.state.core.apis[cbapi] && !this.$store.state.core.apis[cbapi].state && message in data.data) {
                 if (this.$store && this.apis[cbapi] && !this.apis[cbapi].state && message in data.data) {
-                  this.$store.commit('data/setApiState', { api: cbapi, value: true })
+                  this.$store.commit('core/setApiState', { api: cbapi, field: 'state', value: true })
                 }
               }
             }

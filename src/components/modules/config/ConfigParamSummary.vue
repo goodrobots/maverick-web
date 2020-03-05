@@ -104,7 +104,7 @@ export default {
         // Store the message data and set the api state to active, only for the first callback
         // if (this.$store.state.core.apis[api].state !== true) this.$store.commit('data/setApiState', { api: api, value: true })
         if (this.apis[api].state !== true) this.$store.commit('data/setApiState', { api: api, value: true })
-        if (this.$store.state.core.apiTimestamps[api] === null) this.$store.commit('core/setApiSeen', { api: api, value: performance.now() })
+        if (this.apistate[api].lasteen === null) this.$store.commit('core/setApiState', { api: api, field: 'lastseen', value: performance.now() })
         if (!(api in this.$store.state.statusData)) {
           this.$store.commit('core/setStatusData', { api: api, message: data.data.Status })
         }

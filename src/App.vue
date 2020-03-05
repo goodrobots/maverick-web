@@ -78,16 +78,7 @@ export default {
     // Watch apis state for any change and process
     apis: {
       handler: function (newValue) {
-        /*
-        // If any of the endpoints have changed, destroy and recreate the client
-        // this.deleteQueries(apiData.key)
-        delete this.$apollo.provider.clients[apiData.key]
-        this.createClient(apiData.key+'new', apiData)
-        */
-        for (const api in this.apis) {
-          this.createQuery('Status', statusQuery, api, null, null, this.processStatusQuery)
-          this.createSubscription('Status', statusSubscription, api, null, null, this.processStatusSubscription)
-        }
+        this.createClients()
       },
       deep: true
     }
@@ -96,24 +87,37 @@ export default {
   mounted () {
     this.logBanner('** Welcome to Maverick Web GCS **')
     // Try to connect to the default -api client if one doesn't already exist
-    this.createDefaultClient()
+    this.createClients()
   },
 
   methods: {
     checkApis () {
       // If an api hasn't been seen for more than 10 seconds, mark it as dead
       for (const api in this.apis) {
-        if (this.appVisible && performance.now() - this.$store.state.core.apiTimestamps[api] > 10000) {
-          this.logInfo(`deadapi? api: ${api}, timestamp: ${this.$store.state.core.apiTimestamps[api]}`)
-          this.$store.commit('data/setApiState', { api: api, value: false })
+        let lastseen = (this.apistate && this.apistate.hasOwnProperty(api)) ? this.apistate[api].lastseen : 0
+        if (this.appVisible && performance.now() - lastseen > 10000) {
+          this.logInfo(`deadapi? api: ${api}, timestamp: ${lastseen}`)
+          this.$store.commit('core/setApiState', { api: api, field: 'state', value: false })
         }
       }
     },
+    createClients() {
+      // If there are any defined apis that don't have a corresponding client, create one
+      for (const api in this.apis) {
+        if (!this.$apollo.provider.clients.hasOwnProperty(api)) {
+          this.createClient(api, this.apis[api])
+        }
+        this.createQuery('Status', statusQuery, api, null, null, this.processStatusQuery)
+        this.createSubscription('Status', statusSubscription, api, null, null, this.processStatusSubscription)
+      }
+    },
+    /*
     createDefaultClient() {
-      // Port 6800 is the default Flight Controller -api port in Maverick environment4
+      // Create a default client if it doesn't already exist
       const hostname = window.location.hostname
       const protocol = window.location.protocol
       const wsprotocol = (protocol.includes("https")) ? 'wss:' : 'ws:'
+      // Port 6800 is the default Flight Controller -api port in Maverick environment4
       const apiport = 6800
       this.logDebug(`Creating default client:: hostname: ${hostname}, protocol: ${protocol}, wsprotocol: ${wsprotocol}`)
       const clientData = {
@@ -135,25 +139,23 @@ export default {
         this.createClient('default', clientData)
       }
     },
+    */
     processStatusQuery (data, key) {
       const api = key.split('___')[0]
       if (data.data && 'Status' in data.data) {
         // Store the message data and set the api state to active, only for the first callback
-        // if (this.$store.state.core.apis[api].state !== true) this.$store.commit('data/setApiState', { api: api, value: true })
-        if (this.apis[api].state !== true) this.$store.commit('data/setApiState', { api: api, value: true })
+        if (this.apistate[api].state !== true) this.$store.commit('core/setApiState', { api: api, field: 'state', value: true })
         // If the uuid for the api has not already been set, set it and create a VehicleInfo query (which needs the uuid to be created)
-        // if (!this.$store.state.core.apis[api].uuid) {
-        if (!this.apis[api].uuid) {
-          this.$store.commit('data/setApiUuid', { api: api, value: data.data.Status.id })
+        if (!this.apistate[api].uuid) {
+          this.$store.commit('core/setApiUuid', { api: api, value: data.data.Status.id })
         }
         // If the VehicleInfo query doesn't already exist for this client, create it
         if (!(api + '___VehicleInfo___' in this.$apollo.queries)) {
           if (this.verifyQuery(vehicleInfoQuery, api)) {
-            // this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, !this.verifyQuery(vehicleInfoQuery, api), this.processVehicleInfoQuery, null, { uuid: this.$store.state.core.apis[api].uuid })          
             this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, !this.verifyQuery(vehicleInfoQuery, api), this.processVehicleInfoQuery, null, { uuid: this.apis[api].uuid })
           }
         }
-        if (this.$store.state.core.apiTimestamps[api] === null) this.$store.commit('core/setApiSeen', { api: api, value: performance.now() })
+        if (this.apistate[api].lastseen === null) this.$store.commit('core/setApiState', {api: api, field: 'lastseen', value: performance.now() })
         if (!(api in this.$store.state.core.statusData)) {
           this.$store.commit('core/setStatusData', { api: api, message: data.data.Status })
         }
@@ -163,7 +165,8 @@ export default {
       const api = key.split('___')[0]
       // Store the message data and set the api state to active, for subsequent subscription callbacks
       // if (data.data && this.$store.state.core.apis[api].state !== true) this.$store.commit('data/setApiState', { api: api, value: true })
-      this.$store.commit('core/setApiSeen', { api: api, value: performance.now() })
+      // this.$store.commit('core/setApiSeen', { api: api, value: performance.now() })
+      this.$store.commit('core/setApiState', {api: api, field: 'lastseen', value: performance.now()})
       if (data.data && this.$store.state.core.statusData[api] !== data.data.Status) {
         this.$store.commit('core/setStatusData', { api: api, message: data.data.Status })
       }
@@ -172,7 +175,7 @@ export default {
       const api = key.split('___')[0]
       if (!data.data) {
         this.logInfo(`Invalid GraphQL 'VehicleInfo' data returned from api: ${api}`)
-        this.$store.commit('data/setApiState', { api: api, value: false })
+        this.$store.commit('core/setApiState', { api: api, field: 'state', value: false })
         this.$store.commit('core/setVehicleData', { api: api, message: null })
         return false
       }
