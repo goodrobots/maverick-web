@@ -1,8 +1,9 @@
+// This vuex module contains data that should *not* be persisted
+
 import Vue from 'vue'
+
 import { buildClientSchema } from 'graphql'
 import axios from 'axios'
-
-// This vuex module contains data that should *not* be persisted
 
 const state = {
   apiState: {},

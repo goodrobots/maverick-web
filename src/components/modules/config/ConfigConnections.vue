@@ -16,7 +16,18 @@ div
       v-row
         v-col(v-for="item in items" :key="item.name" cols="12" sm="12" md="12" lg="12")
           v-card
-            div.d-flex.flex-no-wrap.justify-space-between
+            v-toolbar
+              v-toolbar-title
+                span {{ item.name }}
+                v-chip.ma-2(v-if="item.state" color='green' small)
+                  v-icon(left) mdi-check-circle
+                  span Connected
+                v-chip.ma-2(v-else color='red' small)
+                  v-icon(left) mdi-alert-circle
+                  span Not Connected
+              v-spacer
+              v-switch.mt-4(:color="navColor" :input-value="isExpanded(item)" :label="isExpanded(item) ? 'Editing' : 'Edit'" @change="(v) => expand(item, v)")
+            // div.d-flex.flex-no-wrap.justify-space-between
               div
                 v-card-title.headline
                   span {{ item.name }}
@@ -52,7 +63,11 @@ div
             v-list-item
               v-btn(color='green' @click="save(item)") Save
               v-btn.ml-2(color='blue' @click="connect(item)") Connect
-
+              v-spacer
+              v-btn(color='red' @click="remove(item)")
+                v-icon(left) mdi-delete
+                span Delete
+  
   v-dialog(v-model="dialog" max-width="600px")
     v-card
       v-card-title.headline(:class="navColor" primary-title)
@@ -76,6 +91,18 @@ div
       v-card-actions
         v-btn.ma-2(color="green" @click="createConnection()") Create Connection
         v-btn.ma-2(color="grey" @click="dialog = false") Cancel
+
+  v-dialog(v-if="deleteitem" v-model="deleteDialog" max-width="400")
+    v-card
+      v-card-title
+        span.headline.red--text Delete Connection: <strong>{{ deleteitem.key }}</strong>?
+      v-card-text
+        h3 {{ deleteitem.name }}
+        div Are you sure you want to delete this API connection?
+      v-card-actions
+        v-spacer
+        v-btn(text @click="deleteDialog = false") Cancel
+        v-btn(text color="red darken-1" @click="removeConnection()") Delete
 </template>
 
 <script>
@@ -88,7 +115,9 @@ export default {
       search: '',
       filter: {},
       dialog: false,
+      deleteDialog: false,
       newitem: {},
+      deleteitem: null,
       expand: true
     }
   },
@@ -106,12 +135,10 @@ export default {
       // this.createClient(apiData.key+'new', apiData)
     },
     connect(apiData) {
-      this.logDebug('connecting')
-      this.logDebug(this.apis)
+      this.logDebug('Connecting: ' + apiData.key)
       if (!(this.$apollo.provider.clients[apiData.key])) {
         this.createClient(apiData.key, this.apis[apiData.key])
       }
-      this.logDebug(this.$apollo.provider.clients)
     },
     createConnection() {
       this.dialog = false // Close dialog
@@ -130,6 +157,16 @@ export default {
         "authToken": null
       }
       this.$store.commit('data/addApi', {key: data.key, data: data})
+    },
+    remove(item) {
+      this.deleteitem = item
+      this.deleteDialog = true
+    },
+    removeConnection() {
+      this.logDebug('Deleting connection:' + this.deleteitem.key)
+      delete this.$apollo.provider.clients[this.deleteitem.key]
+      this.$store.commit('data/removeApi', this.deleteitem.key)
+      this.deleteitem = null
     }
   }
 }

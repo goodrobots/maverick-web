@@ -1,6 +1,6 @@
-import Vue from 'vue'
-
 // This vuex module contains data that *should* be persisted
+
+import Vue from 'vue'
 
 const state = {
   apis: {},
@@ -53,6 +53,9 @@ const mutations = {
   setApiData (state, data) {
     state.apis[data.api] = data.data
   },
+  removeApi (state, key) {
+    Vue.delete(state.apis, key)
+  },
   setDarkUi (state, value) {
     state.darkUi = value
   },
@@ -76,6 +79,9 @@ const mutations = {
   },
   updateVideoStream (state, data) {
     state.videostreams[data.key] = data.data
+  },
+  removeVideoStream (state, key) {
+    Vue.delete(state.videostreams, key)
   }
 }
 

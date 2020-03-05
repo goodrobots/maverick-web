@@ -150,7 +150,6 @@ v-container.px-2.py-2(fluid grid-list-xl)
 </template>
 
 <script>
-import Vue from 'vue'
 import {
   paramsQuery,
   paramSubscription,
@@ -360,13 +359,13 @@ export default {
     processParameter (data, key) {
       // const api = key.split('___')[0]
       const paramIx = this.findParamIndex(data.data.Parameter.id)
-      Vue.set(this.params, paramIx, data.data.Parameter)
+      this.$set(this.params, paramIx, data.data.Parameter)
     },
     processParameterList (data, key) {
       const api = key.split('___')[0]
       if (!data.loading && !this.params.length) {
         Object.keys(data.data.ParameterList.parameters).forEach(pkey => {
-          Vue.set(this.params, pkey, data.data.ParameterList.parameters[pkey])
+          this.$set(this.params, pkey, data.data.ParameterList.parameters[pkey])
         })
       }
       this.groups = [...new Set(this.params.map(param => param.meta.group.replace(/\d+$/, "")))]

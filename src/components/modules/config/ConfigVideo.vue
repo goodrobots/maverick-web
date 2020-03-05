@@ -16,12 +16,10 @@ div
       v-row
         v-col(v-for="item in items" :key="item.name" cols="12" sm="12" md="12" lg="12")
           v-card
-            div.d-flex.flex-no-wrap.justify-space-between
-              div
-                v-card-title.headline
-                  span {{ item.name }}
-              div
-                v-switch.pl-4(:color="navColor" :input-value="isExpanded(item)" :label="isExpanded(item) ? 'Editing' : 'Edit'" @change="(v) => expand(item, v)")
+            v-toolbar
+              v-toolbar-title {{ item.name }}
+              v-spacer
+              v-switch.mt-4(:color="navColor" :input-value="isExpanded(item)" :label="isExpanded(item) ? 'Editing' : 'Edit'" @change="(v) => expand(item, v)")
           v-list(v-if="isExpanded(item)" dense)
             v-list-item
               v-divider
@@ -37,7 +35,11 @@ div
               v-divider
             v-list-item
               v-btn(color='green' @click="save(item)") Save
-              v-btn.ml-2(color='blue') Test
+              v-btn.ml-4(color='blue') Test
+              v-spacer
+              v-btn(color='red' @click="remove(item)")
+                v-icon(left) mdi-delete
+                span Delete
 
   v-dialog(v-model="dialog" max-width="600px")
     v-card
@@ -62,6 +64,18 @@ div
       v-card-actions
         v-btn.ma-2(color="green" @click="createStream()") Create Stream
         v-btn.ma-2(color="grey" @click="dialog = false") Cancel
+
+  v-dialog(v-if="deleteitem" v-model="deleteDialog" max-width="400")
+    v-card
+      v-card-title
+        span.headline.red--text Delete Stream: <strong>{{ deleteitem.key }}</strong>?
+      v-card-text
+        h3 {{ deleteitem.name }}
+        div Are you sure you want to delete this video stream?
+      v-card-actions
+        v-spacer
+        v-btn(text @click="deleteDialog = false") Cancel
+        v-btn(text color="red darken-1" @click="removeStream()") Delete
 </template>
 
 <script>
@@ -74,7 +88,9 @@ export default {
       search: '',
       filter: {},
       dialog: false,
+      deleteDialog: false,
       newitem: {},
+      deleteitem: null,
       expand: true
     }
   },
@@ -101,6 +117,15 @@ export default {
         webrtcEndpoint: `${protocol}://${this.newitem.hostname}:${this.newitem.port}`
       }
       this.$store.commit('data/addVideoStream', {key: data.key, data: data})
+    },
+    remove(item) {
+      this.deleteitem = item
+      this.deleteDialog = true
+    },
+    removeStream() {
+      this.logDebug('Deleting stream: ' + this.deleteitem.key)
+      this.$store.commit('data/removeVideoStream', this.deleteitem.key)
+      this.deleteitem = null
     }
   }
 }
