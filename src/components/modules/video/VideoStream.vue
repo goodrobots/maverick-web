@@ -1,5 +1,5 @@
 <template lang='pug'>
-  video.ma2.pa0(id="videostream" controls autoPictureInPicture=true muted=true preload="none" poster="/img/placeholders/video-placeholder.png" :width="width")
+  video.ma2.pa0(:id='videostream' controls autoPictureInPicture=true muted=true preload="none" poster="/img/placeholders/video-placeholder.png" :width="width")
 </template>
 
 <script>
@@ -19,6 +19,10 @@ export default {
     width: {
       type: Number,
       default: 500
+    },
+    videostream: {
+      type: String,
+      default: null
     }
   },
 
@@ -46,7 +50,7 @@ export default {
         if (entry.type == "inbound-rtp") {
           if (this.lastStats) {
             packetloss = entry.packetsLost
-            bitrate = ((entry.bytesReceived - this.lastStats.bytesReceived) / (entry.lastPacketReceivedTimestamp - this.lastStats.lastPacketReceivedTimestamp))
+            bitrate = (entry.bytesReceived - this.lastStats.bytesReceived) / (entry.lastPacketReceivedTimestamp - this.lastStats.lastPacketReceivedTimestamp)
           }
           this.lastStats = entry
         }
@@ -73,7 +77,7 @@ export default {
         }
       }
       peerConnection.onaddstream = (mediaStreamEvent) => {
-        let videoElement = document.getElementById('videostream')
+        let videoElement = document.getElementById(this.videostream)
         videoElement.srcObject = mediaStreamEvent.stream
         videoElement.play()
         if (this.bufferingInterval == undefined) {

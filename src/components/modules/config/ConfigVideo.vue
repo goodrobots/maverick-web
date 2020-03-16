@@ -102,10 +102,6 @@ export default {
   methods: {
     save(streamData) {
       this.$store.commit('data/updateVideoStream', {key: streamData.key, data: streamData})
-      // If any of the endpoints have changed, destroy and recreate the client
-      // this.deleteQueries(apiData.key)
-      // delete this.$apollo.provider.clients[apiData.key]
-      // this.createClient(apiData.key+'new', apiData)
     },
     createStream() {
       this.dialog = false // Close dialog
@@ -114,7 +110,8 @@ export default {
       let data = {
         key: this.newitem.key,
         name: this.newitem.name,
-        webrtcEndpoint: `${protocol}://${this.newitem.hostname}:${this.newitem.port}`
+        webrtcEndpoint: `${protocol}://${this.newitem.hostname}:${this.newitem.port}`,
+        enabled: false
       }
       this.$store.commit('data/addVideoStream', {key: data.key, data: data})
     },
