@@ -33,6 +33,9 @@ const plugin = {
         activeApi () {
           return this.$store.state.core.activeApi
         },
+        services () {
+          return this.$store.state.core.serviceData
+        },
         darkUi () {
           return this.$store.state.data.darkUi
         },

@@ -1,0 +1,13 @@
+#import "./MaverickServiceListFragment.gql"
+
+query maverickServiceListQuery {
+  MaverickServiceList {
+    ...MaverickServiceList
+  }
+}
+
+subscription maverickServiceListSubscription {
+  MaverickServiceList {
+    ...MaverickServiceList
+  }
+}

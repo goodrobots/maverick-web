@@ -9,6 +9,7 @@ const state = {
   apiState: {},
   statusData: {},
   vehicleData: {},
+  serviceData: {},
   activeApi: null,
   graphqlSchema: {}
 }
@@ -34,7 +35,7 @@ const getters = {
       try {
         return state.graphqlSchema[api].schema
       } catch (err) {
-        console.error(err) // eslint-disable-line no-console
+        // console.error(err) // eslint-disable-line no-console
         return undefined
       }
     }
@@ -44,7 +45,7 @@ const getters = {
       try {
         return state.graphqlSchema[api].verified[hash]
       } catch (err) {
-        console.error(err) // eslint-disable-line no-console
+        // console.error(err) // eslint-disable-line no-console
         return undefined
       }
     }
@@ -75,6 +76,18 @@ const mutations = {
       state.statusData[data.api] = data.message
     } else {
       Vue.set(state.statusData, data.api, data.message)
+    }
+  },
+  setServiceData (state, data) {
+    if (data.api in state.serviceData) {
+      if (data.name in state.serviceData[data.api]) {
+        state.serviceData[data.api][data.name] = data.message
+      } else {
+        Vue.set(state.serviceData[data.api], data.name, data.message)
+      }
+    } else {
+      Vue.set(state.serviceData, data.api, {})
+      Vue.set(state.serviceData[data.api], data.name, data.message)
     }
   },
   setVehicleData (state, data) {

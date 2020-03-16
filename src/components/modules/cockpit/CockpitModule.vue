@@ -24,9 +24,6 @@ export default {
     return {}
   },
   computed: {
-    activeApi () {
-      return this.$store.state.activeApi
-    },
     mapState () {
       return this.$store.state.cockpit.mapState
     },

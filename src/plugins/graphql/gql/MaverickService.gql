@@ -1,0 +1,25 @@
+#import "./MaverickServiceFragment.gql"
+
+query maverickServiceQuery($name: String!) {
+  MaverickService(name: $name) {
+    ...MaverickService
+  }
+}
+
+subscription maverickServiceSubscription($name: String!) {
+  MaverickService(name: $name) {
+    ...MaverickService
+  }
+}
+
+subscription maverickServicesSubscription {
+  MaverickService {
+    ...MaverickService
+  }
+}
+
+mutation maverickServiceMutate($name: String!) {
+  MaverickService(name: $name) {
+    ...MaverickService
+  }
+}

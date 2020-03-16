@@ -1,0 +1,11 @@
+fragment MaverickServiceList on MaverickServiceList {
+  services {
+    name
+    displayName
+    category
+    displayCategory
+    enabled
+    running
+    updateTime
+  }
+}

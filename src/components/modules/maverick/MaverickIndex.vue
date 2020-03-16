@@ -28,32 +28,35 @@
 
 <script>
 import ServicesCard from './ServicesCard.vue'
+/*
 import ConfigurationCard from './ConfigurationCard.vue'
 import NetworkingCard from './NetworkingCard.vue'
 import CommandsCard from './CommandsCard.vue'
+*/
 
 export default {
   name: "MaverickIndex",
   components: {
-    ServicesCard,
+    ServicesCard
+    /*
     ConfigurationCard,
     NetworkingCard,
     CommandsCard
+    */
   },
   data: () => ({
     active_tab: 0,
     tabs: [
-      { index: 0, name: "services", componentName: "ServicesCard" },
+      { index: 0, name: "services", componentName: "ServicesCard" }
+      /*
       { index: 1, name: "configuration", componentName: "ConfigurationCard" },
       { index: 2, name: "networking", componentName: "NetworkingCard" },
       { index: 3, name: "commands", componentName: "CommandsCard" }
+      */
     ]
   }),
 
   computed: {
-    activeApi() {
-      return this.$store.state.activeApi;
-    },
     dynamicComponent() {
       return this.tabs[this.active_tab].componentName
     }

@@ -16,6 +16,8 @@ import ActionButton from './components/common/ActionButton'
 
 import { statusQuery, statusSubscription } from './plugins/graphql/gql/Status.gql'
 import { vehicleInfoQuery } from './plugins/graphql/gql/VehicleInfo.gql'
+import { maverickServiceListQuery } from './plugins/graphql/gql/MaverickServiceList.gql'
+import { maverickServicesSubscription } from './plugins/graphql/gql/MaverickService.gql'
 
 export default {
   name: 'App',
@@ -155,6 +157,11 @@ export default {
             this.createQuery('VehicleInfo', vehicleInfoQuery, api, null, !this.verifyQuery(vehicleInfoQuery, api), this.processVehicleInfoQuery, null, { uuid: this.apis[api].uuid })
           }
         }
+        // If the MaverickServiceList query doesn't already exist for this client, create it
+        if (!(api + '___MaverickServiceList___' in this.$apollo.queries)) {
+          this.createQuery('MaverickServiceList', maverickServiceListQuery, api, null, null, this.processServiceListQuery)
+          this.createSubscription('MaverickService', maverickServicesSubscription, api, null, null, this.processServiceSubscription)
+        }
         if (this.apistate[api].lastseen === null) this.$store.commit('core/setApiState', {api: api, field: 'lastseen', value: performance.now() })
         if (!(api in this.$store.state.core.statusData)) {
           this.$store.commit('core/setStatusData', { api: api, message: data.data.Status })
@@ -169,6 +176,21 @@ export default {
       this.$store.commit('core/setApiState', {api: api, field: 'lastseen', value: performance.now()})
       if (data.data && this.$store.state.core.statusData[api] !== data.data.Status) {
         this.$store.commit('core/setStatusData', { api: api, message: data.data.Status })
+      }
+    },
+    processServiceListQuery (data, key) {
+      const api = key.split('___')[0]
+      if (data.data && 'MaverickServiceList' in data.data) {
+        data.data.MaverickServiceList.services.forEach(element => {
+          this.$store.commit('core/setServiceData', { api: api, name: element.name, message: element })
+        })
+      }
+    },
+    processServiceSubscription (data, key) {
+      const api = key.split('___')[0]
+      if (data.data && 'MaverickService' in data.data) {
+        // this.logDebug(data.data.MaverickService)
+        this.$store.commit('core/setServiceData', { api: api, name: data.data.MaverickService.name, message: data.data.MaverickService })
       }
     },
     processVehicleInfoQuery (data, key) {

@@ -153,7 +153,7 @@ export default {
   },
 
   mounted () {
-    setInterval(() => this.createQueries(), 2000)
+    setTimeout(() => this.createQueries(), 2000)
   },
 
   methods: {
