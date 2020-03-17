@@ -7,9 +7,6 @@ on:
     - 'stable'
     tags:
     - 'v*'
-  pull_request:
-    branches:
-    - '*'
 
 jobs:
   build:
@@ -31,9 +28,20 @@ jobs:
         with:
           name: maverick-web
           path: ./dist
-      - name: Create distribution artifact zip
+      - name: Commit to maverick-web-dist
+        uses: drud/action-cross-commit@master
+        with:
+          source-folder: dist
+          destination-repository: https://samueldudley:${{ secrets.ACCESS_TOKEN }}@github.com/goodrobots/maverick-web-dist
+          destination-folder: .
+          destination-branch: ${GITHUB_REF#refs/heads/}
+          git-user: "samueldudley" 
+          git-user-email: dudley.samuel@gmail.com
+          excludes: README.md:.git:LICENSE
+      - name: Create distribution artifact zip (tag only)
+        if: startsWith(github.ref, 'refs/tags/v')
         run: cd ./dist; zip -qq -r ../maverick-web.zip .; cd ..
-      - name: Publish distribution artifact (tag)
+      - name: Publish distribution artifact zip (tag only)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: svenstaro/upload-release-action@v1-release
         with:
@@ -42,14 +50,3 @@ jobs:
           asset_name: 'maverick-web.zip'
           tag: ${{ github.ref }}
           overwrite: true
-      - name: Commit to maverick-web-dist (tag)
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: drud/action-cross-commit@master
-        with:
-          source-folder: dist
-          destination-repository: https://samueldudley:${{ secrets.ACCESS_TOKEN }}@github.com/goodrobots/maverick-web-dist
-          destination-folder: .
-          destination-branch: testing
-          git-user: "samueldudley" 
-          git-user-email: dudley.samuel@gmail.com
-          excludes: README.md:.git:LICENSE
