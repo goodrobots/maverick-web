@@ -36,7 +36,7 @@ jobs:
       - name: Create zip file
         uses: montudor/action-zip@v0.1.0
         with:
-          args: zip -qq -r ../maverick-web.zip *
+          args: zip -qq -r ../maverick-web.zip .
       - name: Move to ./
         run: cd ..
       - name: Publish distribution artifact
