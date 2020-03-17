@@ -111,7 +111,8 @@ export default {
         key: this.newitem.key,
         name: this.newitem.name,
         webrtcEndpoint: `${protocol}://${this.newitem.hostname}:${this.newitem.port}`,
-        enabled: false
+        enabled: false,
+        action: start
       }
       this.$store.commit('data/addVideoStream', {key: data.key, data: data})
     },

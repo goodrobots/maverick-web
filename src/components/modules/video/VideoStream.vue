@@ -23,12 +23,32 @@ export default {
     videostream: {
       type: String,
       default: null
+    },
+    action: {
+      type: String,
+      default: null
     }
   },
 
   data () {
     return {
-      lastStats: null
+      lastStats: null,
+      streaming: null
+    }
+  },
+
+  watch: {
+    action: {
+      handler: function (newValue) {
+        this.logDebug(`action: ${newValue}, ${this.action}`)
+        if (this.action == 'start') {
+          this.streaming.start()
+        } else if (this.action == 'pause') {
+          this.stremaing.pause()
+        } else if (this.action == 'stop') {
+          this.streaming.stop()
+        }
+      }
     }
   },
 
@@ -39,7 +59,7 @@ export default {
   
   mounted () {
     let janus = this.janus = new Janus(this.config, console)
-    let streaming = new StreamingJanusPlugin(console, false)
+    this.streaming = new StreamingJanusPlugin(console, false)
     let peerConnection = new RTCPeerConnection()
     let bitrate = 0
     let packetloss = 0
@@ -61,15 +81,15 @@ export default {
 
     this.$emit('status', 'init')
     janus.connect().then(() => {
-      return janus.addPlugin(streaming)
+      return janus.addPlugin(this.streaming)
     }).then(() => {
       // console.info('plugin added', janus)
       peerConnection.onicecandidate = (event) => {
         // console.log('@onicecandidate', event)
         if (!event.candidate || !event.candidate.candidate) {
-          streaming.candidate({completed: true})
+          this.streaming.candidate({completed: true})
         } else {
-          streaming.candidate({
+          this.streaming.candidate({
             candidate: event.candidate.candidate,
             sdpMid: event.candidate.sdpMid,
             sdpMLineIndex: event.candidate.sdpMLineIndex
@@ -94,11 +114,11 @@ export default {
       }
       // streaming.on('webrtcState', (a, b) => { console.log('webrtcState', a, b) })
       // streaming.on('mediaState', (a, b) => { console.log('mediaState', a, b) })
-      streaming.on('statusChange', (status) => {
+      this.streaming.on('statusChange', (status) => {
         // console.log('statusChange', status)
         this.$emit('status', status)
       })
-      return streaming.watch(this.stream)
+      return this.streaming.watch(this.stream)
     }).then((jsep) => {
       return peerConnection.setRemoteDescription(new RTCSessionDescription(jsep))
     }).then(() => {
@@ -107,7 +127,7 @@ export default {
     }).then(answer => {
       // console.log('answerCreated', answer)
       peerConnection.setLocalDescription(answer)
-      return streaming.start(answer)
+      return this.streaming.start(answer)
     }).then(({body, json}) => {
       // console.log('START', body, json)
     })

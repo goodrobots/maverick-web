@@ -32,7 +32,7 @@ v-content
                 v-chip.ma-2(v-if="streamStatus[stream.key]=='playing'" color='green')
                   v-icon(left) mdi-check-circle
                   span Playing
-                v-chip.ma-2(v-else-if="streamStatus[stream.key]=='buffering'" color='amber')
+                v-chip.ma-2(v-else-if="streamStatus[stream.key]=='buffering' || stream.action == 'stop'" color='amber')
                   v-icon(left) mdi-alert
                   span Buffering
                 v-chip.ma-2(v-else color='red')
@@ -42,15 +42,15 @@ v-content
                   v-chip.ma-2(color='blue') <strong>{{ cleanBitrate(statBitrate[stream.key]) }}</strong>
                 span Packet Loss
                   v-chip.ma-2(color='red') <strong>{{ statPacketloss[stream.key] }}</strong>
-              VideoStream(:config="{ url: stream.webrtcEndpoint }" :videostream="stream.key" :width="refWidth('layout-'+stream.key)" :stream="1" @status="updateStatus(stream.key, $event)" @packetloss="updatePacketloss(stream.key, $event)" @bitrate="updateBitrate(stream.key, $event)")
-              v-card-text
+              VideoStream(:config="{ url: stream.webrtcEndpoint }" :videostream="stream.key" :width="refWidth('layout-'+stream.key)" :stream="1" :action="stream.action" @status="updateStatus(stream.key, $event)" @packetloss="updatePacketloss(stream.key, $event)" @bitrate="updateBitrate(stream.key, $event)")
+              // v-card-text
                 v-layout.d-flex.justify-space-between(flat)
-                  div
+                  // div
                     v-btn-toggle.ma-2(v-model="actionState" shaped mandatory dense)
-                      v-btn(color='green' value='start')
+                      v-btn(color='green' @click="stream.action='start'")
                         v-icon(left) mdi-play
                         span Start
-                      v-btn(color='red' value='stop')
+                      v-btn(color='red' @click="stream.action='stop'")
                         v-icon(left) mdi-stop
                         span Stop
                 // span BitRate
