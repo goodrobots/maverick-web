@@ -1,24 +1,28 @@
 <template lang='pug'>
 v-content.cockpit-layout(:key="activeApi")
-  cockpit-map(v-if="mapState")
-  cockpit-renderer(v-if="hudState")
+  // cockpit-map(v-if="mapState")
+  // cockpit-renderer(v-if="hudState")
     cockpit-container
       cockpit-hud
 </template>
 
 <script>
+/*
 import CockpitRenderer from './CockpitRenderer.vue'
 import CockpitContainer from './CockpitContainer.vue'
 import CockpitHud from './CockpitHud.vue'
 import CockpitMap from './CockpitMap.vue'
+*/
 
 export default {
   name: 'CockpitModule',
   components: {
+    /*
     CockpitRenderer,
     CockpitContainer,
     CockpitHud,
     CockpitMap
+    */
   },
   data () {
     return {}

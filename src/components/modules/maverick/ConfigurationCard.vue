@@ -24,7 +24,7 @@
 
 <script>
 //https://stackoverflow.com/questions/58592128/how-can-i-integrate-monaco-with-vue-js
-import * as monaco from 'monaco-editor'
+// import * as monaco from 'monaco-editor'
 
 export default {
   name: 'ConfigurationCard',
@@ -42,6 +42,7 @@ export default {
     },
   },
   mounted() {
+    /*
     var randomString = Math.random().toString(36).substring(7)
     var modelUri = monaco.Uri.parse(window.location.hostname + ":" + window.location.port + "/" + randomString + "/config.json"); // a made up unique URI for our model
     var model = monaco.editor.createModel(this.monacoCode, "json", modelUri);
@@ -62,9 +63,10 @@ export default {
       automaticLayout: true,
       scrollBeyondLastLine: false
     })
+    */
   },
   destroyed() {
-    this.editor.dispose()
+    // this.editor.dispose()
   },
 }
 

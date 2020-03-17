@@ -6,7 +6,7 @@ div.cockpit-hud
 
 <script>
 import Vue from 'vue'
-import * as PIXI from 'pixi.js'
+// import * as PIXI from 'pixi.js'
 
 export default {
   data () {

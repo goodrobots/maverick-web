@@ -1,7 +1,7 @@
-import { schema } from '../modules/schema'
+// import { schema } from '../modules/schema'
 
 const state = {
-  monacoSchema: schema,
+  // monacoSchema: schema,
   monacoCode: [
     "{",
     "    ",
