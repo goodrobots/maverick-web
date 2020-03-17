@@ -31,6 +31,23 @@ jobs:
         with:
           name: maverick-web
           path: ./dist
+      - name: Move to ./dist
+        run: cd ./dist
+      - name: Create zip file
+        uses: montudor/action-zip@v0.1.0
+        with:
+          args: zip -qq -r ../maverick-web.zip *
+      - name: Move to ./
+        run: cd ..
+      - name: Publish distribution artifact
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.ACCESS_TOKEN }}
+          file: './maverick-web.zip'
+          asset_name: 'maverick-web.zip'
+          tag: ${{ github.ref }}
+          overwrite: true
       - name: Commit to maverick-web-dist
         if: startsWith(github.ref, 'refs/tags/v')
         uses: drud/action-cross-commit@master
