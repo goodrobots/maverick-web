@@ -7,9 +7,12 @@ on:
     - 'stable'
     tags:
     - 'v*'
+  pull_request:
+    branches:
+    - '*'
 
 jobs:
-  build:
+  automation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,13 +31,25 @@ jobs:
         with:
           name: maverick-web
           path: ./dist
-      - name: Commit to maverick-web-dist
+      - name: Commit to maverick-web-dist master
+        if: github.ref == 'refs/heads/master'
         uses: drud/action-cross-commit@master
         with:
           source-folder: dist
           destination-repository: https://samueldudley:${{ secrets.ACCESS_TOKEN }}@github.com/goodrobots/maverick-web-dist
           destination-folder: .
-          destination-branch: ${GITHUB_REF#refs/heads/}
+          destination-branch: master
+          git-user: "samueldudley" 
+          git-user-email: dudley.samuel@gmail.com
+          excludes: README.md:.git:LICENSE
+      - name: Commit to maverick-web-dist stable
+        if: github.ref == 'refs/heads/stable'
+        uses: drud/action-cross-commit@master
+        with:
+          source-folder: dist
+          destination-repository: https://samueldudley:${{ secrets.ACCESS_TOKEN }}@github.com/goodrobots/maverick-web-dist
+          destination-folder: .
+          destination-branch: stable
           git-user: "samueldudley" 
           git-user-email: dudley.samuel@gmail.com
           excludes: README.md:.git:LICENSE
