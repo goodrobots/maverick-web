@@ -1,4 +1,4 @@
-import mavlinkEnums from './mavlinkEnumData.json'
+// import mavlinkEnums from './mavlinkEnumData.json'
 
 const plugin = {
   install (Vue, options) {
