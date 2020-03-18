@@ -2,6 +2,7 @@
   "name": "maverick-web",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://github.com/goodrobots/maverick-web.git",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -41,8 +42,7 @@
     "xterm-addon-fit": "^0.3.0",
     "xterm-addon-serialize": "^0.1.2",
     "xterm-addon-unicode11": "^0.1.1",
-    "xterm-addon-web-links": "^0.2.1",
-    "xterm-addon-webgl": "^0.5.0"
+    "xterm-addon-web-links": "^0.2.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.2.2",
