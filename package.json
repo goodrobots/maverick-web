@@ -6,7 +6,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@techteamer/janus-api": "^6.0.0",
@@ -42,7 +43,8 @@
     "xterm-addon-fit": "^0.3.0",
     "xterm-addon-serialize": "^0.1.2",
     "xterm-addon-unicode11": "^0.1.1",
-    "xterm-addon-web-links": "^0.2.1"
+    "xterm-addon-web-links": "^0.2.1",
+    "gh-pages": "^2.1.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.2.2",
