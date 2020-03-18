@@ -3,10 +3,7 @@ module.exports = {
   "transpileDependencies": [
     "vuetify"
   ],
-  publicPath: process.env.NODE_ENV === 'production'
-    ? '/maverick-web'
-    : '/',
-  
+  publicPath: './',
   configureWebpack: {
     plugins: [
     ],
@@ -56,7 +53,7 @@ module.exports = {
     open: false,
     compress: true,
     host: '0.0.0.0',
-    public: 'http://dev.maverick.one:6794',
+    // public: 'http://<public-fqdn>:6794',
     disableHostCheck: true,
     port: 6794,
     https: false,
