@@ -5,11 +5,11 @@ v-container
       v-toolbar-title Services
     v-data-table.elevation-1(v-if="activeApi && services[activeApi]" :headers="headers" :items="Object.values(services[activeApi])")
       template(v-slot:item.running="{ item }")
-        v-icon(right v-if="item.running" color='green') mdi-check-circle-outline
-        v-icon(right v-else color='red') mdi-alert-circle-outline
+        v-icon(right v-if="item.running" color='green') check-circle-outline
+        v-icon(right v-else color='red') error_outline
       template(v-slot:item.enabled="{ item }")
-        v-icon(right v-if="item.enabled" color='green') mdi-check-circle-outline
-        v-icon(right v-else color='red') mdi-alert-circle-outline
+        v-icon(right v-if="item.enabled" color='green') check-circle-outline
+        v-icon(right v-else color='red') error_outline
 </template>
 
 <script>
