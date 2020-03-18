@@ -3,29 +3,6 @@ import Router from 'vue-router'
 
 import HomeModule from '../components/modules/home/HomeModule'
 
-import CockpitModule from '../components/modules/cockpit/CockpitModule'
-
-import PlannerModule from '../components/modules/planner/PlannerModule'
-
-import ConfigModule from '../components/modules/config/ConfigModule'
-import ConfigConnections from '../components/modules/config/ConfigConnections'
-import ConfigModules from '../components/modules/config/ConfigModules'
-import ConfigVideo from '../components/modules/config/ConfigVideo'
-import ConfigParamSummary from '../components/modules/config/ConfigParamSummary'
-import ConfigParamGroups from '../components/modules/config/ConfigParamGroups'
-import ConfigParamList from '../components/modules/config/ConfigParamList'
-
-import AnalysisModule from '../components/modules/analysis/AnalysisModule'
-import AnalysisIndex from '../components/modules/analysis/AnalysisIndex'
-import AnalysisLogfile from '../components/modules/analysis/AnalysisLogfile'
-
-import TestModule from '../components/modules/test/TestModule'
-
-import MaverickModule from '../components/modules/maverick/MaverickModule'
-import MaverickIndex from '../components/modules/maverick/MaverickIndex'
-
-import VideoModule from '../components/modules/video/VideoModule'
-
 Vue.use(Router)
 
 export default new Router({
@@ -42,23 +19,23 @@ export default new Router({
     },
     {
       path: '/test',
-      component: TestModule
+      component: () => import(/* webpackMode: "lazy" */ '../components/modules/test/TestModule')
     },
     {
       path: '/video',
-      component: VideoModule
+      component: () => import(/* webpackMode: "lazy" */ '../components/modules/video/VideoModule')
     },
     {
       path: '/cockpit',
-      component: CockpitModule
+      component: () => import(/* webpackMode: "lazy" */ '../components/modules/cockpit/CockpitModule')
     },
     {
       path: '/planner',
-      component: PlannerModule
+      component: () => import(/* webpackMode: "lazy" */ '../components/modules/planner/PlannerModule')
     },
     {
       path: '/config',
-      component: ConfigModule,
+      component: () => import(/* webpackMode: "lazy" */ '../components/modules/config/ConfigModule'),
       children: [
         {
           path: '',
@@ -66,33 +43,33 @@ export default new Router({
         },
         {
           path: 'modules',
-          component: ConfigModules
+          component: () => import(/* webpackMode: "lazy" */ '../components/modules/config/ConfigModules')
         },
         {
           path: 'connections',
-          component: ConfigConnections
+          component: () => import(/* webpackMode: "lazy" */ '../components/modules/config/ConfigConnections')
         },
         {
           path: 'video',
-          component: ConfigVideo
+          component: () => import(/* webpackMode: "lazy" */ '../components/modules/config/ConfigVideo')
         },
         {
           path: 'parameter-summary',
-          component: ConfigParamSummary
+          component: () => import(/* webpackMode: "lazy" */ '../components/modules/config/ConfigParamSummary')
         },
         {
           path: 'parameter-groups',
-          component: ConfigParamGroups
+          component: () => import(/* webpackMode: "lazy" */ '../components/modules/config/ConfigParamGroups')
         },
         {
           path: 'parameter-list',
-          component: ConfigParamList
+          component: () => import(/* webpackMode: "lazy" */ '../components/modules/config/ConfigParamList')
         }
       ]
     },
     {
       path: '/analysis',
-      component: AnalysisModule,
+      component: () => import(/* webpackMode: "lazy" */ '../components/modules/analysis/AnalysisModule'),
       children: [
         {
           path: '',
@@ -100,17 +77,17 @@ export default new Router({
         },
         {
           path: 'analysis-index',
-          component: AnalysisIndex
+          component: () => import(/* webpackMode: "lazy" */ '../components/modules/analysis/AnalysisIndex')
         },
         {
           path: 'analysis-logfile/:id',
-          component: AnalysisLogfile
+          component: () => import(/* webpackMode: "lazy" */ '../components/modules/analysis/AnalysisLogfile')
         }
       ]
     },
     {
       path: '/maverick',
-      component: MaverickModule,
+      component: () => import(/* webpackMode: "lazy" */ '../components/modules/maverick/MaverickModule'),
       children: [
         {
           path: '',
@@ -118,7 +95,7 @@ export default new Router({
         },
         {
           path: 'maverick-index',
-          component: MaverickIndex
+          component: () => import(/* webpackMode: "lazy" */ '../components/modules/maverick/MaverickIndex')
         }
       ]
     },
