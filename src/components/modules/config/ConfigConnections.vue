@@ -3,15 +3,21 @@ div
   v-data-iterator(:items="items" item-key="name" hide-default-footer :single-expand="expand")
 
     template(v-slot:header)
-      v-toolbar.mb-1(:color="navColor" dark flat)
-        v-toolbar-title Connections
+      v-toolbar.mb-1(:color="navColor" dark flat dense)
+        v-toolbar-title API Connections
         v-spacer
-        v-text-field(v-model="search" clearable flat solo-inverted hide-details prepend-inner-icon="mdi-magnify" label="Search")
+        // v-text-field(v-model="search" clearable flat solo-inverted hide-details prepend-inner-icon="mdi-magnify" label="Search")
         v-spacer
-        v-btn(light @click.stop="dialog = true")
+        v-btn(@click.stop="dialog = true" :color="navColor+' darken-2'")
           v-icon(left) mdi-plus-box
           span Add API Connection
     
+    template(v-slot:no-data)
+      v-alert.ma-8(border="left" type="info")
+        span No API Connections are defined.  Please add one: 
+          v-btn(@click.stop="dialog = true" :color="navColor+' darken-2'" small)
+            span Add API Connection
+
     template(v-slot:default="{ items, isExpanded, expand }")
       v-row
         v-col(v-for="item in items" :key="item.name" cols="12" sm="12" md="12" lg="12")
@@ -28,65 +34,69 @@ div
               v-spacer
               v-switch.mt-4(:color="navColor" :input-value="isExpanded(item)" :label="isExpanded(item) ? 'Editing' : 'Edit'" @change="(v) => expand(item, v)")
           v-row(v-if="isExpanded(item)")
-            v-col.pt-0.pr-1(cols="12" sm="12" md="6" lg="6")
-              v-list(dense)
-                v-list-item
-                  v-list-item-content
-                    v-text-field(v-model="item.name" label="API Name/Description")
-                  // v-list-item-content.align-end
-                v-list-item
-                  v-list-item-content
-                    v-text-field(v-model="item.httpEndpoint" label="GraphQL Endpoint")
-                  // v-list-item-content.align-end
-                v-list-item
-                  v-list-item-content
-                    v-text-field(v-model="item.wsEndpoint" label="Websockets Endpoint")
-                  // v-list-item-content.align-end
-                v-list-item
-                  v-list-item-content
-                    v-text-field(v-model="item.schemaEndpoint" label="Schema Endpoint")
-                  // v-list-item-content.align-end
-                v-list-item
-                  v-divider
-                v-list-item
-                  v-btn(color='green' @click="save(item)") Save
-                  v-btn.ml-2(color='blue' @click="connect(item)") Connect
-                  v-spacer
-                  v-btn(color='red' @click="remove(item)")
-                    v-icon(left) mdi-delete
-                    span Delete
-            v-col.pt-0.pl-1(cols="12" sm="12" md="6" lg="6")
-              v-list(dense)
-                v-list-item
-                  v-list-item-content API Unique ID
-                  v-list-item-content
-                    span.green--text.text--lighten-1(v-if="apistate[item.key].uuid") {{ apistate[item.key].uuid }}
-                    v-icon(v-else color='red') mdi-alert-circle-outline
-                v-list-item
-                  v-list-item-content API Last Seen
-                  v-list-item-content
-                    span.green--text.text--lighten-1(v-if="lastseen(item.key) < 60") {{ lastseen(item.key).toFixed(2) }} seconds ago
-                    span.red--text.text--lighten-1(v-else) {{ lastseen(item.key).toFixed(2) }} seconds ago
-                v-list-item
-                  v-list-item-content API Connection State
-                  v-list-item-content
-                    v-icon(v-if="apistate[item.key].state" color='green') mdi-check-circle-outline
-                    v-icon(v-else color='red') mdi-alert-circle-outline
-                v-list-item
-                  v-list-item-content API Schema Ready
-                  v-list-item-content
-                    v-icon(v-if="apistate[item.key].schemaready" color='green') mdi-check-circle-outline
-                    v-icon(v-else color='red') mdi-alert-circle-outline
-                v-list-item
-                  v-list-item-content Authentication Set
-                  v-list-item-content
-                    v-icon(v-if="apistate[item.key].auth" color='green') mdi-check-circle-outline
-                    v-icon(v-else color='red') mdi-alert-circle-outline
-                v-list-item
-                  v-list-item-content Icon Set
-                  v-list-item-content {{ apistate[item.key].icon }}
-                    v-icon(v-if="apistate[item.key].icon" color='green') {{ apistate[item.key].icon }}
-                    v-icon(v-else color='red') mdi-alert-circle-outline
+            v-container.mt-0.pt-0(fluid)
+              v-card
+                v-row
+                  v-col.pt-0.pr-1(cols="12" sm="12" md="6" lg="6")
+                    v-list(dense)
+                      v-list-item
+                        v-list-item-content
+                          v-text-field(v-model="item.name" label="API Name/Description")
+                        // v-list-item-content.align-end
+                      v-list-item
+                        v-list-item-content
+                          v-text-field(v-model="item.httpEndpoint" label="GraphQL Endpoint")
+                        // v-list-item-content.align-end
+                      v-list-item
+                        v-list-item-content
+                          v-text-field(v-model="item.wsEndpoint" label="Websockets Endpoint")
+                        // v-list-item-content.align-end
+                      v-list-item
+                        v-list-item-content
+                          v-text-field(v-model="item.schemaEndpoint" label="Schema Endpoint")
+                        // v-list-item-content.align-end
+                      v-list-item
+                        v-divider
+                      v-list-item
+                        v-btn(color='green' @click="save(item)") Save
+                        v-btn.ml-2(color='blue' @click="connect(item)") Connect
+                        v-spacer
+                        v-btn(color='red' @click="remove(item)")
+                          v-icon(left) mdi-delete
+                          span Delete
+                  v-col.pt-0.pl-1(cols="12" sm="12" md="6" lg="6")
+                    v-list(dense)
+                      v-list-item
+                        v-list-item-content API Unique ID
+                        v-list-item-content
+                          span.green--text.text--lighten-1(v-if="apistate[item.key].uuid") {{ apistate[item.key].uuid }}
+                          v-icon(v-else color='red') mdi-alert-circle-outline
+                      v-list-item
+                        v-list-item-content API Last Seen
+                        v-list-item-content
+                          span.green--text.text--lighten-1(v-if="lastseen(item.key) < 60") {{ lastseen(item.key).toFixed(2) }} seconds ago
+                          span.red--text.text--lighten-1(v-else) {{ lastseen(item.key).toFixed(2) }} seconds ago
+                      v-list-item
+                        v-list-item-content API Connection State
+                        v-list-item-content
+                          v-icon(v-if="apistate[item.key].state" color='green') mdi-check-circle-outline
+                          v-icon(v-else color='red') mdi-alert-circle-outline
+                      v-list-item
+                        v-list-item-content API Schema Ready
+                        v-list-item-content
+                          v-icon(v-if="apistate[item.key].schemaready" color='green') mdi-check-circle-outline
+                          v-icon(v-else color='red') mdi-alert-circle-outline
+                      v-list-item
+                        v-list-item-content Authentication Set
+                        v-list-item-content
+                          v-icon(v-if="apistate[item.key].auth" color='green') mdi-check-circle-outline
+                          v-icon(v-else color='red') mdi-alert-circle-outline
+                      v-list-item
+                        v-list-item-content Icon Set
+                        v-list-item-content {{ apistate[item.key].icon }}
+                          v-icon(v-if="apistate[item.key].icon" color='green') {{ apistate[item.key].icon }}
+                          v-icon(v-else color='red') mdi-alert-circle-outline
+
   v-dialog(v-model="dialog" max-width="600px")
     v-card
       v-card-title.headline(:class="navColor" primary-title)

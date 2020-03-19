@@ -4,18 +4,18 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+
     v-subheader.mt-3.grey--text.text--darken-1 GENERAL CONFIG
     v-list-item.mt-3(@click="" to="/config/connections")
       v-list-item-action
-        v-icon mdi-transit-connection
-      v-list-item-title Connections
-    v-list-item.mt-3(@click="" to="/config/modules")
-      v-list-item-action
-        v-icon mdi-view-module
-      v-list-item-title Modules
+        v-icon mdi-router-wireless-settings
+      v-list-item-title API Connections
     v-list-item.mt-3(@click="" to="/config/video")
       v-list-item-action
         v-icon mdi-video
       v-list-item-title Video
+    v-list-item.mt-3(@click="" to="/config/modules")
+      v-list-item-action
+        v-icon mdi-view-module
+      v-list-item-title Modules
 
-  v-list(v-if="activeApi" dense)
+  // v-list(v-if="activeApi" dense)
     v-subheader.mt-3.grey--text.text--darken-1 FLIGHT CONTROLLER
     v-list-item.mt-3(@click="" to="/config/parameter-summary")
       v-list-item-action
