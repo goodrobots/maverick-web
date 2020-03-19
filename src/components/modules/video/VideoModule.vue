@@ -22,9 +22,8 @@ v-content
 
   v-container(fluid)
       v-row(dense)
-
         v-col(v-for="stream in videostreams" :key='stream.key' v-if="stream.enabled" xs=12 sm=12 md=12 lg=6 xl=6)
-          v-layout(justify-center wrap :ref="'layout-'+stream.key")
+          v-row(justify='center' wrap :ref="'layout-'+stream.key")
             v-card.mx-auto()
               v-system-bar(:color="navColor" window)
                 span Video Stream: {{ stream.name }}

@@ -46,7 +46,7 @@ const plugin = {
           return this.$store.state.data.navColor
         },
         navIcon () {
-          return this.$store.state.data.modules[this.moduleName].icon
+          return this.$store.state.core.modules[this.moduleName].icon
         },
         navDrawer () {
           return this.$store.state.data.navDrawer

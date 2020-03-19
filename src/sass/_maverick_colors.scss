@@ -1,104 +1,146 @@
 /* Custom Maverick colors */
+@use "sass:color";
 
 // alpha level for custom rgba defined colors
-$transLevel: 0.75;
+$transLevel: 0.85;
+
+// Define base colors
+$mavRedAccentBase: rgba(162, 19, 61, $transLevel);
+$mavRedBase: rgba(224, 29, 90, $transLevel);
+
+$mavBlueAccentBase: rgba(20, 148, 207, $transLevel);
+$mavBlueBase: rgba(94, 179, 255, $transLevel);
+
+$mavGreenAccentBase: rgba(11, 132, 83, $transLevel);
+$mavGreenBase: rgba(43, 183, 124, $transLevel);
+
+$mavOrangeAccentBase: rgba(208, 105, 33, $transLevel);
+$mavOrangeBase: rgba(255, 161, 73, $transLevel);
+
+$mavPurpleBase: rgba(103, 58, 183, $transLevel);
+$mavPurpleAccentBase: rgba(179, 136, 255, $transLevel);
+
+$mavYellowBase: rgba(255, 223, 72, $transLevel);
+
+$mavGreyBase: rgba(158, 158, 158, $transLevel);
+
+// Create color variants
+$mavRed: (
+  "darken-5":  color.adjust($mavRedBase, $lightness: -50%),
+  "darken-4":  color.adjust($mavRedBase, $lightness: -40%),
+  "darken-3":  color.adjust($mavRedBase, $lightness: -30%),
+  "darken-2":  color.adjust($mavRedBase, $lightness: -20%),
+  "darken-1":  color.adjust($mavRedBase, $lightness: -10%),
+  "base":       $mavRedBase,
+  "lighten-1":  color.adjust($mavRedBase, $lightness: +10%),
+  "lighten-2":  color.adjust($mavRedBase, $lightness: +20%),
+  "lighten-3":  color.adjust($mavRedBase, $lightness: +30%),
+  "lighten-4":  color.adjust($mavRedBase, $lightness: +40%),
+  "lighten-5":  color.adjust($mavRedBase, $lightness: +50%),
+  "accent-1":   color.adjust($mavRedAccentBase, $lightness: +45%),
+  "accent-2":   color.adjust($mavRedAccentBase, $lightness: +30%),
+  "accent-3":   color.adjust($mavRedAccentBase, $lightness: +15%),
+  "accent-4":   $mavRedAccentBase
+);
 
 $mavBlue: (
-  "base":       rgba(33, 150, 243, $transLevel),
-  "lighten-5":  rgba(227, 242, 253, $transLevel),
-  "lighten-4":  rgba(187, 222, 251, $transLevel),
-  "lighten-3":  rgba(144, 202, 249, $transLevel),
-  "lighten-2":  rgba(100, 181, 246, $transLevel),
-  "lighten-1":  rgba(66, 165, 245, $transLevel),
-  "darken-1":   rgba(30, 136, 229, $transLevel),
-  "darken-2":   rgba(25, 118, 210, $transLevel),
-  "darken-3":   rgba(21, 101, 192, $transLevel),
-  "darken-4":   rgba(13, 71, 161, $transLevel),
-  "accent-1":   rgba(130, 177, 255, $transLevel),
-  "accent-2":   rgba(68, 138, 255, $transLevel),
-  "accent-3":   rgba(41, 121, 255, $transLevel),
-  "accent-4":   rgba(41, 98, 255, $transLevel)
-);
-
-$mavOrange: (
-  "base":       rgba(255, 152, 0, $transLevel),
-  "lighten-5":  rgba(255, 243, 224, $transLevel),
-  "lighten-4":  rgba(255, 224, 178, $transLevel),
-  "lighten-3":  rgba(255, 204, 128, $transLevel),
-  "lighten-2":  rgba(255, 183, 77, $transLevel),
-  "lighten-1":  rgba(255, 167, 38, $transLevel),
-  "darken-1":   rgba(251, 140, 0, $transLevel),
-  "darken-2":   rgba(245, 124, 0, $transLevel),
-  "darken-3":   rgba(239, 108, 0, $transLevel),
-  "darken-4":   rgba(230, 81, 0, $transLevel),
-  "accent-1":   rgba(255, 209, 128, $transLevel),
-  "accent-2":   rgba(255, 171, 64, $transLevel),
-  "accent-3":   rgba(255, 145, 0, $transLevel),
-  "accent-4":   rgba(255, 109, 0, $transLevel)
-);
-
-$mavRed: (
-  "base":       rgba(244, 67, 54, $transLevel),
-  "lighten-5":  rgba(255, 235, 238, $transLevel),
-  "lighten-4":  rgba(255, 205, 210, $transLevel),
-  "lighten-3":  rgba(239, 154, 154, $transLevel),
-  "lighten-2":  rgba(229, 115, 115, $transLevel),
-  "lighten-1":  rgba(239, 83, 80, $transLevel),
-  "darken-1":   rgba(229, 57, 53, $transLevel),
-  "darken-2":   rgba(211, 47, 47, $transLevel),
-  "darken-3":   rgba(198, 40, 40, $transLevel),
-  "darken-4":   rgba(183, 28, 28, $transLevel),
-  "accent-1":   rgba(255, 138, 128, $transLevel),
-  "accent-2":   rgba(255, 82, 82, $transLevel),
-  "accent-3":   rgba(255, 23, 68, $transLevel),
-  "accent-4":   rgba(213, 0, 0, $transLevel)
-);
-
-$mavPurple: (
-  "base":       rgba(103, 58, 183, $transLevel),
-  "lighten-5":  rgba(237, 231, 246, $transLevel),
-  "lighten-4":  rgba(209, 196, 233, $transLevel),
-  "lighten-3":  rgba(179, 157, 219, $transLevel),
-  "lighten-2":  rgba(149, 117, 205, $transLevel),
-  "lighten-1":  rgba(126, 87, 194, $transLevel),
-  "darken-1":   rgba(94, 53, 177, $transLevel),
-  "darken-2":   rgba(81, 45, 168, $transLevel),
-  "darken-3":   rgba(69, 39, 160, $transLevel),
-  "darken-4":   rgba(49, 27, 146, $transLevel),
-  "accent-1":   rgba(179, 136, 255, $transLevel),
-  "accent-2":   rgba(124, 77, 255, $transLevel),
-  "accent-3":   rgba(101, 31, 255, $transLevel),
-  "accent-4":   rgba(98, 0, 234, $transLevel)
+  "darken-5":  color.adjust($mavBlueBase, $lightness: -50%),
+  "darken-4":  color.adjust($mavBlueBase, $lightness: -40%),
+  "darken-3":  color.adjust($mavBlueBase, $lightness: -30%),
+  "darken-2":  color.adjust($mavBlueBase, $lightness: -20%),
+  "darken-1":  color.adjust($mavBlueBase, $lightness: -10%),
+  "base":       $mavBlueBase,
+  "lighten-1":  color.adjust($mavBlueBase, $lightness: +10%),
+  "lighten-2":  color.adjust($mavBlueBase, $lightness: +20%),
+  "lighten-3":  color.adjust($mavBlueBase, $lightness: +30%),
+  "lighten-4":  color.adjust($mavBlueBase, $lightness: +40%),
+  "lighten-5":  color.adjust($mavBlueBase, $lightness: +50%),
+  "accent-1":   color.adjust($mavBlueAccentBase, $lightness: +45%),
+  "accent-2":   color.adjust($mavBlueAccentBase, $lightness: +30%),
+  "accent-3":   color.adjust($mavBlueAccentBase, $lightness: +15%),
+  "accent-4":   $mavBlueAccentBase
 );
 
 $mavGreen: (
-  "base":       rgba(76, 175, 80, $transLevel),
-  "lighten-5":  rgba(232, 245, 233, $transLevel),
-  "lighten-4":  rgba(200, 230, 201, $transLevel),
-  "lighten-3":  rgba(165, 214, 167, $transLevel),
-  "lighten-2":  rgba(129, 199, 132, $transLevel),
-  "lighten-1":  rgba(102, 187, 106, $transLevel),
-  "darken-1":   rgba(67, 160, 71, $transLevel),
-  "darken-2":   rgba(56, 142, 60, $transLevel),
-  "darken-3":   rgba(46, 125, 50, $transLevel),
-  "darken-4":   rgba(27, 94, 32, $transLevel),
-  "accent-1":   rgba(185, 246, 202, $transLevel),
-  "accent-2":   rgba(105, 240, 174, $transLevel),
-  "accent-3":   rgba(0, 230, 118, $transLevel),
-  "accent-4":   rgba(0, 200, 83, $transLevel)
+  "darken-5":  color.adjust($mavGreenBase, $lightness: -50%),
+  "darken-4":  color.adjust($mavGreenBase, $lightness: -40%),
+  "darken-3":  color.adjust($mavGreenBase, $lightness: -30%),
+  "darken-2":  color.adjust($mavGreenBase, $lightness: -20%),
+  "darken-1":  color.adjust($mavGreenBase, $lightness: -10%),
+  "base":       $mavGreenBase,
+  "lighten-1":  color.adjust($mavGreenBase, $lightness: +10%),
+  "lighten-2":  color.adjust($mavGreenBase, $lightness: +20%),
+  "lighten-3":  color.adjust($mavGreenBase, $lightness: +30%),
+  "lighten-4":  color.adjust($mavGreenBase, $lightness: +40%),
+  "lighten-5":  color.adjust($mavGreenBase, $lightness: +50%),
+  "accent-1":   color.adjust($mavGreenAccentBase, $lightness: +45%),
+  "accent-2":   color.adjust($mavGreenAccentBase, $lightness: +30%),
+  "accent-3":   color.adjust($mavGreenAccentBase, $lightness: +15%),
+  "accent-4":   $mavGreenAccentBase
+);
+
+$mavOrange: (
+  "darken-5":  color.adjust($mavOrangeBase, $lightness: -50%),
+  "darken-4":  color.adjust($mavOrangeBase, $lightness: -40%),
+  "darken-3":  color.adjust($mavOrangeBase, $lightness: -30%),
+  "darken-2":  color.adjust($mavOrangeBase, $lightness: -20%),
+  "darken-1":  color.adjust($mavOrangeBase, $lightness: -10%),
+  "base":       $mavOrangeBase,
+  "lighten-1":  color.adjust($mavOrangeBase, $lightness: +10%),
+  "lighten-2":  color.adjust($mavOrangeBase, $lightness: +20%),
+  "lighten-3":  color.adjust($mavOrangeBase, $lightness: +30%),
+  "lighten-4":  color.adjust($mavOrangeBase, $lightness: +40%),
+  "lighten-5":  color.adjust($mavOrangeBase, $lightness: +50%),
+  "accent-1":   color.adjust($mavOrangeAccentBase, $lightness: +45%),
+  "accent-2":   color.adjust($mavOrangeAccentBase, $lightness: +30%),
+  "accent-3":   color.adjust($mavOrangeAccentBase, $lightness: +15%),
+  "accent-4":   $mavOrangeAccentBase
+);
+
+$mavPurple: (
+  "darken-5":  color.adjust($mavPurpleBase, $lightness: -50%),
+  "darken-4":  color.adjust($mavPurpleBase, $lightness: -40%),
+  "darken-3":  color.adjust($mavPurpleBase, $lightness: -30%),
+  "darken-2":  color.adjust($mavPurpleBase, $lightness: -20%),
+  "darken-1":  color.adjust($mavPurpleBase, $lightness: -10%),
+  "base":       $mavPurpleBase,
+  "lighten-1":  color.adjust($mavPurpleBase, $lightness: +10%),
+  "lighten-2":  color.adjust($mavPurpleBase, $lightness: +20%),
+  "lighten-3":  color.adjust($mavPurpleBase, $lightness: +30%),
+  "lighten-4":  color.adjust($mavPurpleBase, $lightness: +40%),
+  "lighten-5":  color.adjust($mavPurpleBase, $lightness: +50%),
+  "accent-1":   color.adjust($mavPurpleAccentBase, $lightness: +45%),
+  "accent-2":   color.adjust($mavPurpleAccentBase, $lightness: +30%),
+  "accent-3":   color.adjust($mavPurpleAccentBase, $lightness: +15%),
+  "accent-4":   $mavPurpleAccentBase
+);
+
+$mavYellow: (
+  "darken-5":  color.adjust($mavYellowBase, $lightness: -50%),
+  "darken-4":  color.adjust($mavYellowBase, $lightness: -40%),
+  "darken-3":  color.adjust($mavYellowBase, $lightness: -30%),
+  "darken-2":  color.adjust($mavYellowBase, $lightness: -20%),
+  "darken-1":  color.adjust($mavYellowBase, $lightness: -10%),
+  "base":       $mavYellowBase,
+  "lighten-1":  color.adjust($mavYellowBase, $lightness: +10%),
+  "lighten-2":  color.adjust($mavYellowBase, $lightness: +20%),
+  "lighten-3":  color.adjust($mavYellowBase, $lightness: +30%),
+  "lighten-4":  color.adjust($mavYellowBase, $lightness: +40%),
+  "lighten-5":  color.adjust($mavYellowBase, $lightness: +50%),
 );
 
 $mavGrey: (
-  "base":       rgba(158, 158, 158, $transLevel),
-  "lighten-5":  rgba(250, 250, 250, $transLevel),
-  "lighten-4":  rgba(245, 245, 245, $transLevel),
-  "lighten-3":  rgba(238, 238, 238, $transLevel),
-  "lighten-2":  rgba(224, 224, 224, $transLevel),
-  "lighten-1":  rgba(189, 189, 189, $transLevel),
-  "darken-1":   rgba(117, 117, 117, $transLevel),
-  "darken-2":   rgba(97, 97, 97, $transLevel),
-  "darken-3":   rgba(66, 66, 66, $transLevel),
-  "darken-4":   rgba(33, 33, 33, $transLevel)
+  "darken-5":  color.adjust($mavGreyBase, $lightness: -50%),
+  "darken-4":  color.adjust($mavGreyBase, $lightness: -40%),
+  "darken-3":  color.adjust($mavGreyBase, $lightness: -30%),
+  "darken-2":  color.adjust($mavGreyBase, $lightness: -20%),
+  "darken-1":  color.adjust($mavGreyBase, $lightness: -10%),
+  "base":       $mavGreyBase,
+  "lighten-1":  color.adjust($mavGreyBase, $lightness: +10%),
+  "lighten-2":  color.adjust($mavGreyBase, $lightness: +20%),
+  "lighten-3":  color.adjust($mavGreyBase, $lightness: +30%),
+  "lighten-4":  color.adjust($mavGreyBase, $lightness: +40%),
+  "lighten-5":  color.adjust($mavGreyBase, $lightness: +50%),
 );
 
 $mavColors: (
@@ -107,5 +149,6 @@ $mavColors: (
   "mavred": $mavRed,
   "mavpurple": $mavPurple,
   "mavgreen": $mavGreen,
+  "mavyellow": $mavYellow,
   "mavgrey": $mavGrey
 );

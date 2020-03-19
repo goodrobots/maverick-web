@@ -74,7 +74,7 @@ div
         template(v-slot:activator="{ on }")
           v-btn.mx-3(:color="navColor" small v-on="on") {{ moduleName | capitalize }}
         v-list
-          v-list-item(v-for="(data, key) in $store.state.data.modules" v-if="data.enabled == true" :key="key" :color="data.color")
+          v-list-item(v-for="(data, key) in $store.state.core.modules" v-if="data.enabled == true" :key="key" :color="data.color")
             v-btn(:color="data.color" :to="'/' + key" block) {{ key | capitalize }}
                   v-icon(right) {{ data.icon }}
 

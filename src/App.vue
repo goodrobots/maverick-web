@@ -1,6 +1,6 @@
 <template lang='pug'>
 div#fullscreen
-  v-app(:dark="darkUi")
+  v-app
     action-button(v-if="this.moduleName !== 'home'")
     top-nav(v-if="navState")
     v-fade-transition(mode="out-in")
@@ -66,8 +66,8 @@ export default {
           this.$store.commit('data/setModuleName', 'home')
           this.$store.commit('data/setNavDrawer', false)
       }
-      if (this.$store.state.data.moduleName in this.$store.state.data.modules) {
-        this.$store.commit('data/setNavColor', this.$store.state.data.modules[this.$store.state.data.moduleName].color)
+      if (this.$store.state.data.moduleName in this.$store.state.core.modules) {
+        this.$store.commit('data/setNavColor', this.$store.state.core.modules[this.$store.state.data.moduleName].color)
       }
       return this.$store.state.data.moduleName
     },

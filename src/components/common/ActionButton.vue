@@ -7,7 +7,7 @@ v-card.transparent.navfab
         v-icon(v-if="navfab") mdi-close
         v-icon(v-else v-html="navIcon")
     // Create icon for each enabled module
-    template(v-for="(data, key) in $store.state.data.modules" v-if="data.enabled == true")
+    template(v-for="(data, key) in $store.state.core.modules" v-if="data.enabled == true")
       v-tooltip(v-if="(moduleName !== key)" left)
         template(v-slot:activator="{ on }")
           v-btn(fab dark :small="(moduleName !== key)" :color="data.color" :to="'/' + key" v-on="on")

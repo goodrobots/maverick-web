@@ -1,5 +1,5 @@
 <template lang='pug'>
-v-container.fluid.grid-list-xl
+v-container(fluid)
   v-layout.row.wrap
     // Overview Card
     v-flex.xs12.sm6.md6

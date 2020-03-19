@@ -11,7 +11,39 @@ const state = {
   vehicleData: {},
   serviceData: {},
   activeApi: null,
-  graphqlSchema: {}
+  graphqlSchema: {},
+  modules: {
+    'cockpit': {
+      'color': 'mavorange',
+      'icon': 'mdi-airplane-takeoff',
+      'enabled': false
+    },
+    'planner': {
+      'color': 'mavblue',
+      'icon': 'mdi-map-marker-circle',
+      'enabled': false
+    },
+    'config': {
+      'color': 'mavpurple',
+      'icon': 'mdi-cog-outline',
+      'enabled': true
+    },
+    'analysis': {
+      'color': 'mavgreen',
+      'icon': 'mdi-equalizer',
+      'enabled': false
+    },
+    'maverick': {
+      'color': 'mavred',
+      'icon': 'mdi-console',
+      'enabled': true
+    },
+    'video': {
+      'color': 'mavyellow',
+      'icon': 'mdi-video',
+      'enabled': true
+    }
+  }
 }
 
 const actions = {

@@ -1,5 +1,5 @@
 <template lang='pug'>
-v-bottom-nav(app fixed :color="navColor" :value="navState")
+v-bottom-navigation(app fixed :color="navColor" :value="navState")
   v-btn.mt-1(to="/") Home
     v-icon home
   v-btn.mt-1(to="/cockpit") Cockpit
