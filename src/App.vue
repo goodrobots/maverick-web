@@ -56,7 +56,7 @@ export default {
           break
         case /^\/video/.test(this.$store.state.route.path):
           this.$store.commit('core/setModuleName', 'video')
-          this.$store.commit('core/setNavDrawerEnable', false)
+          this.$store.commit('core/setNavDrawerEnable', true)
           break
         default:
           this.$store.commit('core/setModuleName', 'home')
