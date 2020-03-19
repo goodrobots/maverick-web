@@ -1,7 +1,7 @@
 <template lang='pug'>
 v-card
   v-toolbar(:color="navColor" dense)
-    v-toolbar-title Modules - Activate / Deactivate
+    v-toolbar-title Web Modules
   v-container
     v-row(v-for="(data, key) in $store.state.core.modules" :key="key")
       v-switch.mx-4(v-model="$store.state.data.modulesActive[key]" :color="data.color" :disabled="!data.enabled || key=='config'")

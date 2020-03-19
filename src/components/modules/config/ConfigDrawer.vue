@@ -9,11 +9,11 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+
     v-list-item.mt-3(@click="" to="/config/video")
       v-list-item-action
         v-icon mdi-video
-      v-list-item-title Video
+      v-list-item-title Video Streams
     v-list-item.mt-3(@click="" to="/config/modules")
       v-list-item-action
         v-icon mdi-view-module
-      v-list-item-title Modules
+      v-list-item-title Web Modules
 
   // v-list(v-if="activeApi" dense)
     v-subheader.mt-3.grey--text.text--darken-1 FLIGHT CONTROLLER
