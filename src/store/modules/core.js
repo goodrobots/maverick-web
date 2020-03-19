@@ -23,7 +23,7 @@ const state = {
       'enabled': false
     },
     'planner': {
-      'color': 'mavblue',
+      'color': 'mavyellow',
       'icon': 'mdi-map-marker-circle',
       'enabled': false
     },
@@ -43,7 +43,7 @@ const state = {
       'enabled': true
     },
     'video': {
-      'color': 'mavyellow',
+      'color': 'mavblue',
       'icon': 'mdi-video',
       'enabled': true
     }

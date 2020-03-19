@@ -1,5 +1,5 @@
 <template lang='pug'>
-v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+' darken-3'")
+v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+' darken-4'")
   v-list-item.mt-4
     v-list-item-content
       v-list-item-title.title

@@ -18,8 +18,10 @@ div
                   span {{ stream.name }}
                   v-spacer
                   v-switch(color='green' v-model='stream.enabled' :label="(stream.enabled) ? 'Enabled' : 'Disabled'")               
-          v-alert(v-if="!Object.keys(videostreams).length" border="left" type="warning")
-            span No Video Streams are defined.  Please define a video stream in <v-btn small to='/config/video'>Config->Video</v-btn>
+    v-container
+      v-card.mx-auto.mt-2
+        v-alert(v-if="!Object.keys(videostreams).length" border="left" type="info")
+          span No Video Streams are defined.  Please define a video stream in <v-btn class="ma-2" :color="navColor+' darken-2'" small to='/config/video'>Config->Video</v-btn>
     v-container.px-2(fluid)
         v-row(dense)
           v-col.px-4(v-for="stream in videostreams" :key='stream.key' v-if="stream.enabled" xs=12 sm=12 md=12 lg=6 xl=6)

@@ -1,7 +1,7 @@
 <template lang='pug'>
 div
   transition(name="slide-y-transition" mode="out-in")
-    v-app-bar(app flat fixed dense clipped-left :color="navColor+' darken-3'" height=48)
+    v-app-bar(app flat fixed dense clipped-left :color="navColor+' darken-4'" height=48)
       v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" text left small to="/"): img(:src="publicPath + 'img/logos/maverick-logo-white.svg'" height='35px')
       v-spacer
       v-toolbar-items
