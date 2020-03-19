@@ -50,27 +50,27 @@ module.exports = {
 
   // configure webpack-dev-server behavior
   devServer: {
-    open: false,
-    compress: true,
-    host: '0.0.0.0',
-    // public: 'http://<public-fqdn>:6794',
-    disableHostCheck: true,
-    port: 6794,
-    https: false,
-    hotOnly: true,
-    overlay: {
-      warnings: true,
-      errors: true
-    },
-    proxy: null,
     before: app => {},
     clientLogLevel: 'warning',
-    inline: true,
+    compress: true,
+    host: '0.0.0.0',
+    public: 'http://0.0.0.0:6794',
+    disableHostCheck: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
       'Access-Control-Allow-Headers':
         'X-Requested-With, content-type, Authorization'
-    }
+    },
+    https: false,
+    hotOnly: true,
+    inline: true,
+    open: false,
+    overlay: {
+      warnings: true,
+      errors: true
+    },
+    port: 6794,
+    proxy: null
   },
 }
