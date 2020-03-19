@@ -22,10 +22,6 @@ export default new Router({
       component: HomeModule
     },
     {
-      path: '/test',
-      component: () => import(/* webpackMode: "lazy", webpackChunkName: "TestModule" */ '../components/modules/test/TestModule')
-    },
-    {
       path: '/video',
       component: () => import(/* webpackMode: "lazy", webpackChunkName: "VideoModule" */ '../components/modules/video/VideoModule')
     },

@@ -50,10 +50,6 @@ export default {
           this.$store.commit('data/setModuleName', 'analysis')
           this.$store.commit('data/setNavDrawer', false)
           break
-        case /^\/test/.test(this.$store.state.route.path):
-          this.$store.commit('data/setModuleName', 'test')
-          this.$store.commit('data/setNavDrawer', false)
-          break
         case /^\/maverick/.test(this.$store.state.route.path):
           this.$store.commit('data/setModuleName', 'maverick')
           this.$store.commit('data/setNavDrawer', false)
@@ -72,7 +68,7 @@ export default {
       return this.$store.state.data.moduleName
     },
     navState () {
-      return this.moduleName === 'home' || this.moduleName === 'test' ? false : this.$store.state.data.navState // Return false if home screen, otherwise from vuex state
+      return this.moduleName === 'home' ? false : this.$store.state.data.navState // Return false if home screen, otherwise from vuex state
     }
   },
 
