@@ -36,22 +36,22 @@ jobs:
         uses: drud/action-cross-commit@master
         with:
           source-folder: dist
-          destination-repository: https://samueldudley:${{ secrets.ACCESS_TOKEN }}@github.com/goodrobots/maverick-web-dist
+          destination-repository: https://goodro-bot:${{ secrets.ACCESS_TOKEN }}@github.com/goodrobots/maverick-web-dist
           destination-folder: .
           destination-branch: master
-          git-user: "samueldudley" 
-          git-user-email: dudley.samuel@gmail.com
+          git-user: "goodro-bot" 
+          git-user-email: goodrobots.bot@gmail.com
           excludes: README.md:.git:LICENSE
       - name: Commit to maverick-web-dist stable
         if: github.ref == 'refs/heads/stable'
         uses: drud/action-cross-commit@master
         with:
           source-folder: dist
-          destination-repository: https://samueldudley:${{ secrets.ACCESS_TOKEN }}@github.com/goodrobots/maverick-web-dist
+          destination-repository: https://goodro-bot:${{ secrets.ACCESS_TOKEN }}@github.com/goodrobots/maverick-web-dist
           destination-folder: .
           destination-branch: stable
-          git-user: "samueldudley" 
-          git-user-email: dudley.samuel@gmail.com
+          git-user: "goodro-bot" 
+          git-user-email: goodrobots.bot@gmail.com
           excludes: README.md:.git:LICENSE
       - name: Create distribution artifact zip (tag only)
         if: startsWith(github.ref, 'refs/tags/v')
