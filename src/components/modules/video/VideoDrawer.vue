@@ -12,7 +12,7 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+
       v-list-item-subtitle
         span Stream Control
   v-divider
-  v-list(v-if="!Object.keys(videostreams).length" flat three-line)
+  v-list(v-if="Object.keys(videostreams).length" flat three-line)
     v-list-item(v-for="stream in videostreams" :key="stream.key")
       template(v-slot:default="{ active }")
         v-list-item-action
@@ -20,7 +20,7 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+
         v-list-item-content
           v-list-item-title {{ stream.name }}
           v-list-item-subtitle {{ stream.webrtcEndpoint }}
-  v-list
+  v-list(v-else)
     v-list-item
       v-list-item-content
         v-alert(outlined type="info")
