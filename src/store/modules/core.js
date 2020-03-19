@@ -7,6 +7,10 @@ import axios from 'axios'
 
 const state = {
   apiState: {},
+  navColor: null,
+  navDrawer: null,
+  navDrawerEnable: true,
+  moduleName: null,
   statusData: {},
   vehicleData: {},
   serviceData: {},
@@ -102,6 +106,18 @@ const mutations = {
   },
   setApiAuth (state, data) {
     state.apiState[data.api].auth = data.value
+  },
+  setModuleName (state, value) {
+    state.moduleName = value
+  },
+  setNavColor (state, color) {
+    state.navColor = color
+  },
+  setNavDrawer (state, value) {
+    state.navDrawer = value
+  },
+  setNavDrawerEnable (state, value) {
+    state.navDrawerEnable = value
   },
   setStatusData (state, data) {
     if (data.api in state.statusData) {

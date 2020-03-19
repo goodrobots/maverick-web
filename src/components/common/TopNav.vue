@@ -1,8 +1,7 @@
 <template lang='pug'>
 div
   transition(name="slide-y-transition" mode="out-in")
-    // v-toolbar(app fixed dense flat clipped-left color="mavgrey darken-4" :height=48)
-    v-app-bar(app flat fixed dense clipped-left color="mavgrey darken-4" height=48)
+    v-app-bar(app flat fixed dense clipped-left :color="navColor+' darken-3'" height=48)
       v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" text left small to="/"): img(:src="publicPath + 'img/logos/maverick-logo-white.svg'" height='35px')
       v-spacer
       v-toolbar-items
@@ -22,6 +21,7 @@ div
                 v-list-item-content(v-if="message")
                   v-list-item-title(v-text="message.message")
                   v-list-item-subtitle(v-text="(fcTime - message.secs > 60) ? Math.round((fcTime - message.secs) / 60) + ' minutes ago' : fcTime - message.secs + ' seconds ago'")
+
         // Armed/Disarmed button
         v-btn(v-if="vehicleStateData[activeApi] && vehicleStateData[activeApi].armed" color="yellow" text) ARMED
         v-btn.transparent(v-else-if="vehicleStateData[activeApi]" text) DISARMED
@@ -53,22 +53,6 @@ div
               v-list-item-title {{ data.name }}
             v-icon(right v-if="apis[key].state" color='green' small) mdi-check-circle-outline
             v-icon(right v-else color='red' small) mdi-alert-circle-outline
-          // v-list-item(v-for="(data, key) in vehicleData" :key="key" @click='changeApi(key)')
-            v-list-item-avatar
-              v-img(v-if="apis[key] && apis[key].icon" :src="publicPath + apis[key].icon" contain=true)
-            v-list-item-content
-              v-list-item-title {{ apis[key].name }}
-            v-icon(v-if="apis[key].state" color='success' small) mdi-checkbox-marked
-            v-icon(v-else color='error' small) mdi-block-helper
-              //v-list-item-sub-title
-                template(v-if="apis[key].state")
-                  div
-                    v-icon(v-if="apis[key].state" color='success' small) mdi-checkbox-marked
-                    span &nbsp; Good Link
-                template(v-else-if="!apis[key].state")
-                  div
-                    v-icon(color='error' small) mdi-block-helper
-                    span &nbsp; No Link
 
       v-menu(offset-y transition="scale-transition" left=true nudge-bottom="10")
         template(v-slot:activator="{ on }")
@@ -79,7 +63,7 @@ div
                   v-icon(right) {{ data.icon }}
 
       v-fade-transition(mode="out-in")
-        v-app-bar-nav-icon(v-if="navDrawer" @click.stop="toggleDrawer")
+        v-app-bar-nav-icon(v-if="navDrawerEnable" @click.stop="toggleDrawer")
 
   v-snackbar(v-if="statusText" :timeout="6000" color="red" :top="true" v-model="snackbar") {{ statusText.message }}
     v-btn(text @click.native="snackbar = false") CLOSE
@@ -194,7 +178,7 @@ export default {
       this.tickers.vfrHud = true
     },
     toggleDrawer () {
-      this.$store.commit('data/setNavDrawer', !this.$store.state.data.navDrawer)
+      this.$store.commit('core/setNavDrawer', !this.navDrawer)
     }
   }
 

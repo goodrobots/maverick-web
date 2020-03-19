@@ -5,11 +5,8 @@ import Vue from 'vue'
 const state = {
   apis: {},
   darkUi: true,
-  navDrawer: true,
-  navColor: null,
   navState: true,
   navIcon: false,
-  moduleName: null,
   bingMapsKey: 'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6',
   videostreams: {},
   modulesActive: {
@@ -35,20 +32,11 @@ const mutations = {
   setDarkUi (state, value) {
     state.darkUi = value
   },
-  setNavColor (state, color) {
-    state.navColor = color
-  },
   setNavIcon (state, value) {
     state.navIcon = value
   },
-  setNavDrawer (state, value) {
-    state.navDrawer = value
-  },
   setNavState (state, value) {
     state.navState = value
-  },
-  setModuleName (state, value) {
-    state.moduleName = value
   },
   addVideoStream (state, data) {
     Vue.set(state.videostreams, data.key, data.data)

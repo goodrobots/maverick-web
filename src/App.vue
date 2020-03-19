@@ -1,7 +1,7 @@
 <template lang='pug'>
 div#fullscreen
   v-app
-    action-button(v-if="this.moduleName !== 'home'")
+    action-button(v-if="moduleName !== 'home'")
     top-nav(v-if="navState")
     v-fade-transition(mode="out-in")
       // cache the planner module to prevent from being destroyed on component change
@@ -35,37 +35,37 @@ export default {
     moduleName () {
       switch (true) {
         case /^\/cockpit/.test(this.$store.state.route.path):
-          this.$store.commit('data/setModuleName', 'cockpit')
-          this.$store.commit('data/setNavDrawer', false)
+          this.$store.commit('core/setModuleName', 'cockpit')
+          this.$store.commit('core/setNavDrawerEnable', false)
           break
         case /^\/planner/.test(this.$store.state.route.path):
-          this.$store.commit('data/setModuleName', 'planner')
-          this.$store.commit('data/setNavDrawer', false)
+          this.$store.commit('core/setModuleName', 'planner')
+          this.$store.commit('core/setNavDrawerEnable', false)
           break
         case /^\/config/.test(this.$store.state.route.path):
-          this.$store.commit('data/setModuleName', 'config')
-          this.$store.commit('data/setNavDrawer', true)
+          this.$store.commit('core/setModuleName', 'config')
+          this.$store.commit('core/setNavDrawerEnable', true)
           break
         case /^\/analysis/.test(this.$store.state.route.path):
-          this.$store.commit('data/setModuleName', 'analysis')
-          this.$store.commit('data/setNavDrawer', false)
+          this.$store.commit('core/setModuleName', 'analysis')
+          this.$store.commit('core/setNavDrawerEnable', false)
           break
         case /^\/maverick/.test(this.$store.state.route.path):
-          this.$store.commit('data/setModuleName', 'maverick')
-          this.$store.commit('data/setNavDrawer', false)
+          this.$store.commit('core/setModuleName', 'maverick')
+          this.$store.commit('core/setNavDrawerEnable', false)
           break
         case /^\/video/.test(this.$store.state.route.path):
-          this.$store.commit('data/setModuleName', 'video')
-          this.$store.commit('data/setNavDrawer', false)
+          this.$store.commit('core/setModuleName', 'video')
+          this.$store.commit('core/setNavDrawerEnable', false)
           break
         default:
-          this.$store.commit('data/setModuleName', 'home')
-          this.$store.commit('data/setNavDrawer', false)
+          this.$store.commit('core/setModuleName', 'home')
+          this.$store.commit('core/setNavDrawerEnable', false)
       }
-      if (this.$store.state.data.moduleName in this.$store.state.core.modules) {
-        this.$store.commit('data/setNavColor', this.$store.state.core.modules[this.$store.state.data.moduleName].color)
+      if (this.$store.state.core.moduleName in this.$store.state.core.modules) {
+        this.$store.commit('core/setNavColor', this.$store.state.core.modules[this.$store.state.core.moduleName].color)
       }
-      return this.$store.state.data.moduleName
+      return this.$store.state.core.moduleName
     },
     navState () {
       return this.moduleName === 'home' ? false : this.$store.state.data.navState // Return false if home screen, otherwise from vuex state

@@ -1,5 +1,5 @@
 <template lang='pug'>
-v-navigation-drawer(app left clipped fixed v-model="drawer")
+v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+' darken-3'")
   v-list(dense)
     v-subheader.mt-3.grey--text.text--darken-1 GENERAL CONFIG
     v-list-item.mt-3(@click="" to="/config/connections")
@@ -40,10 +40,10 @@ export default {
   computed: {
     drawer: {
       get () {
-        return this.$store.state.data.navDrawer
+        return this.$store.state.core.navDrawer
       },
       set (value) {
-        this.$store.commit('data/setNavDrawer', value)
+        this.$store.commit('core/setNavDrawer', value)
       }
     }
   },

@@ -67,7 +67,7 @@ export default {
   computed: {
     // Global states
     navState () {
-      return this.$store.state.navState
+      return this.$store.state.data.navState
     },
     fullScreen () {
       return this.$store.state.fullScreen
@@ -86,7 +86,7 @@ export default {
   },
   methods: {
     toggleNavState () {
-      this.$store.commit('setNavState', !this.navState)
+      this.$store.commit('data/setNavState', !this.navState)
     },
     toggleFullScreen () {
       this.$store.commit('setFullScreen', !this.fullScreen)

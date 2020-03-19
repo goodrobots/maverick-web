@@ -40,16 +40,19 @@ const plugin = {
           return this.$store.state.data.darkUi
         },
         moduleName () {
-          return this.$store.state.data.moduleName
+          return this.$store.state.core.moduleName
         },
         navColor () {
-          return this.$store.state.data.navColor
+          return this.$store.state.core.navColor
         },
         navIcon () {
           return this.$store.state.core.modules[this.moduleName].icon
         },
         navDrawer () {
-          return this.$store.state.data.navDrawer
+          return this.$store.state.core.navDrawer
+        },
+        navDrawerEnable () {
+          return this.$store.state.core.navDrawerEnable
         },
         vehicleData () {
           return this.$store.state.core.vehicleData
