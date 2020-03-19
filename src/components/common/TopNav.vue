@@ -41,7 +41,7 @@ div
 
       v-spacer
 
-      v-menu(offset-y transition="scale-transition" left=true nudge-bottom="10")
+      // v-menu(offset-y transition="scale-transition" left=true nudge-bottom="10")
         template(v-slot:activator="{ on }")
           v-btn(v-if="activeApi" small v-on="on" v-text="apis[activeApi]['name']")
           v-btn.text--blue-grey.lighten-5(v-else small v-on="on") No Active API
