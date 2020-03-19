@@ -3,15 +3,21 @@ div
   v-data-iterator(:items="items" item-key="name" hide-default-footer :single-expand="expand")
 
     template(v-slot:header)
-      v-toolbar.mb-1(:color="navColor" dark flat)
+      v-toolbar.mb-1(:color="navColor" dark dense)
         v-toolbar-title Video Streams
         v-spacer
-        v-text-field(v-model="search" clearable flat solo-inverted hide-details prepend-inner-icon="mdi-magnify" label="Search")
+        // v-text-field(v-model="search" clearable flat solo-inverted hide-details prepend-inner-icon="mdi-magnify" label="Search")
         v-spacer
-        v-btn(light @click.stop="dialog = true")
+        v-btn(@click.stop="dialog = true" :color="navColor+' darken-2'")
           v-icon(left) mdi-plus-box
           span Add Video Stream
     
+    template(v-slot:no-data)
+      v-alert.ma-8(border="left" type="info")
+        span No Video Streams are defined.  Please add one: 
+          v-btn(@click.stop="dialog = true" :color="navColor+' darken-2'" small)
+            span Add Video Stream
+
     template(v-slot:default="{ items, isExpanded, expand }")
       v-row
         v-col(v-for="item in items" :key="item.name" cols="12" sm="12" md="12" lg="12")
@@ -21,8 +27,6 @@ div
               v-spacer
               v-switch.mt-4(:color="navColor" :input-value="isExpanded(item)" :label="isExpanded(item) ? 'Editing' : 'Edit'" @change="(v) => expand(item, v)")
           v-list(v-if="isExpanded(item)" dense)
-            v-list-item
-              v-divider
             v-list-item
               v-list-item-content
                 v-text-field(v-model="item.name" label="Stream Name/Description")
@@ -35,7 +39,7 @@ div
               v-divider
             v-list-item
               v-btn(color='green' @click="save(item)") Save
-              v-btn.ml-4(color='blue') Test
+              // v-btn.ml-4(color='blue') Test
               v-spacer
               v-btn(color='red' @click="remove(item)")
                 v-icon(left) mdi-delete
@@ -112,7 +116,7 @@ export default {
         name: this.newitem.name,
         webrtcEndpoint: `${protocol}://${this.newitem.hostname}:${this.newitem.port}`,
         enabled: false,
-        action: start
+        action: 'start'
       }
       this.$store.commit('data/addVideoStream', {key: data.key, data: data})
     },
