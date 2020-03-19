@@ -23,15 +23,15 @@ const state = {
       'icon': 'mdi-map-marker-circle',
       'enabled': false
     },
-    'config': {
-      'color': 'mavpurple',
-      'icon': 'mdi-cog-outline',
-      'enabled': true
-    },
     'analysis': {
       'color': 'mavgreen',
       'icon': 'mdi-equalizer',
       'enabled': false
+    },
+    'config': {
+      'color': 'mavpurple',
+      'icon': 'mdi-cog-outline',
+      'enabled': true
     },
     'maverick': {
       'color': 'mavred',

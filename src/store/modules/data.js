@@ -11,7 +11,15 @@ const state = {
   navIcon: false,
   moduleName: null,
   bingMapsKey: 'AgXa-GFmIi0y2SeDifLy5FsDF2V6cVINsnrAT9RtBLdsOGkStZSXL_MBwATgvyO6',
-  videostreams: {}
+  videostreams: {},
+  modulesActive: {
+    'cockpit': false,
+    'planner': false,
+    'analysis': false,
+    'config': true,
+    'maverick': true,
+    'video': true
+  }
 }
 
 const mutations = {

@@ -6,7 +6,7 @@ v-content
       v-row.mb-4(align='center' justify='center')
         img.front-gr-logo(:src="publicPath + 'img/logos/maverick-logo-complete-white.svg'" height="250px")
       v-row(align='center' justify='center')
-        v-col(v-for="(data, key) in $store.state.core.modules" v-if="data.enabled == true" :key="key" :color="data.color" cols='12' xs='12' sm='6' md='4' lg='3' xl='2')
+        v-col(v-for="(data, key) in $store.state.core.modules" v-if="$store.state.data.modulesActive[key] == true" :key="key" :color="data.color" cols='12' xs='12' sm='6' md='4' lg='3' xl='2')
           v-btn(:color="data.color" :to="'/' + key" block)
             span {{ key | capitalize }}
             v-icon(right) {{ data.icon }}
