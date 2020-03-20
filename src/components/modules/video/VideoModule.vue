@@ -87,9 +87,9 @@ export default {
     },
     enabledStreams () {
       let _enabled = {}
-      for (const stream in this.$store.state.data.videostreams) {
-        if (stream.enabled) {
-          _enabled[stream.key] = stream
+      for (const stream in this.videostreams) {
+        if (this.videostreams[stream].enabled) {
+          _enabled[this.videostreams[stream].key] = this.videostreams[stream]
         }
       }
       return _enabled
