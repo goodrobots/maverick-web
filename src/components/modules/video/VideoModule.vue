@@ -90,12 +90,9 @@ export default {
       let _enabled = {}
       for (const stream in this.$store.state.data.videostreams) {
         if (stream.enabled) {
-          console.log(stream)
           _enabled[stream.key] = stream
         }
       }
-      console.log(this.$store.state.data.videostreams)
-      console.log(_enabled)
       return _enabled
     }
   },
@@ -132,7 +129,6 @@ export default {
       this.activeStream = stream
     },
     cleanBitrate (bitrate) {
-      // console.log(bitrate)
       if (bitrate / 1000 < 1000) {
         return Math.round(bitrate / 1000) + ' K'
       } else {
