@@ -6,7 +6,6 @@ div
       v-card.mx-auto.mt-2
         v-alert(border="left" type="info")
           span No Video Streams are defined.  Please define a video stream in <v-btn class="ma-2" :color="navColor+' darken-2'" small to='/config/video'>Config->Video</v-btn>
-    // v-container(v-if="!Object.keys(videostreams).length")
     v-container(v-if="!Object.keys(enabledStreams).length")
       v-card.mx-auto.mt-2
         v-alert(border="left" type="info")
