@@ -31,7 +31,7 @@ const plugin = {
           return this.$store.state.core.apiState
         },
         activeApi () {
-          return this.$store.state.core.activeApi
+          return this.$store.state.data.activeApi
         },
         services () {
           return this.$store.state.core.serviceData

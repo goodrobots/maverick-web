@@ -325,7 +325,7 @@ export default {
     selectedFeatures (newValue, oldValue) {
       // If a vehicle is selected, change the active API
       if (newValue.length > 0 && newValue[0].id && newValue[0].id.startsWith('v_')) {
-        this.$store.commit('core/setActiveApi', newValue[0].id.replace('v_', ''))
+        this.$store.commit('data/setActiveApi', newValue[0].id.replace('v_', ''))
 
       // If a waypoint is selected, ...
       } else if (newValue.length === 1 && newValue[0].id && newValue[0].id.startsWith('w_')) {

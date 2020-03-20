@@ -14,7 +14,6 @@ const state = {
   statusData: {},
   vehicleData: {},
   serviceData: {},
-  activeApi: null,
   graphqlSchema: {},
   modules: {
     'cockpit': {
@@ -89,9 +88,6 @@ const getters = {
 }
 
 const mutations = {
-  setActiveApi (state, api) {
-    state.activeApi = api
-  },
   addApiState (state, api) {
     Vue.set(state.apiState, api, {state: false, schemaready: false, auth: false, uuid: null, icon: null, lastseen: null})
   },

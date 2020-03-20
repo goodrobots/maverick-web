@@ -37,7 +37,7 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+
 
   v-spacer
 
-  template(v-if="activeApi")
+  // template(v-if="activeApi")
     v-list-item
       v-list-item-content
         v-list-item-subtitle

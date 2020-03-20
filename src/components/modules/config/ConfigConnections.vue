@@ -25,10 +25,10 @@ div
             v-toolbar
               v-toolbar-title
                 span {{ item.name }}
-                v-chip.ma-2(v-if="isApiReady(item.key)" color='green' small)
+                v-chip.ma-2(v-if="isApiReady(item.key)" color='success' small)
                   v-icon(left) mdi-check-circle
                   span Connected
-                v-chip.ma-2(v-else color='red' small)
+                v-chip.ma-2(v-else color='error' small)
                   v-icon(left) mdi-alert-circle
                   span Not Connected
               v-spacer
@@ -42,19 +42,15 @@ div
                       v-list-item
                         v-list-item-content
                           v-text-field(v-model="item.name" label="API Name/Description")
-                        // v-list-item-content.align-end
                       v-list-item
                         v-list-item-content
                           v-text-field(v-model="item.httpEndpoint" label="GraphQL Endpoint")
-                        // v-list-item-content.align-end
                       v-list-item
                         v-list-item-content
                           v-text-field(v-model="item.wsEndpoint" label="Websockets Endpoint")
-                        // v-list-item-content.align-end
                       v-list-item
                         v-list-item-content
                           v-text-field(v-model="item.schemaEndpoint" label="Schema Endpoint")
-                        // v-list-item-content.align-end
                       v-list-item
                         v-divider
                       v-list-item

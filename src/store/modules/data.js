@@ -3,6 +3,7 @@
 import Vue from 'vue'
 
 const state = {
+  activeApi: null,
   apis: {},
   darkUi: true,
   navState: true,
@@ -23,11 +24,20 @@ const mutations = {
   addApi (state, data) {
     Vue.set(state.apis, data.key, data.data)
   },
-  setApiData (state, data) {
-    state.apis[data.api] = data.data
+  addVideoStream (state, data) {
+    Vue.set(state.videostreams, data.key, data.data)
   },
   removeApi (state, key) {
     Vue.delete(state.apis, key)
+  },
+  removeVideoStream (state, key) {
+    Vue.delete(state.videostreams, key)
+  },
+  setActiveApi (state, api) {
+    state.activeApi = api
+  },
+  setApiData (state, data) {
+    state.apis[data.api] = data.data
   },
   setDarkUi (state, value) {
     state.darkUi = value
@@ -38,14 +48,8 @@ const mutations = {
   setNavState (state, value) {
     state.navState = value
   },
-  addVideoStream (state, data) {
-    Vue.set(state.videostreams, data.key, data.data)
-  },
   updateVideoStream (state, data) {
     state.videostreams[data.key] = data.data
-  },
-  removeVideoStream (state, key) {
-    Vue.delete(state.videostreams, key)
   }
 }
 

@@ -2,27 +2,16 @@
 div
   video-drawer
   v-content
-    // v-container
+    v-container(v-if="!Object.keys(videostreams).length")
       v-card.mx-auto.mt-2
-        v-toolbar(:color="navColor" dense)
-          v-toolbar-title Video Streams
-          v-spacer
-          v-btn(to='/config/video' :color="navColor+' darken-3'")
-            v-icon(left) mdi-cog-outline
-            span configure
-        v-container
-          v-row(dense)
-            v-col(v-for="stream in videostreams" :key="stream.key" xs=12 sm=12 md=6 lg=6 xl=6)
-              v-card(raised).mx-auto
-                v-card-title.headline
-                  span {{ stream.name }}
-                  v-spacer
-                  v-switch(color='green' v-model='stream.enabled' :label="(stream.enabled) ? 'Enabled' : 'Disabled'")               
-    v-container
-      v-card.mx-auto.mt-2
-        v-alert(v-if="!Object.keys(videostreams).length" border="left" type="info")
+        v-alert(border="left" type="info")
           span No Video Streams are defined.  Please define a video stream in <v-btn class="ma-2" :color="navColor+' darken-2'" small to='/config/video'>Config->Video</v-btn>
-    v-container.px-2(fluid)
+    // v-container(v-if="!Object.keys(videostreams).length")
+    v-container(v-if="!Object.keys(enabledStreams).length")
+      v-card.mx-auto.mt-2
+        v-alert(border="left" type="info")
+          span There are no enabled Video Streams.  Please enable a stream in <v-btn class="ma-2" :color="navColor+' darken-2'" small @click.stop="toggleDrawer">Stream Control</v-btn>
+    v-container.pa-2(fluid)
         v-row(dense)
           v-col.px-4(v-for="stream in videostreams" :key='stream.key' v-if="stream.enabled" xs=12 sm=12 md=12 lg=6 xl=6)
             v-row(justify='center' wrap :ref="'layout-'+stream.key")
@@ -96,6 +85,18 @@ export default {
   computed: {
     videostreams () {
       return this.$store.state.data.videostreams
+    },
+    enabledStreams () {
+      let _enabled = {}
+      for (const stream in this.$store.state.data.videostreams) {
+        if (stream.enabled) {
+          console.log(stream)
+          _enabled[stream.key] = stream
+        }
+      }
+      console.log(this.$store.state.data.videostreams)
+      console.log(_enabled)
+      return _enabled
     }
   },
   watch: {
@@ -146,6 +147,9 @@ export default {
 
       }
       return width
+    },
+    toggleDrawer () {
+      this.$store.commit('core/setNavDrawer', true)
     }
   }
 }
