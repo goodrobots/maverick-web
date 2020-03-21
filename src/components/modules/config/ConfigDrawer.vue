@@ -29,6 +29,11 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+
         span API Settings
   v-divider
   v-list.pt-0(dense nav)
+    v-list-item(@click="" to="/config/discovery")
+      v-list-item-icon
+        v-icon mdi-cloud-search
+      v-list-item-content
+        v-list-item-title Discovery
     v-list-item(@click="" to="/config/connections")
       v-list-item-icon
         v-icon mdi-router-wireless-settings

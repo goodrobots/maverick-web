@@ -42,12 +42,16 @@ export default new Router({
           // redirect: 'parameter-summary'
         },
         {
-          path: 'modules',
-          component: () => import(/* webpackMode: "lazy", webpackChunkName: "ConfigModules" */ '../components/modules/config/ConfigModules')
-        },
-        {
           path: 'connections',
           component: () => import(/* webpackMode: "lazy", webpackChunkName: "ConfigConnections" */ '../components/modules/config/ConfigConnections')
+        },
+        {
+          path: 'discovery',
+          component: () => import(/* webpackMode: "lazy", webpackChunkName: "ConfigDiscovery" */ '../components/modules/config/ConfigDiscovery')
+        },
+        {
+          path: 'modules',
+          component: () => import(/* webpackMode: "lazy", webpackChunkName: "ConfigModules" */ '../components/modules/config/ConfigModules')
         },
         {
           path: 'video',
