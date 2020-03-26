@@ -19,6 +19,8 @@ import { vehicleInfoQuery } from './plugins/graphql/gql/VehicleInfo.gql'
 import { maverickServiceListQuery } from './plugins/graphql/gql/MaverickServiceList.gql'
 import { maverickServicesSubscription } from './plugins/graphql/gql/MaverickService.gql'
 
+import io from "socket.io-client";
+
 export default {
   name: 'App',
   components: { BottomNav, TopNav, ActionButton },
@@ -79,13 +81,24 @@ export default {
         this.createClients()
       },
       deep: true
+    },
+    // Watch discoveries state for any change and process
+    '$store.state.data.discoveries': {
+      handler: function (newValue) {
+        this.createDiscoveries()
+      },
+      deep: true
     }
   },
 
   mounted () {
     this.logBanner('** Welcome to Maverick Web GCS **')
-    // Try to connect to the default -api client if one doesn't already exist
+    // Connect to defined APIs
     this.createClients()
+    // Create a default discovery agent if one doesn't exist
+    this.defaultDiscovery()
+    // Create websocket connections for all defined discovery agents
+    this.createDiscoveries()
   },
 
   methods: {
@@ -100,7 +113,7 @@ export default {
       }
     },
     createClients() {
-      // If there are any defined apis that don't have a corresponding client, create one
+      // Connect to all defined apis, and create basic Status query/subscription
       for (const api in this.apis) {
         if (!this.$apollo.provider.clients.hasOwnProperty(api)) {
           this.createClient(api, this.apis[api])
@@ -109,34 +122,66 @@ export default {
         this.createSubscription('Status', statusSubscription, api, null, null, this.processStatusSubscription)
       }
     },
-    /*
-    createDefaultClient() {
-      // Create a default client if it doesn't already exist
-      const hostname = window.location.hostname
-      const protocol = window.location.protocol
-      const wsprotocol = (protocol.includes("https")) ? 'wss:' : 'ws:'
-      // Port 6800 is the default Flight Controller -api port in Maverick environment4
-      const apiport = 6800
-      this.logDebug(`Creating default client:: hostname: ${hostname}, protocol: ${protocol}, wsprotocol: ${wsprotocol}`)
-      const clientData = {
-        "httpEndpoint": `${protocol}//${hostname}:${apiport}/graphql`,
-        "wsEndpoint": `${wsprotocol}//${hostname}:${apiport}/subscriptions`,
-        "schemaEndpoint": `${protocol}//${hostname}:${apiport}/schema`,
-        "websocketsOnly": false,
-        "name": "Default API",
-        "colorLight": "rgba(166,11,11,0.3)",
-        "colorDark": "rgba(166,11,11,0.9)",
-        "authToken": null
-      }
-
-      // If our persistent storage already has a definition for default, use it
-      if (this.apis['default']) {
-        this.createClient('default', this.apis['default'])
-      // Otherwise use the defaults
-      } else {
-        this.createClient('default', clientData)
+    defaultDiscovery() {
+      if (!this.$store.state.data.discoveries[window.location.hostname]) {
+        const url = 'ws://' + window.location.hostname + ':1234'
+        this.logInfo(`Creating default discovery agent: ${url}`)
+        this.$store.commit('data/addDiscovery', { key: window.location.hostname, url: url })
       }
     },
+    createDiscoveries() {
+      for (let [key, url] of Object.entries(this.$store.state.data.discoveries)) {
+        var ws = new WebSocket(url);
+        ws.onopen = () => {
+          this.logInfo("Connected to discovery service: " + url)
+        }
+        ws.onmessage = (evt) => {
+          const data = JSON.parse(evt.data)
+          // this.logDebug(`Received new discovered service: ${data.name}`)
+          if (data.service_type == "maverick-api") {
+            this.createApi(data)
+          }
+          if (data.service_type == "webrtc") {
+            this.createVideo(data)
+          }
+        }
+      }
+    },
+    createApi (data) {
+      if (!this.apis[data.uuid] && data.service_type == 'maverick-api') {
+        this.logInfo(`Creating new API connection from discovered service: ${data.name}`)
+        let apidata = {
+          key: data.uuid,
+          "httpEndpoint": data.httpEndpoint,
+          "wsEndpoint": data.wsEndpoint,
+          "schemaEndpoint": data.schemaEndpoint,
+          "websocketsOnly": data.websocketsOnly,
+          "name": data.name,
+          "colorLight": "rgba(166,11,11,0.3)",
+          "colorDark": "rgba(166,11,11,0.9)",
+          "authToken": null
+        }
+        this.$store.commit('data/addApi', {key: apidata.key, data: apidata})
+        this.$toast.info(`Created new API connection from discovery: <strong>${data.name}</strong>`)
+      }
+    },
+    createVideo (data) {
+      if (!this.$store.state.data.videostreams[data.uuid] && data.service_type == 'webrtc') {
+        this.logInfo(`Creating new Video stream from discovered service: ${data.name}`)
+        let videodata = {
+          key: data.uuid,
+          name: data.name,
+          webrtcEndpoint: data.wsEndpoint,
+          enabled: false,
+          action: 'start'
+        }
+        this.$store.commit('data/addVideoStream', {key: videodata.key, data: videodata})
+        this.$toast.info(`Created new Video Stream from discovery: <strong>${data.name}</strong>`)
+      }
+    },
+
+    /*
+     processX() are async callbacks that process incoming GQL messages
     */
     processStatusQuery (data, key) {
       const api = key.split('___')[0]

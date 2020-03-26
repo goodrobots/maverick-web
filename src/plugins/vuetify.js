@@ -1,10 +1,17 @@
 import '@mdi/font/css/materialdesignicons.css'
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import Vuetify, { VSnackbar, VBtn, VIcon } from 'vuetify/lib'
 
 import colors from 'vuetify/lib/util/colors'
 
-Vue.use(Vuetify)
+// export specific components for vuetoast
+Vue.use(Vuetify, {
+  components: {
+    VSnackbar,
+    VBtn,
+    VIcon
+  }
+})
 
 export default new Vuetify({
   theme: {

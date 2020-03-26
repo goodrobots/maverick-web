@@ -17,7 +17,8 @@ const state = {
     'config': true,
     'maverick': true,
     'video': true
-  }
+  },
+  discoveries: {}
 }
 
 const mutations = {
@@ -50,6 +51,9 @@ const mutations = {
   },
   updateVideoStream (state, data) {
     state.videostreams[data.key] = data.data
+  },
+  addDiscovery (state, data) {
+    Vue.set(state.discoveries, data.key, data.url)
   }
 }
 
