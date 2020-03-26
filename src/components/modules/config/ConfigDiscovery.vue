@@ -1,78 +1,132 @@
 <template lang='pug'>
 div
+  v-data-iterator(:items="items" item-key="host" hide-default-footer :single-expand="expand")
+
+    template(v-slot:header)
+      v-toolbar.mb-1(:color="navColor" dark flat dense)
+        v-toolbar-title Discovery Agents
+        v-spacer
+        // v-text-field(v-model="search" clearable flat solo-inverted hide-details prepend-inner-icon="mdi-magnify" label="Search")
+        v-spacer
+        v-btn(@click.stop="dialog = true" :color="navColor+' darken-2'")
+          v-icon(left) mdi-plus-box
+          span Add Discovery Agent
+    
+    template(v-slot:no-data)
+      v-alert.ma-8(border="left" type="info")
+        span No Discovery Agents are defined.  Please add one: 
+          v-btn(@click.stop="dialog = true" :color="navColor+' darken-2'" small)
+            span Add Discovery Agent
+
+    template(v-slot:default="{ items, isExpanded, expand }")
+      v-row
+        v-col(v-for="item in items" :key="item.host" cols="12" sm="12" md="12" lg="12")
+          v-card
+            v-toolbar
+              v-toolbar-title
+                span {{ item.host }}
+                // v-chip.ma-2(v-if="isDiscoveryReady(item.host)" color='success' small)
+                  v-icon(left) mdi-check-circle
+                  span Connected
+                // v-chip.ma-2(v-else color='error' small)
+                  v-icon(left) mdi-alert-circle
+                  span Not Connected
+              v-spacer
+              v-switch.mt-4(:color="navColor" :input-value="isExpanded(item)" :label="isExpanded(item) ? 'Editing' : 'Edit'" @change="(v) => expand(item, v)")
+          v-row(v-if="isExpanded(item)")
+            v-list-item
+              v-list-item-content
+                v-text-field(v-model="item.host" label="Discovery Hostname")
+              v-list-item-content.align-end
+            v-list-item
+              v-list-item-content
+                v-text-field(v-model="item.url" label="Agent URL")
+              v-list-item-content.align-end
+            v-list-item
+              v-divider
+            v-list-item
+              v-btn(color='green' @click="save(item)") Save
+              // v-btn.ml-4(color='blue') Test
+              v-spacer
+              v-btn(color='red' @click="remove(item)")
+                v-icon(left) mdi-delete
+                span Delete
+
+  v-dialog(v-model="dialog" max-width="600px")
+    v-card
+      v-card-title.headline(:class="navColor" primary-title)
+        v-icon(left) mdi-plus-box
+        span Add Discovery Agent
+      v-card-text
+        v-container
+          v-row
+            v-col(cols="12" sm="6" md="6")
+              v-text-field(v-model="newitem.host" label="Hostname" required)
+          v-row
+            v-col(cols="12" sm="6" md="6")
+              v-text-field(v-model="newitem.port" value=1234 label="Port" hint="Default discovery port is 1234" required)
+      v-divider
+      v-card-actions
+        v-btn.ma-2(color="green" @click="createAgent()") Create Discovery Agent
+        v-btn.ma-2(color="grey" @click="dialog = false") Cancel
+
+  v-dialog(v-if="deleteitem" v-model="deleteDialog" max-width="400")
+    v-card
+      v-card-title
+        span.headline.red--text Delete Agent: <strong>{{ deleteitem.host }}</strong>?
+      v-card-text
+        h3 {{ deleteitem.host }}
+        div Are you sure you want to delete this Discovery Agent?
+      v-card-actions
+        v-spacer
+        v-btn(text @click="deleteDialog = false") Cancel
+        v-btn(text color="red darken-1" @click="removeAgent()") Delete
 </template>
 
 <script>
-import io from "socket.io-client";
-
 export default {
   name: "ConfigDiscovery",
   components: {
   },
   data() {
     return {
+      search: '',
+      filter: {},
+      dialog: false,
+      deleteDialog: false,
+      newitem: {},
+      deleteitem: null,
+      expand: true
     }
   },
   computed: {
     items () {
-      return {
-        'default': window.location.host
-      }
+      return Object.values(this.$store.state.data.discoveries)
     }
   },
-  mounted () {
-    // this.createConnection()
-  },
   methods: {
-    createConnection () {
-      const url = 'ws://' + window.location.hostname + ':1234'
-
-      var ws = new WebSocket(url);
-      ws.onopen = () => {
-        this.logInfo("Connected to discovery service: " + url)
-      }
-      ws.onmessage = (evt) => {
-        const data = JSON.parse(evt.data)
-        // this.logDebug(`Received new discovered service: ${data.name}`)
-        if (data.service_type == "maverick-api") {
-          this.createApi(data)
-        }
-        if (data.service_type == "webrtc") {
-          this.createVideo(data)
-        }
-      }
+    save(agentData) {
+      this.$store.commit('data/updateDiscovery', {key: agentData.host, data: agentData})
     },
-    createApi (data) {
-      if (!this.apis[data.uuid] && data.service_type == 'maverick-api') {
-        this.logInfo(`Creating new API connection from discovered service: ${data.name}`)
-        let apidata = {
-          key: data.uuid,
-          "httpEndpoint": data.httpEndpoint,
-          "wsEndpoint": data.wsEndpoint,
-          "schemaEndpoint": data.schemaEndpoint,
-          "websocketsOnly": data.websocketsOnly,
-          "name": data.name,
-          "colorLight": "rgba(166,11,11,0.3)",
-          "colorDark": "rgba(166,11,11,0.9)",
-          "authToken": null
-        }
-        this.$store.commit('data/addApi', {key: apidata.key, data: apidata})
-        this.$toast.info(`Created new API connection from discovery: <strong>${data.name}</strong>`)
+    createAgent() {
+      this.dialog = false // Close dialog
+      this.logDebug('Creating new discovery agent: ' + this.newitem.host)
+      const protocol = 'ws'
+      let data = {
+        host: this.newitem.host,
+        port: this.newitem.port,
+        url: `${protocol}://${this.newitem.host}:${this.newitem.port}`
       }
+      this.$store.commit('data/addDiscovery', {key: data.host, data: data})
     },
-    createVideo (data) {
-      if (!this.$store.state.data.videostreams[data.uuid] && data.service_type == 'webrtc') {
-        this.logInfo(`Creating new Video stream from discovered service: ${data.name}`)
-        let videodata = {
-          key: data.uuid,
-          name: data.name,
-          webrtcEndpoint: data.wsEndpoint,
-          enabled: false,
-          action: 'start'
-        }
-        this.$store.commit('data/addVideoStream', {key: videodata.key, data: videodata})
-        this.$toast.info(`Created new Video Stream from discovery: <strong>${data.name}</strong>`)
-      }
+    remove(item) {
+      this.deleteitem = item
+      this.deleteDialog = true
+    },
+    removeAgent() {
+      this.logDebug('Deleting agent: ' + this.deleteitem.host)
+      this.$store.commit('data/removeDiscovery', this.deleteitem.host)
+      this.deleteitem = null
     }
   }
 }

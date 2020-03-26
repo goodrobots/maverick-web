@@ -53,7 +53,13 @@ const mutations = {
     state.videostreams[data.key] = data.data
   },
   addDiscovery (state, data) {
-    Vue.set(state.discoveries, data.key, data.url)
+    Vue.set(state.discoveries, data.key, data.data)
+  },
+  updateDiscovery (state, data) {
+    state.discoveries[data.key] = data.data
+  },
+  removeDiscovery (state, key) {
+    Vue.delete(state.discoveries, key)
   }
 }
 

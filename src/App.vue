@@ -126,14 +126,14 @@ export default {
       if (!this.$store.state.data.discoveries[window.location.hostname]) {
         const url = 'ws://' + window.location.hostname + ':1234'
         this.logInfo(`Creating default discovery agent: ${url}`)
-        this.$store.commit('data/addDiscovery', { key: window.location.hostname, url: url })
+        this.$store.commit('data/addDiscovery', { key: window.location.hostname, data: { url: url, host: window.location.hostname, port: 1234 } })
       }
     },
     createDiscoveries() {
-      for (let [key, url] of Object.entries(this.$store.state.data.discoveries)) {
-        var ws = new WebSocket(url);
+      for (let [key, discovery] of Object.entries(this.$store.state.data.discoveries)) {
+        var ws = new WebSocket(discovery.url);
         ws.onopen = () => {
-          this.logInfo("Connected to discovery service: " + url)
+          this.logInfo("Connected to discovery service: " + discovery.url)
         }
         ws.onmessage = (evt) => {
           const data = JSON.parse(evt.data)
