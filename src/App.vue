@@ -104,6 +104,8 @@ export default {
         _color = 'lightGreen'
       } else if (newvalue == 'deep-orange') {
         _color = 'deepOrange'
+      } else if (newvalue == 'blue-grey') {
+        _color = 'blueGrey'
       }
       this.$vuetify.theme.themes.light.primary = colors[_color].lighten2
       this.$vuetify.theme.themes.dark.primary = colors[_color].base
