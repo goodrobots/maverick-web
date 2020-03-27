@@ -105,7 +105,7 @@ export default {
       } else if (newvalue == 'deep-orange') {
         _color = 'deepOrange'
       }
-      this.$vuetify.theme.themes.light.primary = colors[_color].lighten3
+      this.$vuetify.theme.themes.light.primary = colors[_color].lighten2
       this.$vuetify.theme.themes.dark.primary = colors[_color].base
     }
   },

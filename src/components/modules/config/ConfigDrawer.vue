@@ -13,7 +13,7 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="topColor"
         v-icon mdi-account-cog
       v-list-item-content
         v-list-item-title Interface Settings
-    v-list-item.mt-3(@click="" to="/config/modules")
+    v-list-item(@click="" to="/config/modules")
       v-list-item-icon
         v-icon mdi-view-module
       v-list-item-content

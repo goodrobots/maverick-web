@@ -7,7 +7,7 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="topColor"
           v-col
             span Video Streams
           v-col
-            v-btn(dark to='/config/video' :color="navColor+' darken-2'" small)
+            v-btn(to='/config/video' color="primary" small)
               v-icon mdi-cog-outline
       v-list-item-subtitle
         span Stream Control
@@ -16,7 +16,7 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="topColor"
     v-list-item(v-for="stream in videostreams" :key="stream.key")
       template(v-slot:default="{ active }")
         v-list-item-action
-          v-switch(color='green' v-model='stream.enabled')
+          v-switch(color='primary' v-model='stream.enabled')
         v-list-item-content
           v-list-item-title {{ stream.name }}
           v-list-item-subtitle {{ stream.webrtcEndpoint }}
@@ -24,7 +24,7 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="topColor"
     v-list-item
       v-list-item-content
         v-alert(outlined type="info")
-          span No Video Streams are defined.  Please define a video stream in <v-btn class="ma-2" :color="navColor" small to='/config/video'>Config->Video</v-btn>
+          span No Video Streams are defined.
 
 </template>
 

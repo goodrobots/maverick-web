@@ -3,51 +3,49 @@ div
   v-data-iterator(:items="items" item-key="name" hide-default-footer :single-expand="expand")
 
     template(v-slot:header)
-      v-toolbar.mb-1(:color="navColor" dark dense)
+      v-toolbar.mb-1(color="primary lighten-1" dense)
         v-toolbar-title Video Streams
         v-spacer
         // v-text-field(v-model="search" clearable flat solo-inverted hide-details prepend-inner-icon="mdi-magnify" label="Search")
         v-spacer
-        v-btn(@click.stop="dialog = true" :color="navColor+' darken-2'")
+        v-btn(@click.stop="dialog = true" color="primary")
           v-icon(left) mdi-plus-box
           span Add Video Stream
     
     template(v-slot:no-data)
-      v-alert.ma-8(border="left" type="info")
-        span No Video Streams are defined.  Please add one: 
-          v-btn(@click.stop="dialog = true" :color="navColor+' darken-2'" small)
+      v-alert.ma-8(border="left" outlined type="primary")
+        span No Video Streams are defined.
+          v-btn.ml-2(@click.stop="dialog = true" color="primary" small)
             span Add Video Stream
 
     template(v-slot:default="{ items, isExpanded, expand }")
       v-row
         v-col(v-for="item in items" :key="item.name" cols="12" sm="12" md="12" lg="12")
           v-card
-            v-toolbar
+            v-toolbar(dense)
               v-toolbar-title {{ item.name }}
               v-spacer
               v-switch.mt-4(:color="navColor" :input-value="isExpanded(item)" :label="isExpanded(item) ? 'Editing' : 'Edit'" @change="(v) => expand(item, v)")
-          v-list(v-if="isExpanded(item)" dense)
-            v-list-item
-              v-list-item-content
-                v-text-field(v-model="item.name" label="Stream Name/Description")
-              v-list-item-content.align-end
-            v-list-item
-              v-list-item-content
-                v-text-field(v-model="item.webrtcEndpoint" label="WebRTC Endpoint")
-              v-list-item-content.align-end
-            v-list-item
-              v-divider
-            v-list-item
-              v-btn(color='green' @click="save(item)") Save
-              // v-btn.ml-4(color='blue') Test
-              v-spacer
-              v-btn(color='red' @click="remove(item)")
-                v-icon(left) mdi-delete
-                span Delete
+            v-list(v-if="isExpanded(item)" dense)
+              v-list-item
+                v-list-item-content
+                  v-text-field(v-model="item.name" label="Stream Name/Description")
+                v-list-item-content.align-end
+              v-list-item
+                v-list-item-content
+                  v-text-field(v-model="item.webrtcEndpoint" label="WebRTC Endpoint")
+                v-list-item-content.align-end
+              v-list-item
+                v-btn(color='success' @click="save(item)") Save
+                // v-btn.ml-4(color='blue') Test
+                v-spacer
+                v-btn(color='error' @click="remove(item)")
+                  v-icon(left) mdi-delete
+                  span Delete
 
   v-dialog(v-model="dialog" max-width="600px")
     v-card
-      v-card-title.headline(:class="navColor" primary-title)
+      v-card-title.headline(class="primary" primary-title)
         v-icon(left) mdi-plus-box
         span Add Video Stream
       v-card-text
@@ -64,10 +62,9 @@ div
           v-row
             v-col(cols="12" sm="6" md="6")
               v-text-field(v-model="newitem.port" label="Port" hint="Maverick default port is 6796" required)
-      v-divider
       v-card-actions
-        v-btn.ma-2(color="green" @click="createStream()") Create Stream
-        v-btn.ma-2(color="grey" @click="dialog = false") Cancel
+        v-btn.ma-2(color="success" @click="createStream()") Create Stream
+        v-btn.ma-2(color="error" @click="dialog = false") Cancel
 
   v-dialog(v-if="deleteitem" v-model="deleteDialog" max-width="400")
     v-card

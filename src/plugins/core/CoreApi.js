@@ -64,7 +64,7 @@ const plugin = {
         },
         topColor () {
           if (this.uiSettings.colorBg === true) {
-            return (this.isDark) ? `${this.navColor} darken-3` : `${this.navColor} lighten-3`
+            return (this.isDark) ? `${this.navColor} darken-3` : `${this.navColor} lighten-4`
           } else {
             return (this.isDark) ? 'grey darken-4' : 'grey lighten-4'
           }

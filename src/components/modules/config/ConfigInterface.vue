@@ -1,6 +1,6 @@
 <template lang='pug'>
 v-card
-  v-toolbar(color="primary" dense)
+  v-toolbar(color="primary lighten-1" dense)
     v-toolbar-title Interface Settings
   v-container.mt-2
     div

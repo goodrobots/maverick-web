@@ -1,6 +1,6 @@
 <template lang='pug'>
 v-card
-  v-toolbar(:color="navColor" dense)
+  v-toolbar(color="primary lighten-1" dense)
     v-toolbar-title Web Modules
   v-container
     v-row(v-for="(data, key) in $store.state.core.modules" :key="key")

@@ -39,7 +39,7 @@ export default new Router({
       children: [
         {
           path: '',
-          // redirect: 'parameter-summary'
+          component: () => import(/* webpackMode: "lazy", webpackChunkName: "ConfigHome" */ '../components/modules/config/ConfigHome')
         },
         {
           path: 'connections',

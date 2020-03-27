@@ -4,33 +4,33 @@ div
   v-content
     v-container(v-if="!Object.keys(videostreams).length")
       v-card.mx-auto.mt-2
-        v-alert(border="left" type="info")
+        v-alert(border="left" outlined type="info")
           span No Video Streams are defined.  Please define a video stream in <v-btn class="ma-2" :color="navColor+' darken-2'" small to='/config/video'>Config->Video</v-btn>
-    v-container(v-if="!Object.keys(enabledStreams).length")
+    v-container(v-if="Object.keys(videostreams).length && !Object.keys(enabledStreams).length")
       v-card.mx-auto.mt-2
-        v-alert(border="left" type="info")
+        v-alert(border="left" outlined type="info")
           span There are no enabled Video Streams.  Please enable a stream in <v-btn class="ma-2" :color="navColor+' darken-2'" small @click.stop="toggleDrawer">Stream Control</v-btn>
     v-container.pa-2(fluid)
         v-row(dense)
           v-col.px-4(v-for="stream in videostreams" :key='stream.key' v-if="stream.enabled" xs=12 sm=12 md=12 lg=6 xl=6)
             v-row(justify='center' wrap :ref="'layout-'+stream.key")
               v-card
-                v-system-bar(:color="navColor" window)
-                  span Video Stream: {{ stream.name }}
+                v-system-bar(color="primary" window)
+                  span Video Stream: <strong>{{ stream.name }}</strong>
                 v-card-text
-                  v-chip.ma-2(v-if="streamStatus[stream.key]=='playing'" color='green')
+                  v-chip.ma-2(v-if="streamStatus[stream.key]=='playing'" small color='success')
                     v-icon(left) mdi-check-circle
                     span Playing
-                  v-chip.ma-2(v-else-if="streamStatus[stream.key]=='buffering' || stream.action == 'stop'" color='amber')
+                  v-chip.ma-2(v-else-if="streamStatus[stream.key]=='buffering' || stream.action == 'stop'" small color='amber')
                     v-icon(left) mdi-alert
                     span Buffering
-                  v-chip.ma-2(v-else color='red')
+                  v-chip.ma-2(v-else small color='error')
                     v-icon(left) mdi-alert-circle
                     span Stopped
                   span Bitrate
-                    v-chip.ma-2(color='blue') <strong>{{ cleanBitrate(statBitrate[stream.key]) }}</strong>
+                    v-chip.ma-2(small color='primary') <strong>{{ cleanBitrate(statBitrate[stream.key]) }}</strong>
                   span Packet Loss
-                    v-chip.ma-2(color='red') <strong>{{ statPacketloss[stream.key] }}</strong>
+                    v-chip.ma-2(small color='error') <strong>{{ statPacketloss[stream.key] }}</strong>
                 VideoStream(:config="{ url: stream.webrtcEndpoint }" :videostream="stream.key" :width="refWidth('layout-'+stream.key)" :stream="1" :action="stream.action" @status="updateStatus(stream.key, $event)" @packetloss="updatePacketloss(stream.key, $event)" @bitrate="updateBitrate(stream.key, $event)")
                 // v-card-text
                   v-layout.d-flex.justify-space-between(flat)
