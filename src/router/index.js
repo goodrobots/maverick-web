@@ -58,6 +58,10 @@ export default new Router({
           component: () => import(/* webpackMode: "lazy", webpackChunkName: "ConfigVideo" */ '../components/modules/config/ConfigVideo')
         },
         {
+          path: 'interface',
+          component: () => import(/* webpackMode: "lazy", webpackChunkName: "ConfigInterface" */ '../components/modules/config/ConfigInterface')
+        },
+        {
           path: 'parameter-summary',
           component: () => import(/* webpackMode: "lazy", webpackChunkName: "ConfigParamSummary" */ '../components/modules/config/ConfigParamSummary')
         },

@@ -39,6 +39,14 @@ const plugin = {
         darkUi () {
           return this.$store.state.data.darkUi
         },
+        isDark () {
+          // autodark setting overrides manual dark setting
+          if (this.uiSettings.autoDark) {
+            return this.$mq.isDark
+          } else {
+            return this.uiSettings.dark
+          }
+        },
         moduleName () {
           return this.$store.state.core.moduleName
         },
@@ -53,6 +61,16 @@ const plugin = {
         },
         navDrawerEnable () {
           return this.$store.state.core.navDrawerEnable
+        },
+        topColor () {
+          if (this.uiSettings.colorBg === true) {
+            return (this.isDark) ? `${this.navColor} darken-3` : `${this.navColor} lighten-3`
+          } else {
+            return (this.isDark) ? 'grey darken-4' : 'grey lighten-4'
+          }
+        },
+        uiSettings () {
+          return this.$store.state.data.uiSettings
         },
         vehicleData () {
           return this.$store.state.core.vehicleData

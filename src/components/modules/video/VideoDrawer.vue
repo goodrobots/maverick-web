@@ -1,5 +1,5 @@
 <template lang='pug'>
-v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+' darken-4'")
+v-navigation-drawer(app left clipped floating v-model="drawer" :color="topColor")
   v-list-item.mt-4
     v-list-item-content
       v-list-item-title.title
@@ -7,7 +7,7 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+
           v-col
             span Video Streams
           v-col
-            v-btn(to='/config/video' :color="navColor+' darken-2'" small)
+            v-btn(dark to='/config/video' :color="navColor+' darken-2'" small)
               v-icon mdi-cog-outline
       v-list-item-subtitle
         span Stream Control

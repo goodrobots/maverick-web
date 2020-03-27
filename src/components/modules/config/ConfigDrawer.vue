@@ -1,5 +1,5 @@
 <template lang='pug'>
-v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+' darken-4'")
+v-navigation-drawer(app left clipped floating v-model="drawer" :color="topColor")
   v-list-item.mt-4
     v-list-item-content
       v-list-item-title.title
@@ -8,16 +8,21 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="navColor+
         span General Settings
   v-divider
   v-list.pt-0(dense nav)
-    v-list-item(@click="" to="/config/video")
+    v-list-item.mt-3(@click="" to="/config/interface")
       v-list-item-icon
-        v-icon mdi-video
+        v-icon mdi-account-cog
       v-list-item-content
-        v-list-item-title Video Streams
+        v-list-item-title Interface Settings
     v-list-item.mt-3(@click="" to="/config/modules")
       v-list-item-icon
         v-icon mdi-view-module
       v-list-item-content
         v-list-item-title Web Modules
+    v-list-item(@click="" to="/config/video")
+      v-list-item-icon
+        v-icon mdi-video
+      v-list-item-content
+        v-list-item-title Video Streams
 
   v-spacer
 

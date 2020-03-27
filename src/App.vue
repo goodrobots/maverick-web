@@ -19,6 +19,8 @@ import { vehicleInfoQuery } from './plugins/graphql/gql/VehicleInfo.gql'
 import { maverickServiceListQuery } from './plugins/graphql/gql/MaverickServiceList.gql'
 import { maverickServicesSubscription } from './plugins/graphql/gql/MaverickService.gql'
 
+import colors from 'vuetify/lib/util/colors'
+
 import io from "socket.io-client";
 
 export default {
@@ -88,6 +90,23 @@ export default {
         this.createDiscoveries()
       },
       deep: true
+    },
+    isDark (newvalue) {
+      this.$vuetify.theme.dark = newvalue
+    },
+    '$store.state.core.navColor' (newvalue) {
+      let _color = newvalue
+      if (newvalue == 'deep-purple') {
+        _color = 'deepPurple'
+      } else if (newvalue == 'light-blue') {
+        _color = 'lightBlue'
+      } else if (newvalue == 'light-green') {
+        _color = 'lightGreen'
+      } else if (newvalue == 'deep-orange') {
+        _color = 'deepOrange'
+      }
+      this.$vuetify.theme.themes.light.primary = colors[_color].lighten3
+      this.$vuetify.theme.themes.dark.primary = colors[_color].base
     }
   },
 
@@ -99,6 +118,9 @@ export default {
     this.defaultDiscovery()
     // Create websocket connections for all defined discovery agents
     this.createDiscoveries()
+    // Set initital dark theme state
+    this.logDebug()
+    this.$vuetify.theme.dark = this.isDark
   },
 
   methods: {

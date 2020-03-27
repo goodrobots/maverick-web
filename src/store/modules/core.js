@@ -17,32 +17,38 @@ const state = {
   graphqlSchema: {},
   modules: {
     'cockpit': {
-      'color': 'mavorange',
+      // 'color': 'mavorange',
+      'color': 'orange',
       'icon': 'mdi-airplane-takeoff',
       'enabled': false
     },
     'planner': {
-      'color': 'mavyellow',
+      // 'color': 'mavyellow',
+      'color': 'yellow',
       'icon': 'mdi-map-marker-circle',
       'enabled': false
     },
     'analysis': {
-      'color': 'mavgreen',
+      // 'color': 'mavgreen',
+      'color': 'green',
       'icon': 'mdi-equalizer',
       'enabled': false
     },
     'config': {
-      'color': 'mavpurple',
+      // 'color': 'mavpurple',
+      'color': 'deep-purple',
       'icon': 'mdi-cog-outline',
       'enabled': true
     },
     'maverick': {
-      'color': 'mavred',
+      // 'color': 'mavred',
+      'color': 'red',
       'icon': 'mdi-console',
       'enabled': true
     },
     'video': {
-      'color': 'mavblue',
+      // 'color': 'mavblue',
+      'color': 'blue',
       'icon': 'mdi-video',
       'enabled': true
     }

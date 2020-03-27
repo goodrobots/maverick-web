@@ -1,8 +1,8 @@
 <template lang='pug'>
 div
   transition(name="slide-y-transition" mode="out-in")
-    v-app-bar(app flat fixed dense clipped-left :color="navColor+' darken-4'" height=48)
-      v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" text left small to="/"): img(:src="publicPath + 'img/logos/maverick-logo-white.svg'" height='35px')
+    v-app-bar(app flat fixed dense clipped-left :color="topColor" height=48)
+      v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" text left small to="/"): img(:src="topLogo" height='35px')
       v-spacer
       v-toolbar-items
         // StatusText Messages
@@ -56,10 +56,10 @@ div
 
       v-menu(offset-y transition="scale-transition" left=true nudge-bottom="10")
         template(v-slot:activator="{ on }")
-          v-btn.mx-3(:color="navColor" small v-on="on") {{ moduleName | capitalize }}
+          v-btn.mx-3(dark :color="navColor" small v-on="on") {{ moduleName | capitalize }}
         v-list
           v-list-item(v-for="(data, key) in $store.state.core.modules" v-if="$store.state.data.modulesActive[key] == true" :key="key" :color="data.color")
-            v-btn(:color="data.color" :to="'/' + key" block) {{ key | capitalize }}
+            v-btn(dark :color="data.color" :to="'/' + key" block) {{ key | capitalize }}
                   v-icon(right) {{ data.icon }}
 
       v-fade-transition(mode="out-in")
@@ -104,6 +104,13 @@ export default {
     },
     statusData () {
       return this.$store.state.core.statusData
+    },
+    topLogo () {
+      if (this.isDark) {
+        return this.publicPath + 'img/logos/maverick-logo-white.svg'
+      } else {
+        return this.publicPath + 'img/logos/maverick-logo-dark.svg'
+      }
     },
     vehicleData () {
       return this.$store.state.core.vehicleData

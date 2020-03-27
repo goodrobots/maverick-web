@@ -18,7 +18,12 @@ const state = {
     'maverick': true,
     'video': true
   },
-  discoveries: {}
+  discoveries: {},
+  uiSettings: {
+    'dark': true,
+    'autoDark': false,
+    'colorBg': true
+  }
 }
 
 const mutations = {
