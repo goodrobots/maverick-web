@@ -15,7 +15,8 @@ v-container(fluid)
                 v-card-actions
                   v-btn(color="primary" small to="/config/interface") GoTo Settings
               v-avatar.ma-3(tile)
-                v-icon(x-large color="primary") mdi-account-cog
+                v-icon(x-large) mdi-account-cog
+              v-spacer
         v-col(lg=4 md=6)
           v-card(ripple hover shaped to="/config/modules")
             div.d-flex.flex-no-wrap.justify-space-between
@@ -25,7 +26,8 @@ v-container(fluid)
                 v-card-actions
                   v-btn(color="primary" small to="/config/interface") GoTo Modules
               v-avatar.ma-3(tile)
-                v-icon(x-large color="primary") mdi-view-module
+                v-icon(x-large) mdi-view-module
+              v-spacer
         v-col(lg=4 md=6)
           v-card(ripple hover shaped to="/config/video")
             div.d-flex.flex-no-wrap.justify-space-between
@@ -35,8 +37,8 @@ v-container(fluid)
                 v-card-actions
                   v-btn(color="primary" small to="/config/video") GoTo Video Streams
               v-avatar.ma-3(tile)
-                v-icon(x-large color="primary") mdi-video
-
+                v-icon(x-large) mdi-video
+              v-spacer
   
   v-card.mt-4
     v-app-bar(:color="topColor" dense)
@@ -53,7 +55,8 @@ v-container(fluid)
                 v-card-actions
                   v-btn(color="primary" small to="/config/discovery") GoTo Agents
               v-avatar.ma-3(tile)
-                v-icon(x-large color="primary") mdi-cloud-search
+                v-icon(x-large) mdi-cloud-search
+              v-spacer
         v-col(lg=6 md=6)
           v-card(ripple hover shaped to="/config/connections")
             div.d-flex.flex-no-wrap.justify-space-between
@@ -63,7 +66,8 @@ v-container(fluid)
                 v-card-actions
                   v-btn(color="primary" small to="/config/connections") GoTo Connections
               v-avatar.ma-3(tile)
-                v-icon(x-large color="primary") mdi-router-wireless-settings
+                v-icon(x-large) mdi-router-wireless-settings
+              v-spacer
 </template>              
 <script>
 export default {

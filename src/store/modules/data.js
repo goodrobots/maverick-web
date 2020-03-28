@@ -22,7 +22,9 @@ const state = {
   uiSettings: {
     'dark': true,
     'autoDark': false,
-    'colorBg': true
+    'colorBg': true,
+    'notifyServices': true,
+    'notifyDiscovery': true
   }
 }
 

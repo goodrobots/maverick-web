@@ -185,7 +185,9 @@ export default {
           "authToken": null
         }
         this.$store.commit('data/addApi', {key: apidata.key, data: apidata})
-        this.$toast.info(`Created new API connection from discovery: <strong>${data.name}</strong>`)
+        if (this.uiSettings.notifyDiscovery) {
+          this.$toast.info(`Created new API connection from discovery: <strong>${data.name}</strong>`)
+        }
       }
     },
     createVideo (data) {
@@ -199,7 +201,9 @@ export default {
           action: 'start'
         }
         this.$store.commit('data/addVideoStream', {key: videodata.key, data: videodata})
-        this.$toast.info(`Created new Video Stream from discovery: <strong>${data.name}</strong>`)
+        if (this.uiSettings.notifyDiscovery) {
+          this.$toast.info(`Created new Video Stream from discovery: <strong>${data.name}</strong>`)
+        }
       }
     },
 
@@ -224,7 +228,10 @@ export default {
         // If the MaverickServiceList query doesn't already exist for this client, create it
         if (!(api + '___MaverickServiceList___' in this.$apollo.queries)) {
           this.createQuery('MaverickServiceList', maverickServiceListQuery, api, null, null, this.processServiceListQuery)
-          this.createSubscription('MaverickService', maverickServicesSubscription, api, null, null, this.processServiceSubscription)
+          // Create a subscription for service updates, but wait 2.5 seconds to skip all the initial updates from MaverickServiceList query
+          setTimeout(() => {
+            this.createSubscription('MaverickService', maverickServicesSubscription, api, null, null, this.processServiceSubscription)
+          }, 2500)
         }
         if (this.apistate[api].lastseen === null) this.$store.commit('core/setApiState', {api: api, field: 'lastseen', value: performance.now() })
         if (!(api in this.$store.state.core.statusData)) {
@@ -253,8 +260,10 @@ export default {
     processServiceSubscription (data, key) {
       const api = key.split('___')[0]
       if (data.data && 'MaverickService' in data.data) {
-        // this.logDebug(data.data.MaverickService)
         this.$store.commit('core/setServiceData', { api: api, name: data.data.MaverickService.name, message: data.data.MaverickService })
+        if (this.uiSettings.notifyServices) {
+          this.$toast.info(`Maverick service <strong>${data.data.MaverickService.displayName}</strong> for connection <strong>${this.apis[api].name}</strong> changed state to Running(<strong>${data.data.MaverickService.running}</strong>), Enabled(<strong>${data.data.MaverickService.enabled}</strong>)`)
+        }
       }
     },
     processVehicleInfoQuery (data, key) {
