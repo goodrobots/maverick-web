@@ -1,36 +1,20 @@
-<template>
-  <v-container
-    fluid
-    fill-height
-  >
-    <v-row dense>
-      <v-col cols="12">
-        <v-card
-          class="mx-auto"
-          max-width="800"
-          height="600"
-          dark
-        >
-          <div
-            ref="terminal"
-            style="width: 100%; height: 100%; overflow:hidden;"
-          />
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+<template lang='pug'>
+  v-container.fill-height(fluid)
+    v-row.fill-height(dense)
+      v-col
+        v-card(:height="height")
+          div(ref="terminal" style="width: 100%; height: 100%; overflow:hidden;")
 </template>
 
 <script>
 import { Terminal } from "xterm"
 import { FitAddon } from "xterm-addon-fit"
-import { WebglAddon } from "xterm-addon-webgl"
+// import { WebglAddon } from "xterm-addon-webgl"
 import { WebLinksAddon } from "xterm-addon-web-links"
 import { Unicode11Addon } from 'xterm-addon-unicode11'
 import { SerializeAddon } from "xterm-addon-serialize"
 
 import { maverickShellQuery, maverickShellSubscription, maverickShellMutate } from '../../../plugins/graphql/gql/MaverickShell.gql'
-import { navSatFixMutate } from '../../../plugins/graphql/gql/NavSatFix.gql'
 
 export default {
   name: "CommandsCard",
@@ -57,8 +41,12 @@ export default {
     };
   },
   computed: {
-    activeApi() {
-      return this.$store.state.activeApi;
+    height () {
+      if (this.$store.state.data.navState) {
+        return window.innerHeight - 160
+      } else {
+        return window.innerHeight - 100
+      }
     },
     loadingBar() {
       if (this.processRunning) {
@@ -75,7 +63,7 @@ export default {
     this.term = term;
 
     this.fitAddon = new FitAddon(); // https://xtermjs.org/docs/api/addons/fit/
-    const webglAddon = new WebglAddon();
+    // const webglAddon = new WebglAddon();
     const webLinksAddon = new WebLinksAddon();
     const unicode11Addon = new Unicode11Addon();
     this.serializeAddon = new SerializeAddon();
@@ -134,7 +122,7 @@ export default {
   },
   beforeDestroy() {
     // TODO: store this to allow resume
-    this.logDebug(JSON.stringify(this.serializeAddon.serialize()))
+    // this.logDebug(JSON.stringify(this.serializeAddon.serialize()))
     window.removeEventListener("resize", this.resizeEventHandler);
   },
   methods: {

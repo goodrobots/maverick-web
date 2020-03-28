@@ -104,11 +104,11 @@ export default new Router({
         {
           path: 'services',
           component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickServices" */ '../components/modules/maverick/MaverickServices')
+        },
+        {
+          path: 'commands',
+          component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickCommands" */ '../components/modules/maverick/MaverickCommands')
         }
-        // {
-        //  path: 'commands',
-        //  component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickCommands" */ '../components/modules/maverick/MaverickCommands')
-        // }
       ]
     },
   ]

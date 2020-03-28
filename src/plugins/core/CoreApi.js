@@ -269,7 +269,7 @@ const plugin = {
           this.$apollo.mutate(
             mutateFields
           ).then((data) => {
-            this.logDebug(data)
+            // this.logDebug(data)
           }).catch((error) => {
             this.logError(error)
           })

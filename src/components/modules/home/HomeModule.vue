@@ -1,6 +1,6 @@
 <template lang='pug'>
 v-content
-  v-container(fill-height)
+  v-container.fill-height
     v-spacer
     v-container
       v-row.mb-4(align='center' justify='center')

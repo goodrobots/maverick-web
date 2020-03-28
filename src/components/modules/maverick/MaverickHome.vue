@@ -57,6 +57,6 @@ v-container(fluid)
 </template>              
 <script>
 export default {
-  name: "ConfigHome"
+  name: "MaverickHome"
 }
 </script>

@@ -58,11 +58,11 @@ export default {
   
   methods: {
     toggleRunning (item, switchstate) {
-      this.logDebug(item, switchstate)
+      // this.logDebug(item, switchstate)
       this.mutateQuery(this.activeApi, maverickServiceRunningMutate, { name: item.name, running: !item.running })
     },
     toggleEnabled (item, switchstate) {
-      this.logDebug(item, switchstate)
+      // this.logDebug(item, switchstate)
       this.mutateQuery(this.activeApi, maverickServiceEnabledMutate, { name: item.name, enabled: !item.enabled })
     }
   }
