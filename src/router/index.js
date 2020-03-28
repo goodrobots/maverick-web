@@ -99,12 +99,16 @@ export default new Router({
       children: [
         {
           path: '',
-          redirect: 'maverick-index'
+          component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickHome" */ '../components/modules/maverick/MaverickHome')
         },
         {
-          path: 'maverick-index',
-          component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickIndex" */ '../components/modules/maverick/MaverickIndex')
+          path: 'services',
+          component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickServices" */ '../components/modules/maverick/MaverickServices')
         }
+        // {
+        //  path: 'commands',
+        //  component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickCommands" */ '../components/modules/maverick/MaverickCommands')
+        // }
       ]
     },
   ]

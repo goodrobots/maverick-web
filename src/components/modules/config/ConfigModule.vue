@@ -18,10 +18,6 @@ export default {
     return {
       drawer: true
     }
-  },
-  computed: {
-  },
-  mounted () {
   }
 }
 </script>

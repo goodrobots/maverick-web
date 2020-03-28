@@ -1,19 +1,23 @@
 <template lang='pug'>
 div
+  maverick-drawer
   v-content
-    router-view(:key="activeApi")
+    v-container(fluid)
+      router-view(:key="activeApi")
 </template>
 
 <script>
+import MaverickDrawer from './MaverickDrawer'
+
 export default {
   name: "MaverickModule",
-  data () {
-    return {}
+  components: {
+    MaverickDrawer
   },
-  computed: {
-    activeApi () {
-      return this.$store.state.activeApi
-    },
+  data () {
+    return {
+      drawer: true
+    }
   }
-};
+}
 </script>

@@ -37,7 +37,7 @@ const state = {
       'enabled': true
     },
     'maverick': {
-      'color': 'deep-orange',
+      'color': 'blue-grey',
       'icon': 'mdi-console',
       'enabled': true
     },
