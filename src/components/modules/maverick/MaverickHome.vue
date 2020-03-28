@@ -7,7 +7,7 @@ v-container(fluid)
     v-container(fluid)
       v-row()
         v-col(lg=6 md=6)
-          v-card(ripple hover shaped to="/config/interface")
+          v-card(ripple hover shaped to="/maverick/services")
             div.d-flex.flex-no-wrap.justify-space-between
               div
                 v-card-title.headline Services
@@ -17,7 +17,7 @@ v-container(fluid)
               v-avatar.ma-3(tile)
                 v-icon(x-large color="primary") mdi-account-cog
         v-col(lg=6 md=6)
-          v-card(ripple hover shaped to="/config/modules")
+          v-card(ripple hover shaped to="/maverick/commands")
             div.d-flex.flex-no-wrap.justify-space-between
               div
                 v-card-title.headline Commands

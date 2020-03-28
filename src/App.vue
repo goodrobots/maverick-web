@@ -121,7 +121,6 @@ export default {
     // Create websocket connections for all defined discovery agents
     this.createDiscoveries()
     // Set initital dark theme state
-    this.logDebug()
     this.$vuetify.theme.dark = this.isDark
   },
 

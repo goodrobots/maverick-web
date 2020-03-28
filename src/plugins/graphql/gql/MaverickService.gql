@@ -18,8 +18,14 @@ subscription maverickServicesSubscription {
   }
 }
 
-mutation maverickServiceMutate($name: String!) {
-  MaverickService(name: $name) {
+mutation maverickServiceEnabledMutate($name: String!, $enabled: Boolean!) {
+  MaverickService(name: $name, enabled: $enabled) {
+    ...MaverickService
+  }
+}
+
+mutation maverickServiceRunningMutate($name: String!, $running: Boolean!) {
+  MaverickService(name: $name, running: $running) {
     ...MaverickService
   }
 }

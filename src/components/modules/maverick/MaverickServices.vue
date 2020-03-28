@@ -1,20 +1,29 @@
 <template lang='pug'>
-v-container
+v-container(fluid)
   v-card
     v-toolbar(:color="navColor" dense)
-      v-toolbar-title Services
-    v-data-table.elevation-1(v-if="activeApi && services[activeApi]" :headers="headers" :items="Object.values(services[activeApi])")
+      v-toolbar-title Maverick Services
+    v-data-table.elevation-1(v-if="activeApi && services[activeApi]" dense :headers="headers" :items="Object.values(services[activeApi])" :search="search")
+      template(v-slot:item.displayCategory="{ item }")
+        span(v-if="item.displayCategory") {{ item.displayCategory }}
+        span.text--disabled(v-else) ---
       template(v-slot:item.running="{ item }")
-        v-icon(right v-if="item.running" color='green') mdi-check-circle-outline
-        v-icon(right v-else color='red') mdi-alert-circle-outline
+        v-switch(dense color="success" :input-value="item.running" @change="(switchstate) => toggleRunning(item, switchstate)")
       template(v-slot:item.enabled="{ item }")
-        v-icon(right v-if="item.enabled" color='green') mdi-check-circle-outline
-        v-icon(right v-else color='red') mdi-alert-circle-outline
+        v-switch(dense color="success" :input-value="item.enabled" @change="(switchstate) => toggleEnabled(item, switchstate)")
+      template(v-slot:no-data)
+        v-alert.ma-8(border="left" outlined type="primary")
+          span No services are available.  Please activate an API connection before controlling services.
+      template(v-slot:no-results)
+        v-alert.ma-8(border="left" outlined type="primary")
+          span No services are available.  Please activate an API connection before controlling services.
 </template>
 
 <script>
+import { maverickServiceRunningMutate, maverickServiceEnabledMutate } from '../../../plugins/graphql/gql/MaverickService.gql'
+
 export default {
-  name: 'ServicesCard',
+  name: 'MaverickServices',
   data () {
     return {
       headers: [
@@ -23,65 +32,38 @@ export default {
         { text: 'Category', value: 'displayCategory' },
         { text: 'Running', value: 'running' },
         { text: 'Enabled', value: 'enabled' },
-      ]
+      ],
+      search: ''
     }
   },
 
   computed: {
-
-  },
-
-  watch: {
-    // Watch apis state for any change and process
-    apis: {
-      handler: function (newValue) {
-        // this.createQueries()
-      },
-      deep: true
-    },
-    activeApi: {
-      handler: function (newValue) {
-        // this.logDebug(this.services[this.activeApi])
-        // this.logDebug(Object.values(this.services[this.activeApi]))
+    items () {
+      if (this.services.hasOwnProperty(this.activeApi)) {
+        return Object.values(this.services[this.activeApi])
+      } else {
+        return {}
       }
+    },
+    services () {
+      return this.$store.state.core.serviceData
     }
   },
 
+  watch: {
+  },
+
   mounted () {
-    // setTimeout(() => this.createQueries(), 2000)
   },
   
   methods: {
-    createQueries () {
-      if (this.activeApi) {
-        /*
-        if (this.verifyQuery(maverickServiceQuery)) {
-          // createQuery (message, gql, api, container, skip = false, callback = null, errorCallback = null, variables = null) 
-          this.createQuery('MaverickService', maverickServiceQuery, this.activeApi, null, null, this.processServiceQuery, null, { name: 'maverick-visiond' })
-          this.createSubscription('MaverickService', maverickServiceSubscription, this.activeApi, null, null, this.processServiceSubscription, null, { name: 'maverick-visiond' })
-        }
-        */
-      }
+    toggleRunning (item, switchstate) {
+      this.logDebug(item, switchstate)
+      this.mutateQuery(this.activeApi, maverickServiceRunningMutate, { name: item.name, running: !item.running })
     },
-    processServiceQuery (data, key) {
-      const api = key.split('___')[0]
-      this.logDebug(`processServiceQuery: ${api}`)
-      this.logDebug(data)
-      if (data.data && 'MaverickService' in data.data) {
-        if (!(api in this.serviceData)) {
-          this.serviceData = data.data.MaverickService
-        }
-      }
-    },
-    processServiceSubscription (data, key) {
-      const api = key.split('___')[0]
-      this.logDebug(`processServiceSubscription: ${api}`)
-      this.logDebug(data)
-      if (data.data && 'MaverickService' in data.data) {
-        if (!(api in this.serviceData)) {
-          this.serviceData = data.data.MaverickService
-        }
-      }
+    toggleEnabled (item, switchstate) {
+      this.logDebug(item, switchstate)
+      this.mutateQuery(this.activeApi, maverickServiceEnabledMutate, { name: item.name, enabled: !item.enabled })
     }
   }
 }
