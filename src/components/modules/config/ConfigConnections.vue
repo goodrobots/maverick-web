@@ -1,6 +1,6 @@
 <template lang='pug'>
 div
-  v-data-iterator(:items="items" item-key="name" hide-default-footer :single-expand="expand")
+  v-data-iterator(:items="items" item-key="key" hide-default-footer :single-expand="expand")
 
     template(v-slot:header)
       v-toolbar.mb-1(color="primary lighten-1" dense)
@@ -20,7 +20,7 @@ div
 
     template(v-slot:default="{ items, isExpanded, expand }")
       v-row
-        v-col(v-for="item in items" :key="item.name" cols="12" sm="12" md="12" lg="12")
+        v-col(v-for="item in items" :key="item.key" cols="12" sm="12" md="12" lg="12")
           v-card
             v-toolbar(dense)
               v-toolbar-title
