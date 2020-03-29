@@ -27,7 +27,6 @@ v-container(fluid)
               v-avatar.ma-3(tile)
                 v-icon(x-large color="primary") mdi-view-module
 
-  
   v-card.mt-4
     v-app-bar(:color="topColor" dense)
       v-toolbar-title Maverick API Configuration
@@ -54,6 +53,23 @@ v-container(fluid)
                   v-btn(color="primary" small to="/config/connections") GoTo Connections
               v-avatar.ma-3(tile)
                 v-icon(x-large color="primary") mdi-router-wireless-settings
+
+  v-card.mt-4
+    v-app-bar(:color="topColor" dense)
+      v-toolbar-title Maverick Legacy Services
+      v-spacer
+    v-container(fluid)
+      v-row()
+        v-col(lg=6 md=6)
+          v-card(ripple hover shaped to="/maverick/legacy")
+            div.d-flex.flex-no-wrap.justify-space-between
+              div
+                v-card-title.headline Legacy Services
+                v-card-subtitle Web services that have not been migrated to the new maverick-web interface.
+                v-card-actions
+                  v-btn(color="primary" small to="/maverick/legacy") GoTo Legacy
+              v-avatar.ma-3(tile)
+                v-icon(x-large color="primary") mdi-cloud-search
 </template>              
 <script>
 export default {

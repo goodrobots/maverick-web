@@ -106,6 +106,10 @@ export default new Router({
           component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickServices" */ '../components/modules/maverick/MaverickServices')
         },
         {
+          path: 'legacy',
+          component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickServices" */ '../components/modules/maverick/MaverickLegacy')
+        },
+        {
           path: 'commands',
           component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickCommands" */ '../components/modules/maverick/MaverickCommands')
         }

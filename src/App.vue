@@ -231,7 +231,7 @@ export default {
           // Create a subscription for service updates, but wait 2.5 seconds to skip all the initial updates from MaverickServiceList query
           setTimeout(() => {
             this.createSubscription('MaverickService', maverickServicesSubscription, api, null, null, this.processServiceSubscription)
-          }, 2500)
+          }, 5000)
         }
         if (this.apistate[api].lastseen === null) this.$store.commit('core/setApiState', {api: api, field: 'lastseen', value: performance.now() })
         if (!(api in this.$store.state.core.statusData)) {
