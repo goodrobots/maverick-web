@@ -3,7 +3,13 @@ v-container(fluid)
   v-card
     v-toolbar(:color="navColor" dense)
       v-toolbar-title Maverick Services
-    v-data-table.elevation-1(v-if="activeApi && services[activeApi]" dense :headers="headers" :items="Object.values(services[activeApi])" :search="search")
+      v-spacer
+      v-text-field(v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details)
+    // v-card-title(:color="navColor" dense)
+      span Maverick Services
+      v-spacer
+      v-text-field(v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details)
+    v-data-table.elevation-1(v-if="activeApi && services[activeApi]" dense :headers="headers" :items="Object.values(services[activeApi])" :search="search" sort-by="displayName" sort-desc=false)
       template(v-slot:item.displayCategory="{ item }")
         span(v-if="item.displayCategory") {{ item.displayCategory }}
         span.text--disabled(v-else) ---
