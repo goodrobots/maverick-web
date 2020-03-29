@@ -17,7 +17,7 @@ import { SerializeAddon } from "xterm-addon-serialize"
 import { maverickShellQuery, maverickShellSubscription, maverickShellMutate } from '../../../plugins/graphql/gql/MaverickShell.gql'
 
 export default {
-  name: "CommandsCard",
+  name: "SystemConsole",
   data() {
     return {
       processRunning: false,

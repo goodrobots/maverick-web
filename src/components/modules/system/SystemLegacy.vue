@@ -10,7 +10,7 @@ v-container(fluid)
     v-row
       v-col(lg=6)
         v-list(two-line)
-          v-list-item(:href="thishost+':6789'" target="_blank")
+          v-list-item(:href="'//' + thishost+':6789'" target="_blank")
             v-list-item-content
               v-list-item-title Cloud9
               v-list-item-subtitle Cloud9 Web IDE/Text Editor
@@ -67,7 +67,7 @@ v-container(fluid)
 
 <script>
 export default {
-  name: 'MaverickLegacy',
+  name: 'SystemLegacy',
   data () {
     return {
     }

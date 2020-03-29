@@ -5,10 +5,6 @@ v-container(fluid)
       v-toolbar-title Maverick Services
       v-spacer
       v-text-field(v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details)
-    // v-card-title(:color="navColor" dense)
-      span Maverick Services
-      v-spacer
-      v-text-field(v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details)
     v-data-table.elevation-1(v-if="activeApi && services[activeApi]" dense :headers="headers" :items="Object.values(services[activeApi])" :search="search" sort-by="displayName" sort-desc=false)
       template(v-slot:item.displayCategory="{ item }")
         span(v-if="item.displayCategory") {{ item.displayCategory }}
@@ -29,7 +25,7 @@ v-container(fluid)
 import { maverickServiceRunningMutate, maverickServiceEnabledMutate } from '../../../plugins/graphql/gql/MaverickService.gql'
 
 export default {
-  name: 'MaverickServices',
+  name: 'SystemServices',
   data () {
     return {
       headers: [

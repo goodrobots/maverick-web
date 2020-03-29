@@ -1,18 +1,18 @@
 <template lang='pug'>
 div
-  maverick-drawer
+  system-drawer
   v-content
     v-container(fluid)
       router-view(:key="activeApi")
 </template>
 
 <script>
-import MaverickDrawer from './MaverickDrawer'
+import SystemDrawer from './SystemDrawer'
 
 export default {
-  name: "MaverickModule",
+  name: "SystemModule",
   components: {
-    MaverickDrawer
+    SystemDrawer
   },
   data () {
     return {

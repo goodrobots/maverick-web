@@ -15,7 +15,7 @@ const state = {
     'planner': false,
     'analysis': false,
     'config': true,
-    'maverick': true,
+    'system': true,
     'video': true
   },
   discoveries: {},

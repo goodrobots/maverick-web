@@ -6,7 +6,7 @@ import core from './modules/core'
 import data from './modules/data'
 import cockpit from './modules/cockpit'
 import planner from './modules/planner'
-import maverick from './modules/maverick'
+import system from './modules/system'
 
 Vue.use(Vuex)
 
@@ -30,7 +30,7 @@ export default new Vuex.Store({
     data,
     cockpit,
     planner,
-    maverick
+    system
   },
 
   state: {

@@ -36,9 +36,9 @@ const state = {
       'icon': 'mdi-cog-outline',
       'enabled': true
     },
-    'maverick': {
+    'system': {
       'color': 'blue-grey',
-      'icon': 'mdi-console',
+      'icon': 'mdi-desktop-classic',
       'enabled': true
     },
     'video': {

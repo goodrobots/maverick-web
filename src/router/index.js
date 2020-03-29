@@ -94,24 +94,24 @@ export default new Router({
       ]
     },
     {
-      path: '/maverick',
-      component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickModule" */ '../components/modules/maverick/MaverickModule'),
+      path: '/system',
+      component: () => import(/* webpackMode: "lazy", webpackChunkName: "SystemModule" */ '../components/modules/system/SystemModule'),
       children: [
         {
           path: '',
-          component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickHome" */ '../components/modules/maverick/MaverickHome')
+          component: () => import(/* webpackMode: "lazy", webpackChunkName: "SystemHome" */ '../components/modules/system/SystemHome')
         },
         {
           path: 'services',
-          component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickServices" */ '../components/modules/maverick/MaverickServices')
+          component: () => import(/* webpackMode: "lazy", webpackChunkName: "SystemServices" */ '../components/modules/system/SystemServices')
         },
         {
           path: 'legacy',
-          component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickServices" */ '../components/modules/maverick/MaverickLegacy')
+          component: () => import(/* webpackMode: "lazy", webpackChunkName: "SystemLegacy" */ '../components/modules/system/SystemLegacy')
         },
         {
-          path: 'commands',
-          component: () => import(/* webpackMode: "lazy", webpackChunkName: "MaverickCommands" */ '../components/modules/maverick/MaverickCommands')
+          path: 'console',
+          component: () => import(/* webpackMode: "lazy", webpackChunkName: "SystemConsole" */ '../components/modules/system/SystemConsole')
         }
       ]
     },
