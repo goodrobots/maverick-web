@@ -190,6 +190,11 @@ export default {
     },
     removeConnection() {
       this.logDebug('Deleting connection:' + this.deleteitem.key)
+      this.logDebug(this.activeApi)
+      if (this.deleteitem.key == this.activeApi) {
+        this.logDebug('Unsetting active connection')
+        this.$store.commit('data/setActiveApi', null)
+      }
       delete this.$apollo.provider.clients[this.deleteitem.key]
       this.$store.commit('data/removeApi', this.deleteitem.key)
       this.deleteitem = null

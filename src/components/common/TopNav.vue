@@ -43,7 +43,7 @@ div
 
       v-menu(offset-y transition="scale-transition" left=true nudge-bottom="10")
         template(v-slot:activator="{ on }")
-          v-btn(v-if="activeApi && apis.hasOwnProperty(activeApi)" small v-on="on" v-text="apis[activeApi]['name']" :color="(isApiReady(activeApi)) ? 'success' : 'error'")
+          v-btn(v-if="activeApi && apis.hasOwnProperty(activeApi)" small v-on="on" :color="(isApiReady(activeApi)) ? 'success' : 'error'") {{ activeName }}
           v-btn.text--blue-grey.lighten-5(v-else small v-on="on") No Active API
         v-list(rounded)
           v-list-item(v-for="(data, key) in apis" :key="key" @click='changeApi(key)')
@@ -100,6 +100,13 @@ export default {
   },
 
   computed: {
+    activeName () {
+      if (this.apis.hasOwnProperty(this.activeApi)) {
+        return this.apis[this.activeApi]['name']
+      } else {
+        return "No API Active"
+      }
+    },
     height () {
       return window.innerHeight
     },
@@ -140,6 +147,7 @@ export default {
     activeApi: {
       handler: function (newValue) {
         this.createQueries()
+        this.logDebug(`activeApi changed: ${this.activeApi}`)
       }
     }
   },

@@ -1,8 +1,8 @@
 <template lang='pug'>
 v-container(fluid)
-  v-card
+  v-card.transparent
     v-toolbar(:color="navColor" dense)
-      v-toolbar-title Maverick Services
+      v-toolbar-title System Services
       v-spacer
       v-text-field(v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details)
     v-data-table.elevation-1(v-if="activeApi && services[activeApi]" dense :headers="headers" :items="Object.values(services[activeApi])" :search="search" sort-by="displayName" sort-desc=false)
@@ -19,6 +19,10 @@ v-container(fluid)
       template(v-slot:no-results)
         v-alert.ma-8(border="left" outlined type="primary")
           span No services are available.  Please activate an API connection before controlling services.
+    template(v-else)
+      v-alert.ma-8(border="left" outlined type="info")
+        span.mb-4 No services are available.  Please activate an API connection before controlling services.
+      span 
 </template>
 
 <script>

@@ -2,7 +2,7 @@
 v-container(fluid)
   v-card
     v-toolbar(:color="navColor" dense)
-      v-toolbar-title Maverick Legacy Services
+      v-toolbar-title Legacy Services
 
     v-alert.ma-8(border="left" type="info")
       span This is a list of legacy web services that have not yet been migrated to the new Maverick web interface.
