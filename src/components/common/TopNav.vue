@@ -49,6 +49,7 @@ div
           v-list-item(v-for="(data, key) in apis" :key="key" @click='changeApi(key)')
             v-list-item-avatar
               v-img(v-if="apistate[key] && apistate[key].icon" :src="publicPath + apistate[key].icon" contain=true)
+              v-icon(v-else) mdi-desktop-classic
             v-list-item-content
               v-list-item-title {{ data.name }}
             v-icon(right v-if="apistate[key]" color='green' small) mdi-check-circle-outline
@@ -60,7 +61,7 @@ div
         v-list
           v-list-item(v-for="(data, key) in $store.state.core.modules" v-if="$store.state.data.modulesActive[key] == true" :key="key" :color="data.color")
             v-btn(dark :color="data.color" :to="'/' + key" block) {{ key | capitalize }}
-                  v-icon(right) {{ data.icon }}
+              v-icon(right) {{ data.icon }}
 
       v-fade-transition(mode="out-in")
         v-app-bar-nav-icon(v-if="navDrawerEnable" @click.stop="toggleDrawer")
