@@ -10,7 +10,7 @@ Vue.use(VuetifyToast, {
 	classes: [
 		'body-2'
 	],
-	timeout: 5000,
+	timeout: 2000,
 	dismissable: true,
 	multiLine: false,
 	vertical: false,
