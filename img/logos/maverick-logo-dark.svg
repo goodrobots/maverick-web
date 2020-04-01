@@ -38,8 +38,8 @@
                 </g>
             </g>
             <g transform="matrix(1.45892,0,0,1.45892,-268.996,-124.254)">
-                <g id="White-Text" serif:id="White Text">
-                    <text x="270.073px" y="523.144px" style="font-family:'Exo2-Light', 'Exo 2';font-weight:300;font-size:65.802px;fill:white;">MA<tspan x="365.486px " y="523.144px ">V</tspan>ERICK</text>
+                <g id="Dark-Text" serif:id="Dark Text">
+                    <text x="270.073px" y="523.144px" style="font-family:'Exo2-Light', 'Exo 2';font-weight:300;font-size:65.802px;fill:rgb(51,51,51);fill-opacity:0.86;">MA<tspan x="365.486px " y="523.144px ">V</tspan>ERICK</text>
                 </g>
             </g>
         </g>

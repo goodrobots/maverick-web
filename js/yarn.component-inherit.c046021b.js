@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["yarn.component-inherit"],{"62fa":function(o,n){o.exports=function(o,n){var t=function(){};t.prototype=n.prototype,o.prototype=new t,o.prototype.constructor=o}}}]);
+//# sourceMappingURL=yarn.component-inherit.c046021b.js.map
