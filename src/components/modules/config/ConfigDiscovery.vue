@@ -40,7 +40,11 @@ div
                 v-list-item-content.align-end
               v-list-item
                 v-list-item-content
-                  v-text-field(v-model="item.url" label="Agent URL")
+                  v-text-field(v-model="item.ws_url" label="Non-encrypted Agent URL")
+                v-list-item-content.align-end
+              v-list-item
+                v-list-item-content
+                  v-text-field(v-model="item.wss_url" label="Encrypted Agent URL")
                 v-list-item-content.align-end
               v-list-item
                 v-btn(color='success' @click="save(item)") Save

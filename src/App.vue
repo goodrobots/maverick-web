@@ -147,19 +147,18 @@ export default {
     },
     defaultDiscovery() {
       if (!this.$store.state.data.discoveries[window.location.hostname]) {
-        const url = 'ws://' + window.location.hostname + ':1234'
-        this.logInfo(`Creating default discovery agent: ${url}`)
-        this.$store.commit('data/addDiscovery', { key: window.location.hostname, data: { url: url, host: window.location.hostname, port: 1234 } })
+        const ws_url = 'ws://' + window.location.hostname + ':6001'
+        const wss_url = 'wss://' + window.location.hostname + ':6002'
+        this.logInfo(`Creating default discovery agent: ${ws_url} :: ${wss_url}`)
+        this.$store.commit('data/addDiscovery', { key: window.location.hostname, data: { ws_url: ws_url, wss_url: wss_url, host: window.location.hostname } })
       }
     },
     createDiscoveries() {
       for (let [key, discovery] of Object.entries(this.$store.state.data.discoveries)) {
-        var ws = new WebSocket(discovery.url);
-        ws.onopen = () => {
-          this.logInfo("Connected to discovery service: " + discovery.url)
-        }
-        ws.onmessage = (evt) => {
+        /* Define message callback */
+        function onmessage (evt) {
           const data = JSON.parse(evt.data)
+          this.logDebug(data)
           // this.logDebug(`Received new discovered service: ${data.name}`)
           if (data.service_type == "maverick-api") {
             this.createApi(data)
@@ -168,6 +167,18 @@ export default {
             this.createVideo(data)
           }
         }
+        /* Create non-encrypted websocket connection */
+        var ws = new WebSocket(discovery.ws_url);
+        ws.onopen = () => {
+          this.logInfo("Connected to ws maverick-discovery service: " + discovery.ws_url)
+        }
+        ws.onmessage = onmessage
+        /* Create encrypted websocket connection */
+        var wss = new WebSocket(discovery.wss_url);
+        wss.onopen = () => {
+          this.logInfo("Connected to wss maverick-discovery service: " + discovery.wss_url)
+        }
+        wss.onmessage = onmessage
       }
     },
     createApi (data) {
