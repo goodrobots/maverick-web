@@ -1,5 +1,6 @@
+const fs = require('fs');
+
 module.exports = {
-    
   "transpileDependencies": [
     "vuetify"
   ],
@@ -62,7 +63,11 @@ module.exports = {
       'Access-Control-Allow-Headers':
         'X-Requested-With, content-type, Authorization'
     },
-    https: false,
+    https: {
+      key: fs.readFileSync('/srv/maverick/data/security/ssl/web/mavweb.key'),
+      cert: fs.readFileSync('/srv/maverick/data/security/ssl/web/mavweb.crt'),
+      ca: fs.readFileSync('/srv/maverick/data/security/ssl/ca/mavCA.pem'),
+    },
     hotOnly: true,
     inline: true,
     open: false,

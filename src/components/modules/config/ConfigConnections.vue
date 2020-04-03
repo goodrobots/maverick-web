@@ -13,7 +13,7 @@ div
           span Add API Connection
     
     template(v-slot:no-data)
-      v-alert.ma-8(border="left" outlined type="primary")
+      v-alert.ma-8(border="left" outlined type="info" color="primary")
         span No API Connections are defined.
           v-btn.ml-2(@click.stop="dialog = true" :color="navColor+' darken-2'" small)
             span Add API Connection

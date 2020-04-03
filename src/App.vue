@@ -156,29 +156,35 @@ export default {
     createDiscoveries() {
       for (let [key, discovery] of Object.entries(this.$store.state.data.discoveries)) {
         /* Define message callback */
-        function onmessage (evt) {
-          const data = JSON.parse(evt.data)
-          this.logDebug(data)
-          // this.logDebug(`Received new discovered service: ${data.name}`)
-          if (data.service_type == "maverick-api") {
-            this.createApi(data)
-          }
-          if (data.service_type == "webrtc") {
-            this.createVideo(data)
+        onmessage = (evt) => {
+          try {
+            const data = JSON.parse(evt.data)
+            if (data.service_type == "maverick-api") {
+              this.createApi(data)
+            }
+            if (data.service_type == "webrtc") {
+              this.createVideo(data)
+            }
+          } catch (error) {
+            // console.log("Error: " + error)
           }
         }
+
         /* Create non-encrypted websocket connection */
-        var ws = new WebSocket(discovery.ws_url);
-        ws.onopen = () => {
-          this.logInfo("Connected to ws maverick-discovery service: " + discovery.ws_url)
+        if (window.location.protocol == 'http:') {
+          var ws = new WebSocket(discovery.ws_url);
+          ws.onopen = () => {
+            this.logInfo("Connected to ws maverick-discovery service: " + discovery.ws_url)
+          }
+          ws.onmessage = onmessage
+        } else if (window.location.protocol == 'https:') {
+          /* Create encrypted websocket connection */
+          var wss = new WebSocket(discovery.wss_url);
+          wss.onopen = () => {
+            this.logInfo("Connected to wss maverick-discovery service: " + discovery.wss_url)
+          }
+          wss.onmessage = onmessage
         }
-        ws.onmessage = onmessage
-        /* Create encrypted websocket connection */
-        var wss = new WebSocket(discovery.wss_url);
-        wss.onopen = () => {
-          this.logInfo("Connected to wss maverick-discovery service: " + discovery.wss_url)
-        }
-        wss.onmessage = onmessage
       }
     },
     createApi (data) {

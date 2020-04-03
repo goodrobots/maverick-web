@@ -18,20 +18,15 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="topColor"
         v-icon mdi-view-module
       v-list-item-content
         v-list-item-title Web Modules
-    v-list-item(@click="" to="/config/video")
-      v-list-item-icon
-        v-icon mdi-video
-      v-list-item-content
-        v-list-item-title Video Streams
 
   v-spacer
 
   v-list-item.mt-4
     v-list-item-content
       v-list-item-title.title
-        span Maverick API
+        span Connections
       v-list-item-subtitle
-        span API Settings
+        span Discovery, API and Video Connections
   v-divider
   v-list.pt-0(dense nav)
     v-list-item(@click="" to="/config/discovery")
@@ -44,6 +39,11 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="topColor"
         v-icon mdi-router-wireless-settings
       v-list-item-content
         v-list-item-title API Connections
+    v-list-item(@click="" to="/config/video")
+      v-list-item-icon
+        v-icon mdi-video
+      v-list-item-content
+        v-list-item-title Video Streams
 
   v-spacer
 
