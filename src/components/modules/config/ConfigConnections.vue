@@ -47,10 +47,19 @@ div
                           v-text-field(v-model="item.httpEndpoint" label="GraphQL Endpoint")
                       v-list-item
                         v-list-item-content
+                          v-text-field(v-model="item.httpsEndpoint" label="Encrypted GraphQL Endpoint")
+                      v-list-item
+                        v-list-item-content
                           v-text-field(v-model="item.wsEndpoint" label="Websockets Endpoint")
                       v-list-item
                         v-list-item-content
+                          v-text-field(v-model="item.wssEndpoint" label="Encrypted Websockets Endpoint")
+                      v-list-item
+                        v-list-item-content
                           v-text-field(v-model="item.schemaEndpoint" label="Schema Endpoint")
+                      v-list-item
+                        v-list-item-content
+                          v-text-field(v-model="item.schemasEndpoint" label="Encrypted Schema Endpoint")
                       v-list-item
                         v-btn(color='success' @click="save(item)") Save
                         v-btn.ml-2(color='blue' @click="connect(item)") Connect

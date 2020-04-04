@@ -153,11 +153,12 @@ const plugin = {
         },
 
         async fetchClientSchema (api, clientdata) {
-          await this.$store.dispatch("core/fetchSchema", {api:api, schemaEndpoint:clientdata.schemaEndpoint}).then(() => {
+          await this.$store.dispatch("core/fetchSchema", {api: api, schemaEndpoint: clientdata.schemasEndpoint ? clientdata.schemasEndpoint : clientdata.schemaEndpoint}).then(() => {
             this.logDebug('Schema fetch has been dispatched for api: ' + api)
           })
         },
 
+        // TODO: This method name clashes with graphql createClient, should be renamed
         async createClient (api, clientdata) {
           // Add a vuex apis entry
           this.$store.commit('core/addApiState', api)
@@ -169,11 +170,24 @@ const plugin = {
           })
           // While the above is resolving, do as much as possible...
           // Add an apollo client
-          const client = createClient({
-            httpEndpoint: clientdata.httpEndpoint,
-            wsEndpoint: clientdata.wsEndpoint,
-            websocketsOnly: clientdata.websocketsOnly
-          })
+          let client = null
+          if (window.location.protocol == 'https:') {
+            if (clientdata.httpsEndpoint && clientdata.wssEndpoint && clientdata.schemasEndpoint) {
+              client = createClient({
+                httpEndpoint: clientdata.httpsEndpoint,
+                wsEndpoint: clientdata.wssEndpoint,
+                websocketsOnly: clientdata.websocketsOnly
+              })
+            } else {
+              this.logError(`API client ${this.apis[api].name} does not have SSL endpoints set, and this is an https connection`)
+            }
+          } else {
+            client = createClient({
+              httpEndpoint: clientdata.httpEndpoint,
+              wsEndpoint: clientdata.wsEndpoint,
+              websocketsOnly: clientdata.websocketsOnly
+            })
+          }
           this.$set(this.$apollo.provider.clients, api, client)
           // Set the client auth token
           if (clientdata.authToken) {

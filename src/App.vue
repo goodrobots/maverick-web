@@ -193,8 +193,11 @@ export default {
         let apidata = {
           key: data.uuid,
           "httpEndpoint": data.httpEndpoint,
+          "httpsEndpoint": data.httpsEndpoint ? data.httpsEndpoint : null,
           "wsEndpoint": data.wsEndpoint,
+          "wssEndpoint": data.wssEndpoint ? data.wssEndpoint : null,
           "schemaEndpoint": data.schemaEndpoint,
+          "schemasEndpoint": data.schemasEndpoint ? data.schemasEndpoint : null,
           "websocketsOnly": data.websocketsOnly,
           "name": data.name,
           "colorLight": "rgba(166,11,11,0.3)",
