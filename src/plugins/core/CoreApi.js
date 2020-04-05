@@ -162,15 +162,9 @@ const plugin = {
         async createClient (api, clientdata) {
           // Add a vuex apis entry
           this.$store.commit('core/addApiState', api)
-          // Fetch and parse the client schema
-          let schemaFetchPromise = new Promise((resolve, reject) => {
-            this.fetchClientSchema(api, clientdata).then(() => {
-              resolve()
-            })
-          })
-          // While the above is resolving, do as much as possible...
           // Add an apollo client
           let client = null
+          let schemaFetchPromise = null
           if (window.location.protocol == 'https:') {
             if (clientdata.httpsEndpoint && clientdata.wssEndpoint && clientdata.schemasEndpoint) {
               client = createClient({
@@ -178,14 +172,27 @@ const plugin = {
                 wsEndpoint: clientdata.wssEndpoint,
                 websocketsOnly: clientdata.websocketsOnly
               })
+              // Fetch and parse the client schema
+              schemaFetchPromise = new Promise((resolve, reject) => {
+                this.fetchClientSchema(api, clientdata).then(() => {
+                  resolve()
+                })
+              })
             } else {
               this.logError(`API client ${this.apis[api].name} does not have SSL endpoints set, and this is an https connection`)
+              return false
             }
           } else {
             client = createClient({
               httpEndpoint: clientdata.httpEndpoint,
               wsEndpoint: clientdata.wsEndpoint,
               websocketsOnly: clientdata.websocketsOnly
+            })
+            // Fetch and parse the client schema
+            schemaFetchPromise = new Promise((resolve, reject) => {
+              this.fetchClientSchema(api, clientdata).then(() => {
+                resolve()
+              })
             })
           }
           this.$set(this.$apollo.provider.clients, api, client)
