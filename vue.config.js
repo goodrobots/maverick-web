@@ -55,7 +55,7 @@ module.exports = {
     clientLogLevel: 'warning',
     compress: true,
     host: '0.0.0.0',
-    public: 'http://0.0.0.0:6794',
+    public: 'http://0.0.0.0:6100',
     disableHostCheck: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
@@ -63,6 +63,8 @@ module.exports = {
       'Access-Control-Allow-Headers':
         'X-Requested-With, content-type, Authorization'
     },
+    // https: false,
+    // Uncomment this https block below to enable https in the Maverick environment
     https: {
       key: fs.readFileSync('/srv/maverick/data/security/ssl/web/mavweb.key'),
       cert: fs.readFileSync('/srv/maverick/data/security/ssl/web/mavweb.crt'),
@@ -75,7 +77,7 @@ module.exports = {
       warnings: true,
       errors: true
     },
-    port: 6794,
+    port: 6100,
     proxy: null
   },
 }
