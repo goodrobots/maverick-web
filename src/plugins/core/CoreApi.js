@@ -246,8 +246,9 @@ const plugin = {
         },
 
         async fetchClientSchema (api, clientdata) {
-          await this.$store.dispatch("core/fetchSchema", {api: api, schemaEndpoint: clientdata.schemasEndpoint ? clientdata.schemasEndpoint : clientdata.schemaEndpoint}).then(() => {
-            this.logDebug('Schema fetch has been dispatched for api: ' + api)
+          const schemaEndpoint = window.location.protocol == 'https:' ? clientdata.schemasEndpoint : clientdata.schemaEndpoint
+          await this.$store.dispatch("core/fetchSchema", {api: api, schemaEndpoint: schemaEndpoint}).then(() => {
+            this.logDebug('Schema fetch has been dispatched: ' + schemaEndpoint)
           })
         },
 

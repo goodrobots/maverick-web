@@ -89,7 +89,6 @@ export default {
         for (const api of Object.keys(newValue)) {
           // If schema has been fetched, proceed to create Status query/subscription
           if (newValue[api].schemaready === true) {
-            this.logDebug(`Creating status query/subscription for API ${this.apis[api].name}`)
             this.createQuery('Status', statusQuery, api, null, null, this.processStatusQuery)
             this.createSubscription('Status', statusSubscription, api, null, null, this.processStatusSubscription)
           }
