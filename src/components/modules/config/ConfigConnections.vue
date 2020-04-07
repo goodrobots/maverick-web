@@ -99,7 +99,10 @@ div
                         v-list-item-content {{ apistate[item.key].icon }}
                           v-icon(v-if="apistate[item.key].icon" color='success') {{ apistate[item.key].icon }}
                           v-icon(v-else color='error') mdi-alert-circle-outline
-
+                    v-divider
+                    // img(:src="`https://${item.hostname}/img/misc/onepixel.png`" @error="imgError('http', item)" style="display:none")
+                    // img(:src="`http://${item.hostname}/img/misc/onepixel.png`" @error="imgError('https', item)" style="display:none")
+                    
   v-dialog(v-model="dialog" max-width="600px")
     v-card
       v-card-title.headline(class="primary" primary-title)
@@ -157,18 +160,12 @@ export default {
       return Object.values(this.apis)
     }
   },
+  mounted () {
+    for (const api of Object.keys(this.apis)) {
+      // this.testSsl(api)
+    }
+  },
   methods: {
-    lastseen (api) {
-      let lastseen = (this.apistate && this.apistate.hasOwnProperty(api)) ? this.apistate[api].lastseen : 0
-      return (performance.now() - lastseen)
-    },
-    save(apiData) {
-      this.$store.commit('data/setApiData', {api: apiData.key, data: apiData})
-      // If any of the endpoints have changed, destroy and recreate the client
-      // this.deleteQueries(apiData.key)
-      // delete this.$apollo.provider.clients[apiData.key]
-      // this.createClient(apiData.key+'new', apiData)
-    },
     connect(apiData) {
       this.logDebug('Connecting: ' + apiData.key)
       if (!(this.$apollo.provider.clients[apiData.key])) {
@@ -193,6 +190,22 @@ export default {
       }
       this.$store.commit('data/addApi', {key: data.key, data: data})
     },
+    /*
+    imgError (protocol, item) {
+      this.logDebug(`protocol: ${protocol}`)
+      this.logDebug(item)
+      if (event.type == "error" && item.hasOwnProperty('hostname')) {
+        this.logError(`Error connecting to API (${item.name}) over SSL.`)
+        this.logDebug(event)
+      } else if (! item.hasOwnProperty('hostname')) {
+        this.logError(`Error: This API definition (${item.name}) does not have a hostname set.  Please update maverick-api.`)
+      }
+    },
+    */
+    lastseen (api) {
+      let lastseen = (this.$store.state.core.apiSeen.hasOwnProperty(api)) ? this.$store.state.core.apiSeen[api] : 0
+      return (performance.now() - lastseen)
+    },
     remove(item) {
       this.deleteitem = item
       this.deleteDialog = true
@@ -207,6 +220,44 @@ export default {
       delete this.$apollo.provider.clients[this.deleteitem.key]
       this.$store.commit('data/removeApi', this.deleteitem.key)
       this.deleteitem = null
+    },
+    save(apiData) {
+      this.$store.commit('data/setApiData', {api: apiData.key, data: apiData})
+      // If any of the endpoints have changed, destroy and recreate the client
+      // this.deleteQueries(apiData.key)
+      // delete this.$apollo.provider.clients[apiData.key]
+      // this.createClient(apiData.key+'new', apiData)
+    },
+    async testSsl(api) {
+      // Define an internal method function promise that fetches the image and watches for completion or error
+      function testImage(imgPath) {
+        return new Promise((resolve, reject) => {
+          const testImg = new Image()
+          testImg.addEventListener("load", () => resolve(testImg))
+          testImg.addEventListener("error", err => reject(err))
+          testImg.src = imgPath
+        })
+      }
+
+      const item = this.apis[api]
+
+      /*
+      // http can't be loaded from https link
+      let httpState = null
+      let httpLoad = testImage(`http://${item.hostname}/img/misc/onepixel.png`)
+        .then(img => { httpState = true })
+        .catch(err => { this.logDebug('Error loading http image'); httpState = false })
+      await httpLoad
+      */
+
+      let httpsState = null
+      let httpsLoad = testImage(`https://${item.hostname}/img/misc/onepixel.png`)
+        .then(img => { httpsState = true })
+        .catch(err => { this.logDebug('Error loading https image'); httpsState = false })
+      await httpsLoad
+
+      this.logDebug(`SSL state for ${item.name}: ${httpsState}`)
+      
     }
   }
 }

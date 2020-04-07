@@ -106,67 +106,30 @@ const plugin = {
           this.$store.commit('core/clearGraphqlVerified', api)
         },
 
-        isApiReady (api) {
-          try {
-            return this.apistate[api].state === true && this.apistate[api].schemaready === true
-          } catch {
-            return false
-          }
-        },
-
-        verifyQuery (gql, api = this.activeApi, unknownDefault = false) {
-          let gqlHash = this.hashCode(print(gql))
-          let alreadyVerified = this.$store.getters['core/graphqlSchemaVerified'](api, gqlHash)
-
-          if (alreadyVerified !== undefined) {
-            // query has already been verified for this api
-            return alreadyVerified
-          }
-
-          // attempt to validate the query 
-          let graphqlSchema = this.$store.getters['core/graphqlSchema'](api)
-          if (graphqlSchema === undefined) {
-            // graphqlSchema has not been fetched for this api, return unknownDefault
-            return unknownDefault
-          }
-          // this.logDebug(graphqlSchema)
-          let validationErrors = undefined
-          try {
-            validationErrors = validate(graphqlSchema, gql)
-          } catch (err) {
-            this.logDebug(`Validation error: ${err}`)
-            return unknownDefault
-          }
-          let valid = false
-          if (validationErrors == undefined || validationErrors.length == 0) {
-            valid = true
-          }
-          this.$store.commit('core/updateGraphqlVerified', {api:api, hash:gqlHash, ret:valid})
-          return valid
-        },
-
-        hashCode(s) {
-          let h
-          for(let i = 0; i < s.length; i++) 
-                h = Math.imul(31, h) + s.charCodeAt(i) | 0
-          return h.toString()
-        },
-
-        async fetchClientSchema (api, clientdata) {
-          await this.$store.dispatch("core/fetchSchema", {api: api, schemaEndpoint: clientdata.schemasEndpoint ? clientdata.schemasEndpoint : clientdata.schemaEndpoint}).then(() => {
-            this.logDebug('Schema fetch has been dispatched for api: ' + api)
-          })
-        },
-
         // TODO: This method name clashes with graphql createClient, should be renamed
         async createClient (api, clientdata) {
           // Add a vuex apis entry
           this.$store.commit('core/addApiState', api)
+
+          // Check ssl connection
+          let httpsState = false
+          let httpsLoad = this.testImage(`https://${this.apis[api].hostname}/img/ssltest.png`)
+            .then(img => { httpsState = true })
+            .catch(err => { httpsState = false })
+          await httpsLoad      
+          this.$store.commit('core/setApiState', {api: api, field: 'sslstate', value: httpsState})
+          this.logDebug(`SSL test for API host ${this.apis[api].hostname} result: ${httpsState}`)
+
           // Add an apollo client
           let client = null
           let schemaFetchPromise = null
           if (window.location.protocol == 'https:') {
             if (clientdata.httpsEndpoint && clientdata.wssEndpoint && clientdata.schemasEndpoint) {
+              if (httpsState === false) {
+                this.logError(`SSL test for API host ${this.apis[api].hostname} failed, not creating API client`)
+                return false
+              }
+              // Try to create client
               client = createClient({
                 httpEndpoint: clientdata.httpsEndpoint,
                 wsEndpoint: clientdata.wssEndpoint,
@@ -203,6 +166,7 @@ const plugin = {
           }
           // Wait for the fetch to resolve before setting the api state
           await schemaFetchPromise
+          this.logDebug(`Completed schema fetch for API ${this.apis[api].name}`)
           this.$store.commit('core/setApiState', {api: api, field: 'schemaready', value: true})
         },
 
@@ -212,7 +176,7 @@ const plugin = {
           const queryKey = [api, message, varvalues].join('___')
           // If a query with the calculated key doesn't exist, and the client appears to exist, then create the query
           if (!this.$apollo.queries[queryKey] && this.$apollo.provider.clients[api]) {
-            this.logDebug(`Creating GQL Query: api: ${api}, message: ${message}, queryKey: ${queryKey}, container: ${container}`)
+            this.logDebug(`Creating GQL Query: api: ${this.apis[api].name}, message: ${message}, queryKey: ${queryKey}, container: ${container}`)
             // If a callback function has been passed use it as the result processor, otherwise use a default function
             const resultFunction = (callback instanceof Function) ? callback : function (data, key) {
               const cbapi = key.split('___')[0]
@@ -248,7 +212,7 @@ const plugin = {
           const varvalues = variables && Object.values(variables) ? Object.values(variables).join('~') : ''
           const subKey = [api, message, varvalues].join('___')
           if (!this.$apollo.subscriptions[subKey] && this.$apollo.provider.clients[api]) {
-            this.logDebug(`Creating GQL Subscription: api: ${api}, message: ${message}, subKey: ${subKey}`)
+            this.logDebug(`Creating GQL Subscription: api: ${this.apis[api].name}, message: ${message}, subKey: ${subKey}`)
             // If a callback function has been passed use it as the result processor, otherwise use a default function
             const resultFunction = (callback instanceof Function) ? callback : function (data, key) {
               const cbapi = key.split('___')[0]
@@ -278,6 +242,27 @@ const plugin = {
               subscriptionFields = { ...subscriptionFields, variables () { return variables } }
             }
             this.$apollo.addSmartSubscription(subKey, subscriptionFields)
+          }
+        },
+
+        async fetchClientSchema (api, clientdata) {
+          await this.$store.dispatch("core/fetchSchema", {api: api, schemaEndpoint: clientdata.schemasEndpoint ? clientdata.schemasEndpoint : clientdata.schemaEndpoint}).then(() => {
+            this.logDebug('Schema fetch has been dispatched for api: ' + api)
+          })
+        },
+
+        hashCode(s) {
+          let h
+          for(let i = 0; i < s.length; i++) 
+                h = Math.imul(31, h) + s.charCodeAt(i) | 0
+          return h.toString()
+        },
+
+        isApiReady (api) {
+          try {
+            return this.apistate[api].state === true && this.apistate[api].schemaready === true
+          } catch {
+            return false
           }
         },
 
@@ -319,6 +304,24 @@ const plugin = {
           */
         },
 
+        // Define a promise that fetches the image and watches for completion or error
+        testImage(imgPath) {
+          return new Promise((resolve, reject) => {
+            const testImg = new Image()
+            testImg.addEventListener("load", () => resolve(testImg))
+            testImg.addEventListener("error", err => reject(err))
+            testImg.src = imgPath
+          })
+        },
+
+        tickCross (boolean) {
+          if (boolean) {
+            return "v-icon(color='green') mdi-check-circle-outline"
+          } else {
+            return "v-icon(color='red') mdi-alert-circle-outline"
+          }
+        },
+
         vehicleIcon (vehicleType) {
           const iconPath = 'img/icons/vehicleIcons/'
           if (vehicleType === 'Copter' || vehicleType === 'Quadrotor') {
@@ -338,12 +341,35 @@ const plugin = {
           }
         },
 
-        tickCross (boolean) {
-          if (boolean) {
-            return "v-icon(color='green') mdi-check-circle-outline"
-          } else {
-            return "v-icon(color='red') mdi-alert-circle-outline"
+        verifyQuery (gql, api = this.activeApi, unknownDefault = false) {
+          let gqlHash = this.hashCode(print(gql))
+          let alreadyVerified = this.$store.getters['core/graphqlSchemaVerified'](api, gqlHash)
+
+          if (alreadyVerified !== undefined) {
+            // query has already been verified for this api
+            return alreadyVerified
           }
+
+          // attempt to validate the query 
+          let graphqlSchema = this.$store.getters['core/graphqlSchema'](api)
+          if (graphqlSchema === undefined) {
+            // graphqlSchema has not been fetched for this api, return unknownDefault
+            return unknownDefault
+          }
+          // this.logDebug(graphqlSchema)
+          let validationErrors = undefined
+          try {
+            validationErrors = validate(graphqlSchema, gql)
+          } catch (err) {
+            this.logDebug(`Validation error: ${err}`)
+            return unknownDefault
+          }
+          let valid = false
+          if (validationErrors == undefined || validationErrors.length == 0) {
+            valid = true
+          }
+          this.$store.commit('core/updateGraphqlVerified', {api:api, hash:gqlHash, ret:valid})
+          return valid
         }
       }
     })

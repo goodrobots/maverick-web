@@ -84,6 +84,19 @@ export default {
       },
       deep: true
     },
+    '$store.state.core.apiState': {
+      handler: function (newValue) {
+        for (const api of Object.keys(newValue)) {
+          // If schema has been fetched, proceed to create Status query/subscription
+          if (newValue[api].schemaready === true) {
+            this.logDebug(`Creating status query/subscription for API ${this.apis[api].name}`)
+            this.createQuery('Status', statusQuery, api, null, null, this.processStatusQuery)
+            this.createSubscription('Status', statusSubscription, api, null, null, this.processStatusSubscription)
+          }
+        }
+      },
+      deep: true
+    },
     // Watch discoveries state for any change and process
     '$store.state.data.discoveries': {
       handler: function (newValue) {
@@ -114,21 +127,45 @@ export default {
 
   mounted () {
     this.logBanner('** Welcome to Maverick Web GCS **')
-    // Connect to defined APIs
-    this.createClients()
+    // Set initital dark theme state
+    this.$vuetify.theme.dark = this.isDark
     // Create a default discovery agent if one doesn't exist
     this.defaultDiscovery()
     // Create websocket connections for all defined discovery agents
     this.createDiscoveries()
-    // Set initital dark theme state
-    this.$vuetify.theme.dark = this.isDark
+    // Connect to defined APIs
+    this.createClients()
   },
 
   methods: {
+    createApi (data) {
+      if (!this.apis[data.uuid] && data.service_type == 'maverick-api') {
+        this.logInfo(`Creating new API connection from discovered service: ${data.name}`)
+        let apidata = {
+          authToken: null,
+          colorLight: "rgba(166,11,11,0.3)",
+          colorDark: "rgba(166,11,11,0.9)",
+          httpEndpoint: data.httpEndpoint,
+          httpsEndpoint: data.httpsEndpoint ? data.httpsEndpoint : null,
+          hostname: data.hostname,
+          key: data.uuid,
+          name: data.name,
+          schemaEndpoint: data.schemaEndpoint,
+          schemasEndpoint: data.schemasEndpoint ? data.schemasEndpoint : null,
+          wsEndpoint: data.wsEndpoint,
+          wssEndpoint: data.wssEndpoint ? data.wssEndpoint : null,
+          websocketsOnly: data.websocketsOnly
+        }
+        this.$store.commit('data/addApi', {key: apidata.key, data: apidata})
+        if (this.uiSettings.notifyDiscovery) {
+          this.$toast.info(`Created new API connection from discovery: <strong>${data.name}</strong>`)
+        }
+      }
+    },
     checkApis () {
       // If an api hasn't been seen for more than 10 seconds, mark it as dead
       for (const api in this.apis) {
-        let lastseen = (this.apistate && this.apistate.hasOwnProperty(api)) ? this.apistate[api].lastseen : 0
+        let lastseen = this.$store.state.core.apiSeen.hasOwnProperty(api) ? this.$store.state.core.apiSeen[api] : 0
         if (this.appVisible && performance.now() - lastseen > 10000) {
           // this.logInfo(`deadapi? api: ${api}, timestamp: ${lastseen}`)
           this.$store.commit('core/setApiState', { api: api, field: 'state', value: false })
@@ -141,16 +178,6 @@ export default {
         if (!this.$apollo.provider.clients.hasOwnProperty(api)) {
           this.createClient(api, this.apis[api])
         }
-        this.createQuery('Status', statusQuery, api, null, null, this.processStatusQuery)
-        this.createSubscription('Status', statusSubscription, api, null, null, this.processStatusSubscription)
-      }
-    },
-    defaultDiscovery() {
-      if (!this.$store.state.data.discoveries[window.location.hostname]) {
-        const ws_url = 'ws://' + window.location.hostname + ':6001'
-        const wss_url = 'wss://' + window.location.hostname + ':6002'
-        this.logInfo(`Creating default discovery agent: ${ws_url} :: ${wss_url}`)
-        this.$store.commit('data/addDiscovery', { key: window.location.hostname, data: { ws_url: ws_url, wss_url: wss_url, host: window.location.hostname } })
       }
     },
     createDiscoveries() {
@@ -187,35 +214,13 @@ export default {
         }
       }
     },
-    createApi (data) {
-      if (!this.apis[data.uuid] && data.service_type == 'maverick-api') {
-        this.logInfo(`Creating new API connection from discovered service: ${data.name}`)
-        let apidata = {
-          key: data.uuid,
-          "httpEndpoint": data.httpEndpoint,
-          "httpsEndpoint": data.httpsEndpoint ? data.httpsEndpoint : null,
-          "wsEndpoint": data.wsEndpoint,
-          "wssEndpoint": data.wssEndpoint ? data.wssEndpoint : null,
-          "schemaEndpoint": data.schemaEndpoint,
-          "schemasEndpoint": data.schemasEndpoint ? data.schemasEndpoint : null,
-          "websocketsOnly": data.websocketsOnly,
-          "name": data.name,
-          "colorLight": "rgba(166,11,11,0.3)",
-          "colorDark": "rgba(166,11,11,0.9)",
-          "authToken": null
-        }
-        this.$store.commit('data/addApi', {key: apidata.key, data: apidata})
-        if (this.uiSettings.notifyDiscovery) {
-          this.$toast.info(`Created new API connection from discovery: <strong>${data.name}</strong>`)
-        }
-      }
-    },
     createVideo (data) {
       if (!this.$store.state.data.videostreams[data.uuid] && data.service_type == 'webrtc') {
         this.logInfo(`Creating new Video stream from discovered service: ${data.name}`)
         let videodata = {
           key: data.uuid,
           name: data.name,
+          hostnamne: data.hostanme,
           webrtcEndpoint: data.wsEndpoint,
           enabled: false,
           action: 'start'
@@ -224,6 +229,14 @@ export default {
         if (this.uiSettings.notifyDiscovery) {
           this.$toast.info(`Created new Video Stream from discovery: <strong>${data.name}</strong>`)
         }
+      }
+    },
+    defaultDiscovery() {
+      if (!this.$store.state.data.discoveries[window.location.hostname]) {
+        const ws_url = 'ws://' + window.location.hostname + ':6001'
+        const wss_url = 'wss://' + window.location.hostname + ':6002'
+        this.logInfo(`Creating default discovery agent: ${ws_url} :: ${wss_url}`)
+        this.$store.commit('data/addDiscovery', { key: window.location.hostname, data: { ws_url: ws_url, wss_url: wss_url, host: window.location.hostname } })
       }
     },
 
@@ -253,7 +266,7 @@ export default {
             this.createSubscription('MaverickService', maverickServicesSubscription, api, null, null, this.processServiceSubscription)
           }, 5000)
         }
-        if (this.apistate[api].lastseen === null) this.$store.commit('core/setApiState', {api: api, field: 'lastseen', value: performance.now() })
+        this.$store.commit('core/setApiSeen', {api: api, lastseen: performance.now() })
         if (!(api in this.$store.state.core.statusData)) {
           this.$store.commit('core/setStatusData', { api: api, message: data.data.Status })
         }
@@ -263,8 +276,7 @@ export default {
       const api = key.split('___')[0]
       // Store the message data and set the api state to active, for subsequent subscription callbacks
       // if (data.data && this.$store.state.core.apis[api].state !== true) this.$store.commit('data/setApiState', { api: api, value: true })
-      // this.$store.commit('core/setApiSeen', { api: api, value: performance.now() })
-      this.$store.commit('core/setApiState', {api: api, field: 'lastseen', value: performance.now()})
+      this.$store.commit('core/setApiSeen', {api: api, lastseen: performance.now() })
       if (data.data && this.$store.state.core.statusData[api] !== data.data.Status) {
         this.$store.commit('core/setStatusData', { api: api, message: data.data.Status })
       }

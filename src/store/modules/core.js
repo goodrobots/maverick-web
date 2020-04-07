@@ -7,6 +7,7 @@ import axios from 'axios'
 
 const state = {
   apiState: {},
+  apiSeen: {},
   navColor: null,
   navDrawer: null,
   navDrawerEnable: true,
@@ -89,10 +90,17 @@ const getters = {
 
 const mutations = {
   addApiState (state, api) {
-    Vue.set(state.apiState, api, {state: false, schemaready: false, auth: false, uuid: null, icon: null, lastseen: null})
+    Vue.set(state.apiState, api, {state: false, schemaready: false, auth: false, uuid: null, icon: null})
   },
   setApiState (state, data) {
     state.apiState[data.api][data.field] = data.value
+  },
+  setApiSeen (state, data) {
+    if (!state.apiSeen.hasOwnProperty(data.api)) {
+      Vue.set(state.apiSeen, data.api, data.lastseen)
+    } else {
+      state.apiSeen[data.api] = data.lastseen
+    }
   },
   setApiUuid (state, data) {
     state.apiState[data.api].uuid = data.value
@@ -149,7 +157,7 @@ const mutations = {
   },
   clearGraphqlVerified(state, api) {
     state.graphqlSchema[api].verified = {}
-  },
+  }
 }
 
 export default {
