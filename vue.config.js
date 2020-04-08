@@ -1,4 +1,4 @@
-// const fs = require('fs');
+const fs = require('fs');
 
 module.exports = {
   "transpileDependencies": [
@@ -64,14 +64,12 @@ module.exports = {
         'X-Requested-With, content-type, Authorization'
     },
     // Uncomment this https block below to enable https in the Maverick environment
-    /*
     https: {
       key: fs.readFileSync('/srv/maverick/data/security/ssl/web/mavweb.key'),
       cert: fs.readFileSync('/srv/maverick/data/security/ssl/web/mavweb.crt'),
       ca: fs.readFileSync('/srv/maverick/data/security/ssl/ca/mavCA.pem'),
     },
-    */
-    https: false,
+    // https: false,
     hotOnly: true,
     inline: true,
     open: false,

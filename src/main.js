@@ -17,6 +17,7 @@ import './plugins/vuebar'
 import './plugins/vuetoast'
 import './plugins/vuevisibility'
 import mq from './plugins/vuemq'
+import './plugins/vuebrowserdetect'
 // import './plugins/registerServiceWorker'
 import { createProvider } from './plugins/graphql/vue-apollo'
 

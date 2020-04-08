@@ -6,7 +6,7 @@ v-container(fluid)
       v-spacer
     v-container(fluid)
       v-row()
-        v-col(lg=4 md=6)
+        v-col(lg=6 md=6)
           v-card(ripple hover shaped to="/config/interface")
             div.d-flex.flex-no-wrap.justify-space-between
               div
@@ -17,7 +17,7 @@ v-container(fluid)
               v-avatar.ma-3(tile)
                 v-icon(x-large) mdi-account-cog
               v-spacer
-        v-col(lg=4 md=6)
+        v-col(lg=6 md=6)
           v-card(ripple hover shaped to="/config/modules")
             div.d-flex.flex-no-wrap.justify-space-between
               div
@@ -27,17 +27,6 @@ v-container(fluid)
                   v-btn(color="primary" small to="/config/interface") GoTo Modules
               v-avatar.ma-3(tile)
                 v-icon(x-large) mdi-view-module
-              v-spacer
-        v-col(lg=4 md=6)
-          v-card(ripple hover shaped to="/config/video")
-            div.d-flex.flex-no-wrap.justify-space-between
-              div
-                v-card-title.headline Video Streams
-                v-card-subtitle Create and edit Video Streams.
-                v-card-actions
-                  v-btn(color="primary" small to="/config/video") GoTo Video Streams
-              v-avatar.ma-3(tile)
-                v-icon(x-large) mdi-video
               v-spacer
   
   v-card.mt-4
@@ -67,6 +56,17 @@ v-container(fluid)
                   v-btn(color="primary" small to="/config/connections") GoTo Connections
               v-avatar.ma-3(tile)
                 v-icon(x-large) mdi-router-wireless-settings
+              v-spacer
+        v-col(lg=4 md=6)
+          v-card(ripple hover shaped to="/config/video")
+            div.d-flex.flex-no-wrap.justify-space-between
+              div
+                v-card-title.headline Video Streams
+                v-card-subtitle Create and edit Video Streams.
+                v-card-actions
+                  v-btn(color="primary" small to="/config/video") GoTo Video Streams
+              v-avatar.ma-3(tile)
+                v-icon(x-large) mdi-video
               v-spacer
 </template>              
 <script>

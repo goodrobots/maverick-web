@@ -96,13 +96,20 @@ div
                           v-icon(v-else color='error') mdi-alert-circle-outline
                       v-list-item
                         v-list-item-content Icon Set
-                        v-list-item-content {{ apistate[item.key].icon }}
+                        v-list-item-content
                           v-icon(v-if="apistate[item.key].icon" color='success') {{ apistate[item.key].icon }}
                           v-icon(v-else color='error') mdi-alert-circle-outline
                     v-divider
-                    // img(:src="`https://${item.hostname}/img/misc/onepixel.png`" @error="imgError('http', item)" style="display:none")
-                    // img(:src="`http://${item.hostname}/img/misc/onepixel.png`" @error="imgError('https', item)" style="display:none")
-                    
+                    v-list(dense)
+                      v-list-item
+                        v-list-item-content SSL Status
+                        v-list-item-content
+                          v-icon(v-if="apistate[item.key].sslstate === true" color='success') mdi-check-circle-outline
+                          v-icon(v-else color='error') mdi-alert-circle-outline
+                      v-list-item(v-if="apistate[item.key].sslstate !== true")
+                        v-list-item-content
+                          v-btn(color="primary" @click="setupSsl(item.key)") Setup SSL
+  
   v-dialog(v-model="dialog" max-width="600px")
     v-card
       v-card-title.headline(class="primary" primary-title)
@@ -125,6 +132,56 @@ div
       v-card-actions
         v-btn.ma-2(color="success" @click="createConnection()") Create Connection
         v-btn.ma-2(color="error" @click="dialog = false") Cancel
+
+  v-dialog(v-model="sslDialog" max-width="600px" overlay-opacity=0.85)
+    v-card
+      v-card-title.headline.primary(primary-title)
+        span SSL Setup
+        v-spacer(v-if="sslitem")
+        span.subtitle-1(v-if="sslitem")  {{ sslitem.name }}
+      v-card-text(v-if="sslitem")
+        v-container
+          // Download CA cert step
+          v-row
+            v-col(cols="12" sm="12" md="12")
+              div 1. Please click on the button below to download the SSL Certificate
+              v-btn(color="primary" small :href="`http://${sslitem.hostname}/security/mavCA.crt`") Download SSL CA Certificate
+          // Firefox ssl guide
+          v-row(v-if="$browserDetect.isFirefox")
+            v-col(cols="12" sm="12" md="12")
+              div 2. In Firefox, a dialog should popup asking which permissions to give the certificate:
+              img(src="img/ssl/firefox-sslca.png")
+              div Click to enable 'Trust this CA to identify web sites'
+          // MacOS Chrome/Safari ssl guide
+          v-row(v-else-if="($browserDetect.isChrome || $browserDetect.isSafari) && (/OS X/.test($browserDetect.meta.ua) || /OSX/.test($browserDetect.meta.ua))")
+            v-col(cols="12" sm="12" md="12")
+              div 2. In MacOS Chrome or Safari, click on the downloaded file in the footer of the browser.
+              img(src="img/ssl/macffsafari-1.png")
+              div This will import the certificate into MacOS system Keychain Access app.
+              img(src="img/ssl/macffsafari-2.png")
+              div Choose the default 'login' option and click Add
+            v-col(cols="12" sm="12" md="12")
+              div 3. Double click on the untrusted certificate (with red X)
+              img(src="img/ssl/macffsafari-3.png")
+            v-col(cols="12" sm="12" md="12")
+              div 4. Open the 'Trust' section and change 'When using this certificate' to 'Always Trust'
+              img(src="img/ssl/macffsafari-4.png")
+              div Close the window and it will ask you to authenticate, to verify the system certificate update.
+          // Undetected browser ssl guide
+          v-row(v-else)
+            v-col(cols="12" sm="12" md="12")
+              div 2. Unknown browser - please search on the internet for installation instructions for your OS/Browser:
+              div {{ $browserDetect.meta.ua }}
+          // Add reload step
+          v-row
+            v-col(cols="12" sm="12" md="12")
+              div 3. Reload the website to activate the new certificate.
+              v-btn(color="primary" small @click="reloadPage()") Reload
+
+      v-divider
+      v-card-actions
+        v-spacer
+        v-btn.ma-2(color="error" @click="sslDialog = false") Close
 
   v-dialog(v-if="deleteitem" v-model="deleteDialog" max-width="400")
     v-card
@@ -150,8 +207,10 @@ export default {
       filter: {},
       dialog: false,
       deleteDialog: false,
+      sslDialog: false,
       newitem: {},
       deleteitem: null,
+      sslitem: null,
       expand: true
     }
   },
@@ -190,21 +249,12 @@ export default {
       }
       this.$store.commit('data/addApi', {key: data.key, data: data})
     },
-    /*
-    imgError (protocol, item) {
-      this.logDebug(`protocol: ${protocol}`)
-      this.logDebug(item)
-      if (event.type == "error" && item.hasOwnProperty('hostname')) {
-        this.logError(`Error connecting to API (${item.name}) over SSL.`)
-        this.logDebug(event)
-      } else if (! item.hasOwnProperty('hostname')) {
-        this.logError(`Error: This API definition (${item.name}) does not have a hostname set.  Please update maverick-api.`)
-      }
-    },
-    */
     lastseen (api) {
       let lastseen = (this.$store.state.core.apiSeen.hasOwnProperty(api)) ? this.$store.state.core.apiSeen[api] : 0
       return (performance.now() - lastseen)
+    },
+    reloadPage(){
+      window.location.reload()
     },
     remove(item) {
       this.deleteitem = item
@@ -227,6 +277,11 @@ export default {
       // this.deleteQueries(apiData.key)
       // delete this.$apollo.provider.clients[apiData.key]
       // this.createClient(apiData.key+'new', apiData)
+    },
+    setupSsl(api) {
+      this.logDebug(`Opening setupSsl for Api: ${this.apis[api].name}`)
+      this.sslitem = this.apis[api]
+      this.sslDialog = true
     },
     async testSsl(api) {
       // Define an internal method function promise that fetches the image and watches for completion or error

@@ -111,9 +111,13 @@ const plugin = {
           // Add a vuex apis entry
           this.$store.commit('core/addApiState', api)
 
+          if (!this.apis[api].hostname) {
+            this.logError(`Error: API ${this.apis[api].name} does not have a hostname set, please upgrade maverick-api`)
+            return false
+          }
           // Check ssl connection
           let httpsState = false
-          let httpsLoad = this.testImage(`https://${this.apis[api].hostname}/img/ssltest.png`)
+          let httpsLoad = this.testImage(`https://${this.apis[api].hostname}/img/ssl/ssltest.png`)
             .then(img => { httpsState = true })
             .catch(err => { httpsState = false })
           await httpsLoad      
