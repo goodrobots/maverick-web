@@ -6,16 +6,10 @@ import { buildClientSchema } from 'graphql'
 import axios from 'axios'
 
 const state = {
-  apiState: {},
   apiSeen: {},
-  navColor: null,
-  navDrawer: null,
-  navDrawerEnable: true,
-  moduleName: null,
-  statusData: {},
-  vehicleData: {},
-  serviceData: {},
+  apiState: {},
   graphqlSchema: {},
+  moduleName: null,
   modules: {
     'cockpit': {
       'color': 'orange',
@@ -47,7 +41,14 @@ const state = {
       'icon': 'mdi-video',
       'enabled': true
     }
-  }
+  },
+  navColor: null,
+  navDrawer: null,
+  navDrawerEnable: true,
+  serviceData: {},
+  sslState: null,
+  statusData: {},
+  vehicleData: {}
 }
 
 const actions = {
@@ -92,8 +93,14 @@ const mutations = {
   addApiState (state, api) {
     Vue.set(state.apiState, api, {state: false, schemaready: false, auth: false, uuid: null, icon: null})
   },
-  setApiState (state, data) {
-    state.apiState[data.api][data.field] = data.value
+  clearGraphqlVerified(state, api) {
+    state.graphqlSchema[api].verified = {}
+  },
+  setApiAuth (state, data) {
+    state.apiState[data.api].auth = data.value
+  },
+  setApiIcon (state, data) {
+    state.apiState[data.api].icon = data.value
   },
   setApiSeen (state, data) {
     if (!state.apiSeen.hasOwnProperty(data.api)) {
@@ -102,14 +109,11 @@ const mutations = {
       state.apiSeen[data.api] = data.lastseen
     }
   },
+  setApiState (state, data) {
+    state.apiState[data.api][data.field] = data.value
+  },
   setApiUuid (state, data) {
     state.apiState[data.api].uuid = data.value
-  },
-  setApiIcon (state, data) {
-    state.apiState[data.api].icon = data.value
-  },
-  setApiAuth (state, data) {
-    state.apiState[data.api].auth = data.value
   },
   setModuleName (state, value) {
     state.moduleName = value
@@ -123,13 +127,6 @@ const mutations = {
   setNavDrawerEnable (state, value) {
     state.navDrawerEnable = value
   },
-  setStatusData (state, data) {
-    if (data.api in state.statusData) {
-      state.statusData[data.api] = data.message
-    } else {
-      Vue.set(state.statusData, data.api, data.message)
-    }
-  },
   setServiceData (state, data) {
     if (data.api in state.serviceData) {
       if (data.name in state.serviceData[data.api]) {
@@ -140,6 +137,16 @@ const mutations = {
     } else {
       Vue.set(state.serviceData, data.api, {})
       Vue.set(state.serviceData[data.api], data.name, data.message)
+    }
+  },
+  setSslState (state, value) {
+    state.sslState = value
+  },
+  setStatusData (state, data) {
+    if (data.api in state.statusData) {
+      state.statusData[data.api] = data.message
+    } else {
+      Vue.set(state.statusData, data.api, data.message)
     }
   },
   setVehicleData (state, data) {
@@ -154,16 +161,13 @@ const mutations = {
   },
   updateGraphqlVerified(state, {api, hash, ret}) {
     state.graphqlSchema[api].verified[hash] = ret
-  },
-  clearGraphqlVerified(state, api) {
-    state.graphqlSchema[api].verified = {}
   }
 }
 
 export default {
-  namespaced: true,
-  state,
   actions,
   getters,
-  mutations
+  mutations,
+  namespaced: true,
+  state
 }

@@ -220,9 +220,6 @@ export default {
     }
   },
   mounted () {
-    for (const api of Object.keys(this.apis)) {
-      // this.testSsl(api)
-    }
   },
   methods: {
     connect(apiData) {
@@ -282,37 +279,6 @@ export default {
       this.logDebug(`Opening setupSsl for Api: ${this.apis[api].name}`)
       this.sslitem = this.apis[api]
       this.sslDialog = true
-    },
-    async testSsl(api) {
-      // Define an internal method function promise that fetches the image and watches for completion or error
-      function testImage(imgPath) {
-        return new Promise((resolve, reject) => {
-          const testImg = new Image()
-          testImg.addEventListener("load", () => resolve(testImg))
-          testImg.addEventListener("error", err => reject(err))
-          testImg.src = imgPath
-        })
-      }
-
-      const item = this.apis[api]
-
-      /*
-      // http can't be loaded from https link
-      let httpState = null
-      let httpLoad = testImage(`http://${item.hostname}/img/misc/onepixel.png`)
-        .then(img => { httpState = true })
-        .catch(err => { this.logDebug('Error loading http image'); httpState = false })
-      await httpLoad
-      */
-
-      let httpsState = null
-      let httpsLoad = testImage(`https://${item.hostname}/img/misc/onepixel.png`)
-        .then(img => { httpsState = true })
-        .catch(err => { this.logDebug('Error loading https image'); httpsState = false })
-      await httpsLoad
-
-      this.logDebug(`SSL state for ${item.name}: ${httpsState}`)
-      
     }
   }
 }

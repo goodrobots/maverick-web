@@ -28,6 +28,7 @@ export default {
   components: { BottomNav, TopNav, ActionButton },
   data () {
     return {
+      sslState: null
     }
   },
 
@@ -128,6 +129,8 @@ export default {
     this.logBanner('** Welcome to Maverick Web GCS **')
     // Set initital dark theme state
     this.$vuetify.theme.dark = this.isDark
+    // Test SSL status
+    this.testSsl()
     // Create a default discovery agent if one doesn't exist
     this.defaultDiscovery()
     // Create websocket connections for all defined discovery agents
@@ -311,6 +314,13 @@ export default {
       if (!this.apis[api].icon) {
         this.$store.commit('data/setApiIcon', { api: api, value: this.vehicleIcon(data.data.VehicleInfo.typeString) })
       }
+    },
+    async testSsl(api) {
+      let httpsLoad = this.testImage(`https://${window.location.hostname}/img/ssl/ssltest.png`)
+        .then(img => { this.$store.commit('core/setSslState', true) })
+        .catch(err => { this.logDebug('Error loading https image'); this.$store.commit('core/setSslState', false) })
+      await httpsLoad
+      this.logDebug(`SSL state for -web: ${this.$store.state.core.sslState}`)
     }
   }
 }

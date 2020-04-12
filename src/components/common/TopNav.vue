@@ -202,7 +202,15 @@ export default {
 </script>
 
 <style scoped>
-.btn {
+.v-btn {
   line-height: normal;
 }
+/* Stop the logo background changing on hover */
+.v-btn:hover:before, .v-btn:focus:before {
+  color: transparent
+}
+.v-btn:before {
+  display: none;
+}
+.v-ripple__animation{ display: none; }
 </style>
