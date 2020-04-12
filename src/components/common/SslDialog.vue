@@ -1,5 +1,5 @@
 <template lang='pug'>
-v-dialog(v-model="sslDialog" max-width=600 overlay-opacity=0.85)
+v-dialog(v-model="sslDialog" max-width="600px" overlay-opacity=0.85)
     v-card
       v-card-title.headline.primary(primary-title)
         span SSL Setup
@@ -60,6 +60,10 @@ export default {
     sslitem: {
       type: Object,
       default: null
+    },
+    redirect: {
+      type: String,
+      default: null
     }
   },
   data () {
@@ -75,7 +79,11 @@ export default {
       this.sslDialog = false
     },
     reloadPage(){
-      window.location.reload()
+      if (this.redirect === null) {
+        window.location.reload()
+      } else {
+        window.location.href = this.redirect
+      }
     }
   }
 }

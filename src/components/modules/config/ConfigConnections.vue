@@ -108,7 +108,7 @@ div
                           v-icon(v-else color='error') mdi-alert-circle-outline
                       v-list-item(v-if="apistate[item.key].sslstate !== true")
                         v-list-item-content
-                          v-btn(color="primary" @click="setupSsl(item.key)") Setup SSL
+                          v-btn(color="primary" @click="sslitem=item; $refs.ssldialog.open()") Setup SSL
   
   v-dialog(v-model="dialog" max-width="600px")
     v-card
@@ -133,56 +133,6 @@ div
         v-btn.ma-2(color="success" @click="createConnection()") Create Connection
         v-btn.ma-2(color="error" @click="dialog = false") Cancel
 
-  v-dialog(v-model="sslDialog" max-width="600px" overlay-opacity=0.85)
-    v-card
-      v-card-title.headline.primary(primary-title)
-        span SSL Setup
-        v-spacer(v-if="sslitem")
-        span.subtitle-1(v-if="sslitem")  {{ sslitem.name }}
-      v-card-text(v-if="sslitem")
-        v-container
-          // Download CA cert step
-          v-row
-            v-col(cols="12" sm="12" md="12")
-              div 1. Please click on the button below to download the SSL Certificate
-              v-btn(color="primary" small :href="`http://${sslitem.hostname}/security/mavCA.crt`") Download SSL CA Certificate
-          // Firefox ssl guide
-          v-row(v-if="$browserDetect.isFirefox")
-            v-col(cols="12" sm="12" md="12")
-              div 2. In Firefox, a dialog should popup asking which permissions to give the certificate:
-              img(src="img/ssl/firefox-sslca.png")
-              div Click to enable 'Trust this CA to identify web sites'
-          // MacOS Chrome/Safari ssl guide
-          v-row(v-else-if="($browserDetect.isChrome || $browserDetect.isSafari) && (/OS X/.test($browserDetect.meta.ua) || /OSX/.test($browserDetect.meta.ua))")
-            v-col(cols="12" sm="12" md="12")
-              div 2. In MacOS Chrome or Safari, click on the downloaded file in the footer of the browser.
-              img(src="img/ssl/macffsafari-1.png")
-              div This will import the certificate into MacOS system Keychain Access app.
-              img(src="img/ssl/macffsafari-2.png")
-              div Choose the default 'login' option and click Add
-            v-col(cols="12" sm="12" md="12")
-              div 3. Double click on the untrusted certificate (with red X)
-              img(src="img/ssl/macffsafari-3.png")
-            v-col(cols="12" sm="12" md="12")
-              div 4. Open the 'Trust' section and change 'When using this certificate' to 'Always Trust'
-              img(src="img/ssl/macffsafari-4.png")
-              div Close the window and it will ask you to authenticate, to verify the system certificate update.
-          // Undetected browser ssl guide
-          v-row(v-else)
-            v-col(cols="12" sm="12" md="12")
-              div 2. Unknown browser - please search on the internet for installation instructions for your OS/Browser:
-              div {{ $browserDetect.meta.ua }}
-          // Add reload step
-          v-row
-            v-col(cols="12" sm="12" md="12")
-              div 3. Reload the website to activate the new certificate.
-              v-btn(color="primary" small @click="reloadPage()") Reload
-
-      v-divider
-      v-card-actions
-        v-spacer
-        v-btn.ma-2(color="error" @click="sslDialog = false") Close
-
   v-dialog(v-if="deleteitem" v-model="deleteDialog" max-width="400")
     v-card
       v-card-title
@@ -194,12 +144,17 @@ div
         v-spacer
         v-btn(text @click="deleteDialog = false") Cancel
         v-btn(text color="error darken-1" @click="removeConnection()") Delete
+
+  SslDialog(:sslitem="sslitem" ref="ssldialog")
 </template>
 
 <script>
+import SslDialog from '../../common/SslDialog'
+
 export default {
   name: "ConfigConnections",
   components: {
+    SslDialog
   },
   data() {
     return {
@@ -207,7 +162,6 @@ export default {
       filter: {},
       dialog: false,
       deleteDialog: false,
-      sslDialog: false,
       newitem: {},
       deleteitem: null,
       sslitem: null,
