@@ -73,6 +73,9 @@ export default {
     },
     close () {
       this.sslDialog = false
+    },
+    reloadPage(){
+      window.location.reload()
     }
   }
 }
