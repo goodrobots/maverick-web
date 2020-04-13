@@ -59,6 +59,9 @@ const plugin = {
         navDrawerEnable () {
           return this.$store.state.core.navDrawerEnable
         },
+        ssl () {
+          return (window.location.protocol == 'https:' ? true : false)
+        },
         topColor () {
           if (this.uiSettings.colorBg === true) {
             return (this.isDark) ? `${this.navColor} darken-3` : `${this.navColor} lighten-4`

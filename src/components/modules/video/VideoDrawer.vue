@@ -16,7 +16,7 @@ v-navigation-drawer(app left clipped floating v-model="drawer" :color="topColor"
     v-list-item(v-for="stream in videostreams" :key="stream.key")
       template(v-slot:default="{ active }")
         v-list-item-action
-          v-switch(color='primary' v-model='stream.enabled')
+          v-switch(color='primary' v-model='stream.enabled' :disabled="!ssl")
         v-list-item-content
           v-list-item-title {{ stream.name }}
           v-list-item-subtitle {{ stream.webrtcEndpoint }}

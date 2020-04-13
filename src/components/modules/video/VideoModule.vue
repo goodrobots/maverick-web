@@ -1,15 +1,32 @@
 <template lang='pug'>
-div
+v-content
   video-drawer
-  v-content
-    v-container(v-if="!Object.keys(videostreams).length")
-      v-card.mx-auto.mt-2
-        v-alert(border="left" outlined type="info")
-          span No Video Streams are defined.  Please define a video stream in <v-btn class="ma-2" :color="navColor+' darken-2'" small to='/config/video'>Config->Video</v-btn>
-    v-container(v-if="Object.keys(videostreams).length && !Object.keys(enabledStreams).length")
-      v-card.mx-auto.mt-2
-        v-alert(border="left" outlined type="info")
-          span There are no enabled Video Streams.  Please enable a stream in <v-btn class="ma-2" :color="navColor+' darken-2'" small @click.stop="toggleDrawer">Stream Control</v-btn>
+  v-container.fill-height
+    v-spacer
+    v-container
+      v-row(v-if="!ssl && !$store.state.core.sslState" align='center' justify='center')
+        v-col(xs='12' sm='12' md='6' lg='6' xl='4')
+          v-row(align='center' justify='center')
+            v-alert(type='warning' border='left' outlined dense) Maverick-Web is not setup to load over an encrypted SSL connection, which is required for the realtime Video component.  Please goto the homepage to setup SSL.
+          v-row(align='center' justify='center')
+            v-btn(color='primary' small to="/") Goto Homepage
+      v-row(v-if="!ssl && $store.state.core.sslState" align='center' justify='center')
+        v-col(xs='12' sm='12' md='6' lg='6' xl='4')
+          v-row(align='center' justify='center')
+            v-alert(type='warning' border='left' outlined dense) Maverick-Web is not loaded over an encrypted SSL connection, which is required for the realtime Video component.
+          v-row(align='center' justify='center')
+            v-btn(color='primary' small @click="gotoSsl()") Reload over SSL
+      v-row(v-else-if="!Object.keys(videostreams).length" align='center' justify='center')
+        v-col(xs='12' sm='12' md='6' lg='6' xl='4')
+          v-row(align='center' justify='center')
+            v-alert(border="left" outlined type="info")
+              span No Video Streams are defined.  Please define a video stream in <v-btn class="ma-2" :color="navColor+' darken-2'" small to='/config/video'>Config->Video</v-btn>
+      v-row(v-else-if="Object.keys(videostreams).length && !Object.keys(enabledStreams).length" align='center' justify='center')
+        v-col(xs='12' sm='12' md='6' lg='6' xl='4')
+          v-row(align='center' justify='center')
+            v-alert(border="left" outlined type="info")
+              span There are no enabled Video Streams.  Please enable a stream in <v-btn class="ma-2" :color="navColor+' darken-2'" small @click.stop="toggleDrawer">Stream Control</v-btn>
+      v-spacer
     v-container.pa-2(fluid)
         v-row(dense)
           v-col.px-4(v-for="stream in videostreams" :key='stream.key' v-if="stream.enabled" xs=12 sm=12 md=12 lg=6 xl=6)
@@ -98,6 +115,11 @@ export default {
   watch: {
   },
   mounted () {
+    // If website not loaded over ssl, hide the drawer
+    if (!this.ssl) {
+      // setTimeout(() => this.$store.commit('core/setNavDrawer', false), 500)
+    }
+    // Add a resize listener
     window.addEventListener('resize', () => {
       this.width = ((75 / 100) * window.innerWidth)
     })
@@ -133,6 +155,9 @@ export default {
       } else {
         return Math.round(bitrate / 1000000) + ' M'
       }
+    },
+    gotoSsl() {
+      window.location.href = `https://${window.location.hostname}/#/video`
     },
     refWidth (el) {
       let width = null

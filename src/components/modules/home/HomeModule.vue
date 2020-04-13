@@ -51,9 +51,6 @@ export default {
     hostname () {
       return window.location.hostname
     },
-    ssl () {
-      return (window.location.protocol == 'https:' ? true : false)
-    },
     topLogo () {
       if (this.isDark) {
         return this.publicPath + 'img/logos/maverick-logo-white.svg'
