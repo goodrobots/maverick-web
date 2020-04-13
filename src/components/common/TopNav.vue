@@ -52,7 +52,7 @@ div
               v-icon(v-else) mdi-desktop-classic
             v-list-item-content
               v-list-item-title {{ data.name }}
-            v-icon(right v-if="apistate[key]" color='green' small) mdi-check-circle-outline
+            v-icon(right v-if="apistate[key].state" color='green' small) mdi-check-circle-outline
             v-icon(right v-else color='red' small) mdi-alert-circle-outline
 
       v-menu(offset-y transition="scale-transition" left=true nudge-bottom="10")
