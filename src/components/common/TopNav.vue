@@ -2,7 +2,8 @@
 div
   transition(name="slide-y-transition" mode="out-in")
     v-app-bar(app flat fixed dense clipped-left :color="topColor" height=48)
-      v-btn.pl-0.ml-0(v-show="!$vuetify.breakpoint.smAndDown" text left small to="/"): img(:src="topLogo" height='35px')
+      v-btn.pl-0.ml-0(v-show="$vuetify.breakpoint.smAndUp" text left small to="/"): img(:src="topLogo" height='35px')
+      v-btn.pl-0.ml-0(v-show="$vuetify.breakpoint.xsOnly" text left small to="/"): img(:src="this.publicPath + 'img/logos/goodrobots-symbol.svg'" height='35px')
       v-spacer
       v-toolbar-items
         // StatusText Messages
